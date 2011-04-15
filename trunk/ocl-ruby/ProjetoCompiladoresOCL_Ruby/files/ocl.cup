@@ -24,6 +24,10 @@ parser code {:
 	public List<String> errorLog = new ArrayList<String>();
 	public SemanticAnalyzer as = new SemanticAnalyzer();
 	
+	public Symbol getCurrentToken() {
+		return cur_token;
+	}
+	
 	/* Overrides */
 	@Override
 	public void debug_message(String message) {
@@ -225,13 +229,13 @@ unaryExpression ::= unaryOperator postfixExpression
 unaryOperator ::= NOT | MINUS;
 
 
-postfixExpression ::= primaryExpression postfixExpressionAux | SELF featureAccess | SELF AROBAPRE featureAccess;
+postfixExpression ::= primaryExpression postfixExpressionAux | SELF featureAccess | SELF AROBAPRE {: parser.as.checkStereotype("@pre"); :} featureAccess;
 
-postfixExpressionAux ::= POINT featureCall postfixExpressionAux | ARROW featureCall postfixExpressionAux |;
+postfixExpressionAux ::= POINT featureCall postfixExpressionAux | ARROW featureCall:fc {: parser.as.checkCollectionOperation((String)fc); :} postfixExpressionAux |;
 
 featureAccess ::=  POINT featureCall postfixExpressionAux|;
 
-primaryExpression ::= litteralCollection | litteral | RESULT | featureCall | LPAREN expression RPAREN | ifExpression;
+primaryExpression ::= litteralCollection | litteral | RESULT {: parser.as.checkStereotype("result"); :} | featureCall | LPAREN expression RPAREN | ifExpression;
 
 litteralCollection ::= OCL_COLLECTION LCURLY expressionListOrRange RCURLY
 						| OCL_COLLECTION LCURLY RCURLY;
@@ -245,15 +249,9 @@ litteral ::= number;
 
 ifExpression ::= IF expression THEN expression ELSE expression ENDIF;
 
-featureCall ::= pathName AROBAPRE {: 
-				if (parser.as.getStereotype().equals("pre"))
-					throw new excecoes.SemanticErrorException("@pre nao deve aparecer em pre condicoes."); 
-				:} parameters
-				| pathName parameters
-				| pathName AROBAPRE {: 
-				if (parser.as.getStereotype().equals("pre"))
-					throw new excecoes.SemanticErrorException("@pre nao deve aparecer em pre condicoes.");
-				:}
+featureCall ::= pathName AROBAPRE {: parser.as.checkStereotype("@pre"); :} parameters
+				| pathName:pn parameters {: RESULT = (String)pn; :}
+				| pathName AROBAPRE {: parser.as.checkStereotype("@pre"); :}
 				| pathName;
 
 parameters ::= LPAREN declarator expression RPAREN
@@ -273,8 +271,11 @@ typeName ::= pathName | oclType;
 
 oclType ::= OCL_SUPER_TYPE | OCL_BASIC_TYPE | OCL_COLLECTION LPAREN typeName RPAREN;
 
-pathName ::= ID pathNameAux;
+pathName ::= ID:id pathNameAux:pn {: RESULT = (String)id + (String)pn; :};
 
-pathNameAux ::= FOUR_POINTS ID pathNameAux |;
+pathNameAux ::= FOUR_POINTS ID:id pathNameAux:pn {: RESULT = "::" + (String)id + (String)pn; :} | {: RESULT = ""; :};
 
-number ::= INT | FLOAT | STRING | BOOL;
+number ::= INT:int1 {: RESULT = int1; :}
+		| FLOAT:float1 {: RESULT = float1; System.out.println(RESULT);:}
+		| STRING:string1 {: RESULT = string1; :} 
+		| BOOL:bool1 {: RESULT = bool1; :};
