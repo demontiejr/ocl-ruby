@@ -16,11 +16,13 @@ package analisadorSintatico;
 import java_cup.runtime.*;
 import java.util.List;
 import java.util.ArrayList;
+import analisadorSemantico.SemanticAnalyzer;
 
 parser code {:
 	
 	public List<String> log = new ArrayList<String>();
 	public List<String> errorLog = new ArrayList<String>();
+	public SemanticAnalyzer as = new SemanticAnalyzer();
 	
 	/* Overrides */
 	@Override
@@ -174,7 +176,8 @@ contextDeclaration ::= CONTEXT operationContext;
 constraintBody ::= stereotype ID POINTS expression
 					| stereotype POINTS expression;
 
-stereotype ::= PRE | POST;
+stereotype ::= PRE {: parser.as.setStereotype("pre"); :}
+			| POST {: parser.as.setStereotype("post"); :};
 
 classifierType ::= pathName;
 
@@ -242,9 +245,15 @@ litteral ::= number;
 
 ifExpression ::= IF expression THEN expression ELSE expression ENDIF;
 
-featureCall ::= pathName AROBAPRE parameters
+featureCall ::= pathName AROBAPRE {: 
+				if (parser.as.getStereotype().equals("pre"))
+					throw new excecoes.SemanticErrorException("@pre nao deve aparecer em pre condicoes."); 
+				:} parameters
 				| pathName parameters
-				| pathName AROBAPRE
+				| pathName AROBAPRE {: 
+				if (parser.as.getStereotype().equals("pre"))
+					throw new excecoes.SemanticErrorException("@pre nao deve aparecer em pre condicoes.");
+				:}
 				| pathName;
 
 parameters ::= LPAREN declarator expression RPAREN

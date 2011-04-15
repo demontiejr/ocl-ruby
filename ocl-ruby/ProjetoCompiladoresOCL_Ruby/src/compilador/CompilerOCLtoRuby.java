@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import excecoes.FatalErrorException;
+import excecoes.SemanticErrorException;
 
 import analisadorLexico.ScannerOCL;
 import analisadorSintatico.ParserOCL;
@@ -108,28 +109,42 @@ public class CompilerOCLtoRuby {
 		System.out.println("====================================================");
 	}
 	
+	public static void semanticAnalysis(String fileName) {
+		System.out.println("============================================");
+		System.out.println("Realizando analise...");
+		System.out.println("============================================");
+		ScannerOCL scanner = createScanner(fileName);
+		List<String> fatalErrors = new ArrayList<String>();
+		if (scanner != null) {
+			ParserOCL parser = new ParserOCL(scanner);
+			errors = parser.errorLog;
+			try {
+				parser.parse();
+			} catch (RuntimeException e) {
+				errors.add(e.getMessage()); 
+			} catch (FatalErrorException e) {
+				fatalErrors.add(e.getMessage());
+			} catch (SemanticErrorException e){
+				errors.add(e.getMessage());
+			} catch (Exception e) {
+				parser.log.add("\nErro durante a analise: " + e.getMessage() + "\n");
+			}
+			System.out.println("\n" + errors.size() + " erro(s)\n");
+			for (String error : errors)
+				System.out.println(error);
+			System.out.println();
+		}
+		System.out.println("====================================================");
+		System.out.println("Analise realizada para o arquivo "  + fileName);
+		System.out.println("====================================================");
+	}
+	
 	public static void main(String[] args) throws IOException {
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("Escolha a opcao a ser realizada:");
-		System.out.println("1 - Analise Lexica\n2 - Analise Sintatica");
-		Integer option = Integer.valueOf(in.readLine());
 		String fileName;
-		switch (option) {
-		case 1:
-			System.out.println("Digite o nome do Arquivo");
-			fileName = in.readLine();
-			lexicalAnalysis(fileName);
-			break;
-		case 2:
-			System.out.println("Digite o nome do Arquivo");
-			fileName = in.readLine();
-			syntacticAnalysis(fileName);
-			break;
-		default:
-			System.out.println("Opcao Invalida");
-			break;
-		}
-		
+		System.out.println("Digite o nome do Arquivo: ");
+		fileName = in.readLine();
+		semanticAnalysis(fileName);
 	}
 	
 }
