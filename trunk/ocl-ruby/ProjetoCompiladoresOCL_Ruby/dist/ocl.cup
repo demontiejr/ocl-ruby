@@ -1,0 +1,271 @@
+package analisadorSintatico;
+
+/*********************************************************
+* Universidade Federal de Campina Grande - UFCG          *
+* Centro de Engenharia Eletrica e Informatica - CEEI     *
+* Departamento de Sistemas e Computacao - DSC            *
+*                                                        *
+* Projeto da disciplina de Compiladores, 2011.1          *
+* Analisador Sintatico para OCL                          *
+*                                                        *
+* Grupo: Francisco Demontie dos Santos Junior - 20911084 *
+*        Izabela Vanessa de Almeida Melo - 20811018      *
+*        Savyo Igor da Nobrega Santos - 20811034         *
+*********************************************************/
+
+import java_cup.runtime.*;
+import java.util.List;
+import java.util.ArrayList;
+
+parser code {:
+	
+	public List<String> log = new ArrayList<String>();
+	public List<String> errorLog = new ArrayList<String>();
+	
+	/* Overrides */
+	@Override
+	public void debug_message(String message) {
+		if (message.equals("# Initializing parser"))
+			message = "Inicializando o parser";
+		if (message.contains("# Goto state #"))
+			message = message.replace("# Goto state ", "# Goto para o estado ");
+		if (message.contains("# Current Symbol is #")){
+			message = message.replace("# Current Symbol is ", "O simbolo atual eh ");
+			int tokenNumber = Integer.valueOf((String) message.subSequence(message.indexOf("#")+1, message.length()));
+			message = message.replace(message.subSequence(message.indexOf("#"), message.length()), 
+					Tokens.getTokenName(tokenNumber));
+		}
+		if (message.contains("# Current token is #")){
+			message = message.replace("# Current token is ", "O token atual eh ");
+			int tokenNumber = Integer.valueOf((String) message.subSequence(message.indexOf("#")+1, message.length()));
+			message = message.replace(message.subSequence(message.indexOf("#"), message.length()), 
+					Tokens.getTokenName(tokenNumber));
+		}
+		if (message.contains(" Attempting error recovery"))
+			message = "\nRotina de tratamento de erros: tentando reparar o erro";
+		if (message.contains("Error recovery fails"))
+			message = "Recuperacao de erro falhou";
+		if (message.contains("Finding recovery state") | message.contains("Pop stack by one") | message.contains("No recovery state"))
+			return;
+		log.add(message + "\n");
+	}
+	
+	@Override
+  	public void debug_reduce(int prod_num, int nt_num, int rhs_size) {
+		debug_message("# Reduce com a producao #" + prod_num + " [NT=" + nt_num
+				+ ", " + "SZ=" + rhs_size + "]");
+	}
+
+	@Override
+	public void debug_shift(Symbol shift_tkn) {
+		debug_message("# Shift sob o termo " + Tokens.getTokenName(shift_tkn.sym) + " para o estado #"
+				+ shift_tkn.parse_state);
+	}
+	
+	@Override
+	public void report_error(String message, Object info) {
+		String token = "";
+		if (info instanceof Symbol){
+			Symbol s = (Symbol) info;
+			if (s.value != null){
+				token = s.value.toString();
+			} 
+			else {
+				token = Tokens.getTokenName(s.sym);
+			}
+			errorLog.add(message + ": token \" " + token + " \"" + " na linha " + (s.left+1));
+		}
+		else
+			errorLog.add(message);
+	}
+	
+	@Override
+	public void report_fatal_error(String message, Object info) throws excecoes.FatalErrorException {
+		report_error(message, info);
+		done_parsing();
+		String linha = "";
+		if (info instanceof Symbol){
+			Symbol s = (Symbol) info;
+			linha = " na linha " + (s.left+1);
+		}
+		throw new excecoes.FatalErrorException("na analise sintatica" + linha);
+	}
+	
+	@Override
+	public void syntax_error(Symbol cur_token) {
+		report_error("Erro sintatico", cur_token);
+	}
+	
+	@Override
+	public void unrecovered_syntax_error(Symbol cur_token) throws excecoes.FatalErrorException {
+		String token = " na linha " + (cur_token.left+1);
+		if (cur_token.value != null)
+			token = ": token " + cur_token.value + token;
+		throw new excecoes.FatalErrorException("na analise sintatica" + token + ". Impossivel reparar e continuar a analise.");
+    }
+	
+:}
+
+/*Terminais*/
+terminal CONTEXT, PRE, POST;
+terminal IF, THEN, ELSE, ENDIF;
+terminal LPAREN, RPAREN, LCURLY, RCURLY;
+terminal PIPE, POINT_POINT, COMA;
+terminal POINTS, FOUR_POINTS, POINT, ARROW;
+terminal STAR, DIV, PLUS, MINUS;
+terminal AND, OR, XOR, IMPLIES, NOT;
+terminal EQ, LT, LE, GT, GE, NE;
+terminal AROBAPRE, SELF, RESULT;
+terminal String OCL_SUPER_TYPE, OCL_BASIC_TYPE, OCL_COLLECTION;
+terminal String STRING;
+terminal Integer INT;
+terminal Float FLOAT;
+terminal Boolean BOOL;
+terminal Object ID;
+
+/*Nao terminais*/
+non terminal initialRule, initialRuleAux;
+non terminal constraint;
+non terminal contextDeclaration, constraintBody, stereotype;
+non terminal classifierType, operationContext;
+non terminal formalParameterList, formalParameter;
+non terminal expression, logicalExpression, logicalOperator;
+non terminal relationalExpression, relationalOperator;
+non terminal additiveExpression, multiplicativeExpression, unaryExpression, unaryOperator;
+non terminal postfixExpression, postfixExpressionAux, featureAccess, primaryExpression;
+non terminal litteralCollection, expressionListOrRange, litteral;
+non terminal ifExpression, featureCall, parameters;
+non terminal actualParameterList, typeName, oclType;
+non terminal pathName, number;
+non terminal constraintAux, formalParameterListAux, logicalExpressionAux;
+non terminal additiveExpressionAux, multiplicativeExpressionAux;
+non terminal expressionListOrRangeAux, declarator, declaratorAux;
+non terminal actualParameterListAux, pathNameAux;
+
+/*Precedencias*/
+precedence left COMA;
+precedence left IMPLIES;
+precedence left NOT;
+precedence left AND;
+precedence left OR;
+precedence left XOR;
+precedence left EQ, NE;
+precedence left LT, GT, GE, LE;
+precedence left IF, THEN, ELSE, ENDIF;
+precedence left PLUS, MINUS;
+precedence left STAR, DIV;
+precedence left NOT;
+precedence left POINT, ARROW;
+precedence left AROBAPRE;
+
+/*Regras da gramatica*/
+start with initialRule;
+
+initialRule ::= constraint initialRuleAux;
+
+initialRuleAux ::= constraint initialRuleAux |;
+
+constraint ::= contextDeclaration constraintBody constraintAux;
+
+constraintAux ::= constraintBody constraintAux |;
+
+contextDeclaration ::= CONTEXT operationContext;
+
+constraintBody ::= stereotype ID POINTS expression
+					| stereotype POINTS expression;
+
+stereotype ::= PRE | POST;
+
+classifierType ::= pathName;
+
+operationContext ::= classifierType LPAREN formalParameterList RPAREN POINTS classifierType
+					 | classifierType LPAREN formalParameterList RPAREN POINTS oclType
+					 | classifierType LPAREN RPAREN POINTS classifierType
+					 | classifierType LPAREN RPAREN POINTS oclType
+					 | classifierType LPAREN formalParameterList RPAREN
+					 | classifierType LPAREN RPAREN;
+
+formalParameterList ::= formalParameter formalParameterListAux;
+
+formalParameterListAux ::= COMA formalParameter formalParameterListAux |;
+
+formalParameter ::= ID POINTS typeName;
+
+expression ::= logicalExpression;
+
+logicalExpression ::= relationalExpression logicalExpressionAux;
+
+logicalExpressionAux ::= logicalOperator relationalExpression logicalExpressionAux |;
+
+logicalOperator ::= AND | OR | XOR | IMPLIES;
+
+relationalExpression ::= additiveExpression relationalOperator additiveExpression
+						 | additiveExpression;
+
+relationalOperator ::= EQ | GT | LT | GE | LE | NE;
+
+additiveExpression ::= multiplicativeExpression additiveExpressionAux;
+
+additiveExpressionAux ::= PLUS multiplicativeExpression additiveExpressionAux
+								| MINUS multiplicativeExpression additiveExpressionAux
+								|;
+
+multiplicativeExpression ::= unaryExpression multiplicativeExpressionAux;
+
+multiplicativeExpressionAux ::= STAR unaryExpression multiplicativeExpressionAux
+								| DIV unaryExpression multiplicativeExpressionAux
+								|;
+
+unaryExpression ::= unaryOperator postfixExpression
+					| postfixExpression;
+
+unaryOperator ::= NOT | MINUS;
+
+
+postfixExpression ::= primaryExpression postfixExpressionAux | SELF featureAccess | SELF AROBAPRE featureAccess;
+
+postfixExpressionAux ::= POINT featureCall postfixExpressionAux | ARROW featureCall postfixExpressionAux |;
+
+featureAccess ::=  POINT featureCall postfixExpressionAux|;
+
+primaryExpression ::= litteralCollection | litteral | RESULT | featureCall | LPAREN expression RPAREN | ifExpression;
+
+litteralCollection ::= OCL_COLLECTION LCURLY expressionListOrRange RCURLY
+						| OCL_COLLECTION LCURLY RCURLY;
+
+expressionListOrRange ::= expression COMA expression expressionListOrRangeAux
+							| expression POINT_POINT expression;
+
+expressionListOrRangeAux ::= COMA expression expressionListOrRangeAux |;
+
+litteral ::= number;
+
+ifExpression ::= IF expression THEN expression ELSE expression ENDIF;
+
+featureCall ::= pathName AROBAPRE parameters
+				| pathName parameters
+				| pathName AROBAPRE
+				| pathName;
+
+parameters ::= LPAREN declarator expression RPAREN
+				| LPAREN declarator RPAREN
+				| LPAREN actualParameterList RPAREN;
+
+declarator ::= ID declaratorAux POINTS typeName PIPE
+				| ID declaratorAux PIPE;
+
+declaratorAux ::= COMA ID declaratorAux |;
+			
+actualParameterList ::= expression actualParameterListAux|;
+
+actualParameterListAux ::= COMA expression actualParameterListAux |;
+
+typeName ::= pathName | oclType;
+
+oclType ::= OCL_SUPER_TYPE | OCL_BASIC_TYPE | OCL_COLLECTION LPAREN typeName RPAREN;
+
+pathName ::= ID pathNameAux;
+
+pathNameAux ::= FOUR_POINTS ID pathNameAux |;
+
+number ::= INT | FLOAT | STRING | BOOL;
