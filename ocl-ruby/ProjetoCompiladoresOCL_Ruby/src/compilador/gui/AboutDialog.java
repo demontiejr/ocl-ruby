@@ -30,6 +30,7 @@ public class AboutDialog extends Dialog{
 		"Centro de Engenharia Eletrica e Informatica - CEEI\n" +
   		"Departamento de Sistemas e Computacao - DSC\n\n" +
   		"Projeto da disciplina de Compiladores, 2011.1\n" +
+  		"Professor: Franklin Ramalho\n" +
   		"Compilador de Pre e Pos condicoes para verificacao\n" +
   		"OCL para Ruby\n\n" +
   		"Grupo: Francisco Demontie dos Santos Junior - 20911084\n" +
