@@ -1,2 +1,2 @@
 context MinhaClasse::meuMetodoDaMinhaLindaClasseBunita(): MeuTipoDeRetorno
-	post: result = 4.5e-21
+	post: result = a->size()
