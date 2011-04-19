@@ -132,7 +132,7 @@ id = {ALPHA} ({ALPHA} | {DIGIT})*
 	{AROBAPRE}				{return symbol(Symbols.AROBAPRE, "AROBAPRE");}
 	//literais
 	{INT}					{return symbol(Symbols.INT, new Integer(yytext()), "INT");}
-	{FLOAT}					{return symbol(Symbols.FLOAT, new Double(yytext()), "FLOAT");}
+	{FLOAT}					{return symbol(Symbols.FLOAT, new Float(yytext()), "FLOAT");}
 	{bool}					{return symbol(Symbols.BOOL, new Boolean(yytext()), "BOOL");}
 	
 	{id}					{return symbol(Symbols.ID, yytext(), "ID");}
