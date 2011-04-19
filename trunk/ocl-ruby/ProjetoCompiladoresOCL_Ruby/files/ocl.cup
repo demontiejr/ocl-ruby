@@ -167,134 +167,134 @@ precedence left AROBAPRE;
 /*Regras da gramatica*/
 start with initialRule;
 
-initialRule ::= constraint:c1 initialRuleAux:ira1 {: RESULT = (String)c1 + (String)ira1 ; System.out.println(RESULT);:};
+initialRule ::= constraint:c1 initialRuleAux:ira1;
 
-initialRuleAux ::= constraint:c1 initialRuleAux:ira1 {: RESULT = (String)c1 + (String)ira1 ;:} 
-				| {: RESULT = "" ;:};
+initialRuleAux ::= constraint:c1 initialRuleAux:ira1 
+				| ;
 
-constraint ::= contextDeclaration:cd1 constraintBody:cb1 constraintAux:ca1 {: RESULT = (String)cd1 + (String)cb1 + (String)ca1 ;:};
+constraint ::= contextDeclaration:cd1 constraintBody:cb1 constraintAux:ca1;
 
-constraintAux ::= constraintBody:cb1 constraintAux:ca1 {: RESULT = (String)cb1 + (String)ca1 ;:} 
-			   | {: RESULT = "" ;:};
+constraintAux ::= constraintBody:cb1 constraintAux:ca1 
+			   | ;
 
-contextDeclaration ::= CONTEXT operationContext:oc1 {: RESULT = "context" + (String)oc1 ;:};
+contextDeclaration ::= CONTEXT operationContext:oc1;
 
-constraintBody ::= stereotype:s1 ID:id POINTS expression:exp1 {: RESULT = (String)s1 + (String)id + ":" + (String)exp1 ;:}
-					| stereotype:s1 POINTS expression:exp1 {: RESULT = (String)s1 + ":" + (String)exp1 ;:};
+constraintBody ::= stereotype:s1 ID:id POINTS expression:exp1
+					| stereotype:s1 POINTS expression:exp1;
 
-stereotype ::= PRE {: parser.as.setStereotype("pre"); RESULT = "pre" ;:}
-			| POST {: parser.as.setStereotype("post"); RESULT = "post" ;:};
+stereotype ::= PRE {: parser.as.setStereotype("pre"); :}
+			| POST {: parser.as.setStereotype("post"); :};
 
-classifierType ::= pathName:pn {: RESULT = (String)pn ;:};
+classifierType ::= pathName:pn;
 
-operationContext ::= classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN POINTS classifierType:ct2 {: RESULT = (String)ct1 + "(" + (String)fpl1 + ")" + ":" + (String)ct2 ;:}
-					 | classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN POINTS oclType:ocltype1  {: RESULT = (String)ct1 + "(" + (String)fpl1 + ")" + ":" + (String)ocltype1 ;:}
-					 | classifierType:ct1 LPAREN RPAREN POINTS classifierType:ct2  {: RESULT = (String)ct1 + "(" + ")" + ":" + (String)ct2 ;:}
-					 | classifierType:ct1 LPAREN RPAREN POINTS oclType:ocltype1  {: RESULT = (String)ct1 + "(" + ")" + ":" + (String)ocltype1 ;:}
-					 | classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN  {: RESULT = (String)ct1 + "(" + (String)fpl1 + ")" ;:}
-					 | classifierType:ct1 LPAREN RPAREN {: RESULT = (String)ct1 + "(" + ")" ;:};
+operationContext ::= classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN POINTS classifierType:ct2
+					 | classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN POINTS oclType:ocltype1
+					 | classifierType:ct1 LPAREN RPAREN POINTS classifierType:ct2
+					 | classifierType:ct1 LPAREN RPAREN POINTS oclType:ocltype1
+					 | classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN
+					 | classifierType:ct1 LPAREN RPAREN;
 
-formalParameterList ::= formalParameter:fp1 formalParameterListAux:fpla1 {: RESULT = (String)fp1 + (String)fpla1 ;:};
+formalParameterList ::= formalParameter:fp1 formalParameterListAux:fpla1;
 
-formalParameterListAux ::= COMA formalParameter:fp1 formalParameterListAux:fpla1 {: RESULT = "," + (String)fp1 + (String)fpla1 ;:} 
-					    | {: RESULT = "" ;:};
+formalParameterListAux ::= COMA formalParameter:fp1 formalParameterListAux:fpla1 
+					    | ;
 
-formalParameter ::= ID:id POINTS typeName:tn {: RESULT = (String)id + ":" + (String)tn ;:};
+formalParameter ::= ID:id POINTS typeName:tn;
 
-expression ::= logicalExpression:le1 {: RESULT = (String)le1 ;:};
+expression ::= logicalExpression:le1;
 
-logicalExpression ::= relationalExpression:re1 logicalExpressionAux:lea1 {: RESULT = (String)re1 + (String)lea1 ;:};
+logicalExpression ::= relationalExpression:re1 logicalExpressionAux:lea1;
 
-logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExpressionAux:lea1 {: RESULT = (String)lo1 + (String)re1 + (String)lea1 ;:}
-					  | {: RESULT = "" ;:};
+logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExpressionAux:lea1
+					  | ;
 
-logicalOperator ::= AND {: RESULT = "and" ;:}
-			     | OR {: RESULT = "or" ;:}
-				 | XOR {: RESULT = "xor" ;:}
-				 | IMPLIES {: RESULT = "implies" ;:};
+logicalOperator ::= AND
+			     | OR
+				 | XOR
+				 | IMPLIES;
 
-relationalExpression ::= additiveExpression:ae1 relationalOperator:ro1 additiveExpression:ae2 {: RESULT = (String)ae1 + (String)ro1 + (String)ae2 ;:}
-						 | additiveExpression:ae1 {: RESULT = (String)ae1 ;:};
+relationalExpression ::= additiveExpression:ae1 relationalOperator:ro1 additiveExpression:ae2
+						 | additiveExpression:ae1;
 
-relationalOperator ::= EQ {: RESULT = "=" ;:}
-					| GT {: RESULT = ">" ;:}
-					| LT {: RESULT = "<" ;:}
-					| GE {: RESULT = ">=" ;:}
-					| LE {: RESULT = "<=" ;:}
-					| NE {: RESULT = "<>" ;:};
+relationalOperator ::= EQ
+					| GT
+					| LT
+					| GE
+					| LE
+					| NE;
 
-additiveExpression ::= multiplicativeExpression:me1 additiveExpressionAux:aea1 {: RESULT = (String)me1 + (String)aea1 ;:};
+additiveExpression ::= multiplicativeExpression:me1 additiveExpressionAux:aea1;
 
-additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAux:aea1 {: RESULT = "+" + (String)me1 + (String)aea1 ;:}
-								| MINUS multiplicativeExpression:me1 additiveExpressionAux:aea1 {: RESULT = "-" + (String)me1 + (String)aea1 ;:}
-								| {: RESULT = "" ;:};
+additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAux:aea1
+								| MINUS multiplicativeExpression:me1 additiveExpressionAux:aea1
+								| ;
 
-multiplicativeExpression ::= unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: RESULT = (String)ue1 + (String)mea1 ;:};
+multiplicativeExpression ::= unaryExpression:ue1 multiplicativeExpressionAux:mea1;
 
-multiplicativeExpressionAux ::= STAR unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: RESULT = "*" + (String)ue1 + (String)mea1  ;:}
-								| DIV unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: RESULT = "/" + (String)ue1 + (String)mea1  ;:}
-								| {: RESULT = "" ;:};
+multiplicativeExpressionAux ::= STAR unaryExpression:ue1 multiplicativeExpressionAux:mea1
+								| DIV unaryExpression:ue1 multiplicativeExpressionAux:mea1
+								| ;
 
-unaryExpression ::= unaryOperator:uo1 postfixExpression:pfe1 {: RESULT = (String)uo1 + pfe1 ;:}
-			     | postfixExpression:pfe1 {: RESULT = pfe1 ;:};
+unaryExpression ::= unaryOperator:uo1 postfixExpression:pfe1
+			     | postfixExpression:pfe1;
 
-unaryOperator ::= NOT {: RESULT = "not" ;:}
-			   | MINUS {: RESULT =  "-" ;:};
+unaryOperator ::= NOT
+			   | MINUS;
 
-postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1 {: RESULT = pe1 + (String)pfea1  ;:}
-				   | SELF featureAccess:fa1 {: RESULT = "SELF" + (String)fa1 ;:}
-				   | SELF AROBAPRE {: parser.as.checkStereotype("@pre"); :} featureAccess:fa1 {: RESULT = "SELF" + "@pre" + (String)fa1 ;:};
+postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1
+				   | SELF featureAccess:fa1
+				   | SELF AROBAPRE {: parser.as.checkStereotype("@pre"); :} featureAccess:fa1;
 
-postfixExpressionAux ::= POINT featureCall:fCall1 postfixExpressionAux:pfea1 {: RESULT = "." + (String)fCall1 + (String)pfea1 ;:}
-					  | ARROW featureCall:fCall1 {: parser.as.checkCollectionOperation((String)fCall1); :} postfixExpressionAux:pfea1 {: RESULT = "->" + fCall1 + (String)pfea1 ;:} 
-					  | {: RESULT = "" ;:};
+postfixExpressionAux ::= POINT featureCall:fCall1 postfixExpressionAux:pfea1
+					  | ARROW featureCall:fCall1 {: parser.as.checkCollectionOperation((String)fCall1); :} postfixExpressionAux:pfea1 
+					  | ;
 
-featureAccess ::=  POINT featureCall:fCall1 postfixExpressionAux:pfea1 {: RESULT = "." + (String)fCall1 + (String)pfea1 ;:} 
-			   | {: RESULT = "" ;:};
+featureAccess ::=  POINT featureCall:fCall1 postfixExpressionAux:pfea1
+			   | ;
 
-primaryExpression ::= litteralCollection:lc1 {: RESULT = (String)lc1 ;:} 
+primaryExpression ::= litteralCollection:lc1
 		           | litteral:l1 {: RESULT = l1 ;:}
-				   | RESULT {: parser.as.checkStereotype("result"); RESULT = "RESULT" ;:} 
+				   | RESULT {: parser.as.checkStereotype("result"); :} 
 				   | featureCall:fCall1 {: RESULT = (String)fCall1 ;:} 
-				   | LPAREN expression:exp1 RPAREN {: RESULT = "(" + (String)exp1 + ")" ;:} 
-				   | ifExpression:ifexp1 {: RESULT = (String)ifexp1 ;:};
+				   | LPAREN expression:exp1 RPAREN 
+				   | ifExpression:ifexp1;
 
-litteralCollection ::= OCL_COLLECTION:collection1 LCURLY expressionListOrRange:elor1 RCURLY {: RESULT = collection1 + "{" + (String)elor1 + "}" ;:}
-						| OCL_COLLECTION:collection1 LCURLY RCURLY {: RESULT = collection1 + "{" + "}" ;:};
+litteralCollection ::= OCL_COLLECTION:collection1 LCURLY expressionListOrRange:elor1 RCURLY
+						| OCL_COLLECTION:collection1 LCURLY RCURLY;
 
-expressionListOrRange ::= expression:exp1 COMA expression:exp2 expressionListOrRangeAux:elora1 {: RESULT = (String)exp1 + "," + (String)exp2 + (String)elora1 ;:}
-							| expression:exp1 POINT_POINT expression:exp2 {: RESULT = (String)exp1 + ".." + (String)exp2 ;:};
+expressionListOrRange ::= expression:exp1 COMA expression:exp2 expressionListOrRangeAux:elora1
+							| expression:exp1 POINT_POINT expression:exp2;
 
-expressionListOrRangeAux ::= COMA expression:exp1 expressionListOrRangeAux:elora1 {: RESULT = "," + (String)exp1 + (String)elora1; :} | {: RESULT = ""; :};
+expressionListOrRangeAux ::= COMA expression:exp1 expressionListOrRangeAux:elora1;
 
 litteral ::= number:n1 {: RESULT = n1; :};
 
-ifExpression ::= IF expression:exp1 THEN expression:exp2 ELSE expression:exp3 ENDIF {: RESULT = "if" + (String)exp1 + "then" + (String)exp2 + "else" + (String)exp3 + "endif"; :};
+ifExpression ::= IF expression:exp1 THEN expression:exp2 ELSE expression:exp3 ENDIF;
 
-featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre"); :} parameters:params1 {: RESULT = (String)pn + "@pre" + (String)params1; :}
-				| pathName:pn parameters:params1 {: RESULT = (String)pn + (String)params1; :}
-				| pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre"); RESULT = (String)pn + "@pre"; :}
-				| pathName:pn {: RESULT	= (String)pn; :};
+featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre"); :} parameters:params1
+				| pathName:pn parameters:params1 {: RESULT	= (String)pn; :}
+				| pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre"); :}
+				| pathName:pn;
 
-parameters ::= LPAREN declarator:d1 expression:exp1 RPAREN {: RESULT = "(" + (String)d1 + (String)exp1 + ")"; :}
-				| LPAREN declarator:d1 RPAREN {: RESULT = "(" + (String)d1 + ")"; :}
-				| LPAREN actualParameterList:apl1 RPAREN {: RESULT = "(" + (String)apl1 + ")"; :};
+parameters ::= LPAREN declarator:d1 expression:exp1 RPAREN
+				| LPAREN declarator:d1 RPAREN
+				| LPAREN actualParameterList:apl1 RPAREN;
 
-declarator ::= ID:id declaratorAux:da1 POINTS typeName:tn PIPE {: RESULT = (String)id + (String)da1 + ":" + (String)tn + "|"; :}
-				| ID:id declaratorAux:da1 PIPE {: RESULT = (String)id + (String)da1 + "|"; :};
+declarator ::= ID:id declaratorAux:da1 POINTS typeName:tn PIPE
+				| ID:id declaratorAux:da1 PIPE;
 
-declaratorAux ::= COMA ID:id declaratorAux:da1 {: RESULT = "," + (String)id + (String)da1; :} | {: RESULT = ""; :} ;
+declaratorAux ::= COMA ID:id declaratorAux:da1 | ;
 			
-actualParameterList ::= expression:exp1 actualParameterListAux:apla1 {: RESULT = (String)exp1 + (String)apla1 ; :} | {: RESULT = ""; :};
+actualParameterList ::= expression:exp1 actualParameterListAux:apla1 | ;
 
-actualParameterListAux ::= COMA expression:exp1 actualParameterListAux:apla1 {: RESULT = "," + (String)exp1 + (String)apla1 ; :} | {: RESULT = ""; :} ;
+actualParameterListAux ::= COMA expression:exp1 actualParameterListAux:apla1 | ;
 
-typeName ::= pathName:pn {: RESULT = (String)pn; :}
-		  | oclType:ocltype1 {: RESULT = (String)ocltype1; :};
+typeName ::= pathName:pn
+		  | oclType:ocltype1;
 
-oclType ::= OCL_SUPER_TYPE:super1 {: RESULT = super1; :} 
-		 | OCL_BASIC_TYPE:basic1 {: RESULT = basic1; :}  
-		 | OCL_COLLECTION:collection1 LPAREN typeName:tn RPAREN {: RESULT = collection1 + "(" + (String)tn + ")" ; :};
+oclType ::= OCL_SUPER_TYPE:super1
+		 | OCL_BASIC_TYPE:basic1 
+		 | OCL_COLLECTION:collection1 LPAREN typeName:tn RPAREN;
 
 pathName ::= ID:id pathNameAux:pna {: RESULT = (String)id + (String)pna; :};
 
