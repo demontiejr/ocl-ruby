@@ -2,6 +2,14 @@ package analisadorSemantico;
 
 import excecoes.SemanticErrorException;
 
+/**
+ * Classe com funcoes uteis para a analise semantica.
+ * 
+ * @author Demontie Junior
+ * @author Izabela Vanessa
+ * @author Savyo Igor
+ *
+ */
 public class SemanticAnalyzer {
 
 	private String stereotype;
