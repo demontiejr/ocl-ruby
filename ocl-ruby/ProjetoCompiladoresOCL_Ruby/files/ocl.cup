@@ -17,6 +17,7 @@ import java_cup.runtime.*;
 import java.util.List;
 import java.util.ArrayList;
 import analisadorSemantico.SemanticAnalyzer;
+import analisadorSemantico.Node;
 
 parser code {:
 	
@@ -300,7 +301,7 @@ pathName ::= ID:id pathNameAux:pna {: RESULT = (String)id + (String)pna; :};
 
 pathNameAux ::= FOUR_POINTS ID:id pathNameAux:pna {: RESULT = "::" + (String)id + (String)pna; :} | {: RESULT = "" ; :};
 
-number ::= INT:int1 {: RESULT = int1; :}
-		| FLOAT:float1 {: RESULT = float1; :}
-		| STRING:string1 {: RESULT = string1; :} 
-		| BOOL:bool1 {: RESULT = bool1; :};
+number ::= INT:int1 {: RESULT = new Node(int1, "Integer"); :}
+		| FLOAT:float1 {: RESULT = new Node(float1, "Float"); :}
+		| STRING:string1 {: RESULT = new Node(string1, "String"); :} 
+		| BOOL:bool1 {: RESULT = new Node(bool1, "Boolean"); :};
