@@ -23,6 +23,10 @@ public class Node {
 		this.value = value;
 	}
 	
+	public Node() {
+		
+	}
+	
 	public Object getValue() {
 		return value;
 	}

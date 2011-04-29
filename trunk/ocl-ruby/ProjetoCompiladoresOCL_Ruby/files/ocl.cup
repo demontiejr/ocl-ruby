@@ -281,8 +281,9 @@ featureCallCollection ::= pathName:pn collectionParameters:params {: parser.as.c
 collectionParameters ::= LPAREN declarator:d1 expression:exp1 RPAREN
 				| LPAREN declarator:d1 RPAREN
 				| LPAREN expression:exp1 RPAREN
-				| LPAREN RPAREN {: RESULT = new Node();
-				                   RESULT.setType("void"); :};
+				| LPAREN RPAREN {: Node node = new Node();
+				                   node.setType("void");
+				                   RESULT = node; :};
 
 parameters ::= LPAREN actualParameterList:apl1 RPAREN;
 
