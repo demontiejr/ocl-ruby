@@ -247,7 +247,7 @@ postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1
 				   | SELF AROBAPRE {: parser.as.checkStereotype("@pre"); :} featureAccess:fa1;
 
 postfixExpressionAux ::= POINT featureCall:fCall1 postfixExpressionAux:pfea1
-					  | ARROW featureCall:fCall1 {: parser.as.checkCollectionOperation((String)fCall1); :} postfixExpressionAux:pfea1 
+					  | ARROW featureCall:fCall1 {: parser.as.checkCollectionOperation(((Node)fCall1).toString()); :} postfixExpressionAux:pfea1 
 					  | ;
 
 featureAccess ::=  POINT featureCall:fCall1 postfixExpressionAux:pfea1
@@ -256,7 +256,7 @@ featureAccess ::=  POINT featureCall:fCall1 postfixExpressionAux:pfea1
 primaryExpression ::= litteralCollection:lc1
 		           | litteral:l1 {: RESULT = l1 ;:}
 				   | RESULT {: parser.as.checkStereotype("result"); :} 
-				   | featureCall:fCall1 {: RESULT = (String)fCall1 ;:} 
+				   | featureCall:fCall1 {: RESULT = fCall1 ;:} 
 				   | LPAREN expression:exp1 RPAREN 
 				   | ifExpression:ifexp1;
 
@@ -273,7 +273,7 @@ litteral ::= number:n1 {: RESULT = n1; :};
 ifExpression ::= IF expression:exp1 THEN expression:exp2 ELSE expression:exp3 ENDIF;
 
 featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre"); :} parameters:params1
-				| pathName:pn parameters:params1 {: RESULT	= (String)pn; :}
+				| pathName:pn parameters:params1 {: RESULT	= pn; :}
 				| pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre"); :}
 				| pathName:pn;
 
@@ -286,7 +286,8 @@ declarator ::= ID:id declaratorAux:da1 POINTS typeName:tn PIPE
 
 declaratorAux ::= COMA ID:id declaratorAux:da1 | ;
 			
-actualParameterList ::= expression:exp1 actualParameterListAux:apla1 | ;
+actualParameterList ::= expression:exp1 actualParameterListAux:apla1 
+						| ;
 
 actualParameterListAux ::= COMA expression:exp1 actualParameterListAux:apla1 | ;
 
@@ -297,9 +298,10 @@ oclType ::= OCL_SUPER_TYPE:super1
 		 | OCL_BASIC_TYPE:basic1 
 		 | OCL_COLLECTION:collection1 LPAREN typeName:tn RPAREN;
 
-pathName ::= ID:id pathNameAux:pna {: RESULT = (String)id + (String)pna; :};
+pathName ::= ID:id pathNameAux:pna {: RESULT = new Node((String)id + ((Node)pna).toString()); :};
 
-pathNameAux ::= FOUR_POINTS ID:id pathNameAux:pna {: RESULT = "::" + (String)id + (String)pna; :} | {: RESULT = "" ; :};
+pathNameAux ::= FOUR_POINTS ID:id pathNameAux:pna {: RESULT = new Node("::" + (String)id + ((Node)pna).toString()); :} 
+				| {: RESULT = new Node("") ; :};
 
 number ::= INT:int1 {: RESULT = new Node(int1, "Integer"); :}
 		| FLOAT:float1 {: RESULT = new Node(float1, "Float"); :}

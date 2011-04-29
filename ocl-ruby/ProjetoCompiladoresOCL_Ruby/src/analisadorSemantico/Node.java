@@ -20,11 +20,7 @@ public class Node {
 	}
 
 	public Node(Object value) {
-		new Node(value, null);
-	}
-	
-	public Node(String type) {
-		new Node(null, type);
+		this.value = value;
 	}
 	
 	public Object getValue() {
@@ -38,6 +34,11 @@ public class Node {
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	@Override
+	public String toString() {
+		return value.toString();
 	}
 	
 }

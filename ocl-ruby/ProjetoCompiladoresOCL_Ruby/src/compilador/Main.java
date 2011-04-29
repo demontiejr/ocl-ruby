@@ -18,9 +18,12 @@ package compilador;
 public class Main {
 
 	
-	public final static int LEXICAL = 1, SYNTACTIC = 2;
-	  
-	public static int analysisType = 2;
+	public final static int LEXICAL = 1, SYNTACTIC = 2, SEMANTIC = 3;
+	
+	public final static int ON = 4, OFF = 5;
+	
+	public static int analysisType = SYNTACTIC;
+	public static int debugMode = OFF;
 	
 	public static void main(String[] args) {
 		new compilador.gui.MainFrame();

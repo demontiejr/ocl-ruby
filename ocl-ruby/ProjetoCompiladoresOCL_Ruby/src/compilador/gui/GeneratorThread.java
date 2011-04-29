@@ -3,22 +3,20 @@
 
 package compilador.gui;
 
-import JFlex.*;
-
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import compilador.Main;
-import excecoes.FatalErrorException;
-
-import java_cup.runtime.Symbol;
-
+import JFlex.ErrorMessages;
+import JFlex.Out;
 import analisadorLexico.ScannerOCL;
 import analisadorSintatico.ParserOCL;
+
+import compilador.Main;
+
+import excecoes.FatalErrorException;
 
 public class GeneratorThread extends Thread {
 
@@ -98,7 +96,10 @@ public class GeneratorThread extends Thread {
 						running = false;
 					}
 				}
-				parent.analysisFinished(true, scanner.foundTokens, errors);
+				if (Main.debugMode == Main.ON)
+					parent.analysisFinished(true, scanner.foundTokens, errors);
+				else
+					parent.analysisFinished(true, new ArrayList<String>(), errors);
 			}
 		}
 	}
@@ -108,7 +109,6 @@ public class GeneratorThread extends Thread {
 			Out.error(ErrorMessages.ALREADY_RUNNING);
 			parent.analysisFinished(false, new ArrayList<String>(),errors);
 		} else {
-			
 			ScannerOCL scanner = createScanner(inputFile);
 			if (scanner != null) {
 				Out.print("Iniciando analise sintatica para o arquivo\n" + inputFile);
@@ -116,7 +116,10 @@ public class GeneratorThread extends Thread {
 				ParserOCL parser = new ParserOCL(scanner);
 				errors = parser.errorLog;
 				try {
-					parser.debug_parse();
+					if (Main.debugMode == Main.ON)
+						parser.debug_parse();
+					else
+						parser.parse();
 				} catch (RuntimeException e) {
 					errors.add(e.getMessage());
 				} catch (FatalErrorException e){
