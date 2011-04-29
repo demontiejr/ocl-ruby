@@ -1,5 +1,8 @@
 package analisadorSemantico;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Classe que serve para guardar os atributos
  * da gramatica anotada.
@@ -13,18 +16,21 @@ public class Node {
 
 	private Object value;
 	private String type;
+	private List<String> attributesTypes;
 	
 	public Node(Object value, String type) {
 		this.value = value;
 		this.type = type;
+		this.attributesTypes = new ArrayList<String>();
 	}
 
 	public Node(Object value) {
 		this.value = value;
+		this.attributesTypes = new ArrayList<String>();
 	}
 	
 	public Node() {
-		
+		this.attributesTypes = new ArrayList<String>();
 	}
 	
 	public Object getValue() {
@@ -38,6 +44,10 @@ public class Node {
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	public void addAttributesTypes(String attribute){
+		attributesTypes.add(attribute);
 	}
 	
 	@Override
