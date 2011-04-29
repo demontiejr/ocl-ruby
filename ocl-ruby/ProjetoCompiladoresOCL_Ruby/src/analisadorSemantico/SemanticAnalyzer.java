@@ -25,11 +25,12 @@ public class SemanticAnalyzer {
 		this.opID = collectionOpID;
 	}
 
-	public void checkCollectionOperation(String operation, String type) throws SemanticErrorException {
+	public void checkCollectionOperation(String operation, String parameterType) throws SemanticErrorException {
 		if (!checkCollectionOpName(operation))
 			throw new SemanticErrorException(operation + " nao eh uma operacao de collection " +
 			"definida pela linguagem");
-		checkCollectionOpParams();
+		if (!checkCollectionOpParams(operation, parameterType))
+			throw new SemanticErrorException("tipo de parametro errado para a operacao " + operation);
 	}
 	
 	private boolean checkCollectionOpName(String operation) {
@@ -39,9 +40,11 @@ public class SemanticAnalyzer {
 		return false;
 	}
 	
-	private void checkCollectionOpParams() {
-		// TODO Auto-generated method stub
-		
+	private boolean checkCollectionOpParams(String operation, String parameterType) {
+		if (operation.equals("size") || operation.equals("empty") || operation.equals("first")){
+			return parameterType.equals("void");
+		}
+		return false;
 	}
 	
 	public void checkStereotype(String token) throws SemanticErrorException {
