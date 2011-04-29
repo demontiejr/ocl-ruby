@@ -1,6 +1,7 @@
 package analisadorSemantico;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import excecoes.SemanticErrorException;
 
@@ -18,8 +19,12 @@ public class SemanticAnalyzer {
 	private String[] collectionOperations = {"forAll", "exists", "includes", "excludes",
 			"including", "size", "excluding", "select", "empty", "first"};
 	private String opID;
-	private ArrayList<String> logErros = new ArrayList<String>();
+	private List<String> logErros = new ArrayList<String>();
 	
+	public List<String> getLogErros() {
+		return logErros;
+	}
+
 	public void error(int line, String message){
 		logErros.add("Erro semantico na linha " + (line+1) + ": " + message);
 	}
@@ -32,12 +37,12 @@ public class SemanticAnalyzer {
 		this.opID = collectionOpID;
 	}
 
-	public void checkCollectionOperation(String operation, String parameterType) throws SemanticErrorException {
+	public void checkCollectionOperation(String operation, String parameterType, int line) throws SemanticErrorException {
 		if (!checkCollectionOpName(operation))
-			throw new SemanticErrorException(operation + " nao eh uma operacao de collection " +
+			error(line, operation + " nao eh uma operacao de collection " +
 			"definida pela linguagem");
 		if (!checkCollectionOpParams(operation, parameterType))
-			throw new SemanticErrorException("tipo de parametro errado para a operacao " + operation);
+			error(line, "tipo de parametro errado para a operacao " + operation);
 	}
 	
 	private boolean checkCollectionOpName(String operation) {
@@ -54,9 +59,9 @@ public class SemanticAnalyzer {
 		return false;
 	}
 	
-	public void checkStereotype(String token) throws SemanticErrorException {
+	public void checkStereotype(String token, int line) throws SemanticErrorException {
 		if (stereotype.equals("pre"))
-			throw new SemanticErrorException(token + " nao deve aparecer em pre condicoes.");
+			error(line, token + " nao deve aparecer em pre condicoes.");
 	}
 	
 	public String getStereotype() {

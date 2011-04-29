@@ -124,13 +124,13 @@ public class CompilerOCLtoRuby {
 				errors.add(e.getMessage()); 
 			} catch (FatalErrorException e) {
 				fatalErrors.add(e.getMessage());
-			} catch (SemanticErrorException e){
-				errors.add(e.getMessage());
 			} catch (Exception e) {
 				parser.log.add("\nErro durante a analise: " + e.getMessage() + "\n");
 			}
-			System.out.println("\n" + errors.size() + " erro(s)\n");
+			System.out.println("\n" + (errors.size() + parser.as.getLogErros().size()) + " erro(s)\n");
 			for (String error : errors)
+				System.out.println(error);
+			for (String error : parser.as.getLogErros())
 				System.out.println(error);
 			System.out.println();
 		}
