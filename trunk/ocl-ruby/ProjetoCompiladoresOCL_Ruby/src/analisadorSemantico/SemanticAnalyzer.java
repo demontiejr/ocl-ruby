@@ -56,6 +56,22 @@ public class SemanticAnalyzer {
 		if (operation.equals("size") || operation.equals("empty") || operation.equals("first")){
 			return parameterType.equals("void");
 		}
+		else if (operation.equals("forAll") || operation.equals("exists")){
+			return parameterType.equals("Boolean");
+			//BOOLEAN
+			//Collection -> forAll (v: Type | expressão booleana com v)
+		}else if (operation.equals("select")){
+			return parameterType.equals("Boolean");
+		    //collection -> select (expressão booleana)
+		}else if (operation.equals("includes") || operation.equals("excludes")){
+		   //TODO	
+		   //Collection::includes(object : T) : Boolean 
+		   //Collection::excludes(object : T) : Boolean
+		}else if (operation.equals("including") || operation.equals("excluding")){
+		   //TODO
+		   //including(object : T) -> retorna o mesmo tipo da colecao
+		   //excluding(object : T) -> retorna o mesmo tipo da colecao
+		}
 		return false;
 	}
 	
