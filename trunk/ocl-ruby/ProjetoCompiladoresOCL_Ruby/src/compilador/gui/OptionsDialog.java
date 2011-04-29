@@ -8,17 +8,18 @@ import java.awt.event.*;
 
 import compilador.Main;
 
-import JFlex.GeneratorException;
-import JFlex.Options;
-
 public class OptionsDialog extends Dialog {
 
-  private Button ok;
+	private static final long serialVersionUID = 1L;
+
+private Button ok;
 
   private Checkbox lexical;
   private Checkbox syntactic;
-  private Checkbox packG;
+  private Checkbox semantic;
   
+  private Checkbox debugOn;
+  private Checkbox debugOff;
 
   /**
    * Create a new options dialog
@@ -42,11 +43,14 @@ public class OptionsDialog extends Dialog {
     // create components
     ok = new Button("Ok");
 
-    CheckboxGroup codeG = new CheckboxGroup();
-    lexical = new Checkbox(" Lexica",Main.analysisType == Main.LEXICAL, codeG);
-    syntactic = new Checkbox(" Sintatica",Main.analysisType == Main.SYNTACTIC, codeG);
-    packG = new Checkbox(" Semantica",Main.analysisType == Options.PACK, codeG);
-    packG.setEnabled(false);
+    CheckboxGroup analysisType = new CheckboxGroup();
+    lexical = new Checkbox(" Lexica",Main.analysisType == Main.LEXICAL, analysisType);
+    syntactic = new Checkbox(" Sintatica",Main.analysisType == Main.SYNTACTIC, analysisType);
+    semantic = new Checkbox(" Semantica",Main.analysisType == Main.SEMANTIC, analysisType);
+    
+    CheckboxGroup debug = new CheckboxGroup();
+    debugOn = new Checkbox(" ON", Main.debugMode == Main.ON, debug);
+    debugOff = new Checkbox(" OFF", Main.debugMode == Main.OFF, debug);
     
     // setup interaction
     ok.addActionListener( new ActionListener() {
@@ -57,39 +61,55 @@ public class OptionsDialog extends Dialog {
 
     lexical.addItemListener( new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        setGenMethod();
+        setAnalysisMode();
       }
     } );
 
     syntactic.addItemListener( new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
-          setGenMethod();
+          setAnalysisMode();
         }
       } );
     
-    packG.addItemListener( new ItemListener() {
+    semantic.addItemListener( new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
-          setGenMethod();
+          setAnalysisMode();
+        }
+      } );
+    
+    debugOn.addItemListener( new ItemListener() {
+        public void itemStateChanged(ItemEvent e) {
+          setDebugMode();
+        }
+      } );
+    
+    debugOff.addItemListener( new ItemListener() {
+        public void itemStateChanged(ItemEvent e) {
+          setDebugMode();
         }
       } );
    
     // setup layout
-    GridPanel panel = new GridPanel(1,7,10,10);
+    GridPanel panel = new GridPanel(3,5,10,10);
     panel.setInsets( new Insets(10,5,5,10) );
     
-    panel.add(0,4,ok);
+    panel.add(1,4,ok);
      
     panel.add(0,0,1,1,Handles.BOTTOM,new Label("Tipo de analise:"));
     panel.add(0,1,1,1,lexical);
     panel.add(0,2,1,1,syntactic);
-    panel.add(0,3,1,1,packG);
+    panel.add(0,3,1,1,semantic);
 
+    panel.add(2,0,1,1,Handles.BOTTOM,new Label("Debug:"));
+    panel.add(2,1,1,1,debugOn);
+    panel.add(2,2,1,1,debugOff);
+    
     add("Center",panel);
     
     updateState();
   }
     
-  private void setGenMethod() {
+  private void setAnalysisMode() {
     if ( lexical.getState() ) {
     	Main.analysisType = Main.LEXICAL;
       return;
@@ -100,16 +120,28 @@ public class OptionsDialog extends Dialog {
       return;
     }
     
-    if ( packG.getState() ) {
-    	Main.analysisType = Options.PACK;
+    if ( semantic.getState() ) {
+    	Main.analysisType = Main.SEMANTIC;
       return;
     }
+  }
+  
+  private void setDebugMode() {
+		if (debugOn.getState()) {
+			Main.debugMode = Main.ON;
+		}
+
+		else if (debugOff.getState()) {
+			Main.debugMode = Main.OFF;
+		}
   }
 
   private void updateState() {
     lexical.setState(Main.analysisType == Main.LEXICAL);
     syntactic.setState(Main.analysisType == Main.SYNTACTIC);
-    packG.setState(Main.analysisType == Options.PACK);     
+    semantic.setState(Main.analysisType == Main.SEMANTIC);
+    debugOn.setState(Main.debugMode == Main.ON);
+    debugOff.setState(Main.debugMode == Main.OFF);
   }
 
 

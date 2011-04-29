@@ -14,7 +14,7 @@ public class SemanticAnalyzer {
 
 	private String stereotype;
 	private String[] collectionOperations = {"forAll", "exists", "includes", "excludes",
-			"including", "size", "implies", "excluding", "select"}; //TODO: tirar implies
+			"including", "size", "excluding", "select"};
 	private String opID;
 	
 	public String getOpID() {
