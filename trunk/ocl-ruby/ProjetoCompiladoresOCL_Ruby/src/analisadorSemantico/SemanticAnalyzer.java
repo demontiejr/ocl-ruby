@@ -14,7 +14,7 @@ public class SemanticAnalyzer {
 
 	private String stereotype;
 	private String[] collectionOperations = {"forAll", "exists", "includes", "excludes",
-			"including", "size", "excluding", "select"};
+			"including", "size", "excluding", "select", "empty", "first"};
 	private String opID;
 	
 	public String getOpID() {
@@ -25,12 +25,23 @@ public class SemanticAnalyzer {
 		this.opID = collectionOpID;
 	}
 
-	public void checkCollectionOperation(String operation) throws SemanticErrorException {
+	public void checkCollectionOperation(String operation, String type) throws SemanticErrorException {
+		if (!checkCollectionOpName(operation))
+			throw new SemanticErrorException(operation + " nao eh uma operacao de collection " +
+			"definida pela linguagem");
+		checkCollectionOpParams();
+	}
+	
+	private boolean checkCollectionOpName(String operation) {
 		for (String op : collectionOperations)
 			if (op.equals(operation))
-				return;
-		throw new SemanticErrorException(operation + " nao eh uma operacao de collection " +
-				"definida pela linguagem");
+				return true;
+		return false;
+	}
+	
+	private void checkCollectionOpParams() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public void checkStereotype(String token) throws SemanticErrorException {

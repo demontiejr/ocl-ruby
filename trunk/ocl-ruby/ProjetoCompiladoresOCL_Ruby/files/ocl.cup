@@ -143,11 +143,12 @@ non terminal postfixExpression, postfixExpressionAux, featureAccess, primaryExpr
 non terminal litteralCollection, expressionListOrRange, litteral;
 non terminal ifExpression, featureCall, parameters;
 non terminal actualParameterList, typeName, oclType;
-non terminal pathName, number;
+non terminal pathName;
 non terminal constraintAux, formalParameterListAux, logicalExpressionAux;
 non terminal additiveExpressionAux, multiplicativeExpressionAux;
 non terminal expressionListOrRangeAux, declarator, declaratorAux;
 non terminal actualParameterListAux, pathNameAux;
+non terminal featureCallCollection, collectionParameters;
 
 /*Precedencias*/
 precedence left COMA;
@@ -247,7 +248,7 @@ postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1
 				   | SELF AROBAPRE {: parser.as.checkStereotype("@pre"); :} featureAccess:fa1;
 
 postfixExpressionAux ::= POINT featureCall:fCall1 postfixExpressionAux:pfea1
-					  | ARROW featureCall:fCall1 {: parser.as.checkCollectionOperation(((Node)fCall1).toString()); :} postfixExpressionAux:pfea1 
+					  | ARROW featureCallCollection:fCol1 postfixExpressionAux:pfea1 
 					  | ;
 
 featureAccess ::=  POINT featureCall:fCall1 postfixExpressionAux:pfea1
@@ -268,8 +269,6 @@ expressionListOrRange ::= expression:exp1 COMA expression:exp2 expressionListOrR
 
 expressionListOrRangeAux ::= COMA expression:exp1 expressionListOrRangeAux:elora1;
 
-litteral ::= number:n1 {: RESULT = n1; :};
-
 ifExpression ::= IF expression:exp1 THEN expression:exp2 ELSE expression:exp3 ENDIF;
 
 featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre"); :} parameters:params1
@@ -277,9 +276,15 @@ featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre"); :} pa
 				| pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre"); :}
 				| pathName:pn;
 
-parameters ::= LPAREN declarator:d1 expression:exp1 RPAREN
+featureCallCollection ::= pathName:pn collectionParameters:params {: parser.as.checkCollectionOperation(((Node)pn).toString(), ((Node)params).getType()); :};
+
+collectionParameters ::= LPAREN declarator:d1 expression:exp1 RPAREN
 				| LPAREN declarator:d1 RPAREN
-				| LPAREN actualParameterList:apl1 RPAREN;
+				| LPAREN expression:exp1 RPAREN
+				| LPAREN RPAREN {: RESULT = new Node();
+				                   RESULT.setType("void"); :};
+
+parameters ::= LPAREN actualParameterList:apl1 RPAREN;
 
 declarator ::= ID:id declaratorAux:da1 POINTS typeName:tn PIPE
 				| ID:id declaratorAux:da1 PIPE;
@@ -303,7 +308,7 @@ pathName ::= ID:id pathNameAux:pna {: RESULT = new Node((String)id + ((Node)pna)
 pathNameAux ::= FOUR_POINTS ID:id pathNameAux:pna {: RESULT = new Node("::" + (String)id + ((Node)pna).toString()); :} 
 				| {: RESULT = new Node("") ; :};
 
-number ::= INT:int1 {: RESULT = new Node(int1, "Integer"); :}
+litteral ::= INT:int1 {: RESULT = new Node(int1, "Integer"); :}
 		| FLOAT:float1 {: RESULT = new Node(float1, "Float"); :}
 		| STRING:string1 {: RESULT = new Node(string1, "String"); :} 
 		| BOOL:bool1 {: RESULT = new Node(bool1, "Boolean"); :};
