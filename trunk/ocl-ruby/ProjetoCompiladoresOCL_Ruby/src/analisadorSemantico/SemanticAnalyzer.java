@@ -1,5 +1,7 @@
 package analisadorSemantico;
 
+import java.util.ArrayList;
+
 import excecoes.SemanticErrorException;
 
 /**
@@ -16,6 +18,11 @@ public class SemanticAnalyzer {
 	private String[] collectionOperations = {"forAll", "exists", "includes", "excludes",
 			"including", "size", "excluding", "select", "empty", "first"};
 	private String opID;
+	private ArrayList<String> logErros = new ArrayList<String>();
+	
+	public void error(int line, String message){
+		logErros.add("Erro semantico na linha " + (line+1) + ": " + message);
+	}
 	
 	public String getOpID() {
 		return opID;
