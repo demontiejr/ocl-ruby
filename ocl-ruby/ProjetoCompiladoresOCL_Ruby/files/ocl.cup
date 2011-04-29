@@ -245,7 +245,7 @@ unaryOperator ::= NOT
 
 postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1
 				   | SELF featureAccess:fa1
-				   | SELF AROBAPRE {: parser.as.checkStereotype("@pre"); :} featureAccess:fa1;
+				   | SELF AROBAPRE featureAccess:fa1 {: parser.as.checkStereotype("@pre", fa1left); :};
 
 postfixExpressionAux ::= POINT featureCall:fCall1 postfixExpressionAux:pfea1
 					  | ARROW featureCallCollection:fCol1 postfixExpressionAux:pfea1 
@@ -256,7 +256,7 @@ featureAccess ::=  POINT featureCall:fCall1 postfixExpressionAux:pfea1
 
 primaryExpression ::= litteralCollection:lc1
 		           | litteral:l1 {: RESULT = l1 ;:}
-				   | RESULT {: parser.as.checkStereotype("result"); :} 
+				   | RESULT:r {: parser.as.checkStereotype("result", rleft); :} 
 				   | featureCall:fCall1 {: RESULT = fCall1 ;:} 
 				   | LPAREN expression:exp1 RPAREN 
 				   | ifExpression:ifexp1;
@@ -271,12 +271,14 @@ expressionListOrRangeAux ::= COMA expression:exp1 expressionListOrRangeAux:elora
 
 ifExpression ::= IF expression:exp1 THEN expression:exp2 ELSE expression:exp3 ENDIF;
 
-featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre"); :} parameters:params1
+featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft); :} parameters:params1
 				| pathName:pn parameters:params1 {: RESULT	= pn; :}
-				| pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre"); :}
+				| pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft); :}
 				| pathName:pn;
 
-featureCallCollection ::= pathName:pn collectionParameters:params {: parser.as.checkCollectionOperation(((Node)pn).toString(), ((Node)params).getType()); :};
+featureCallCollection ::= pathName:pn collectionParameters:params {: 
+                      parser.as.checkCollectionOperation(((Node)pn).toString(), ((Node)params).getType(), pnleft); 
+                      :};
 
 collectionParameters ::= LPAREN declarator:d1 expression:exp1 RPAREN
 				| LPAREN declarator:d1 RPAREN
