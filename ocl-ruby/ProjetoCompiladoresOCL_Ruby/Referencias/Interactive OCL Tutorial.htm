@@ -1,0 +1,730 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      lang="en">
+
+
+<head>
+    <meta http-equiv="Content-Type"
+          content="text/html;charset=iso-8859-15" />
+
+    <title>index_html - Interactive OCL Tutorial</title>
+
+    
+        
+            <base href="http://atl.emn.fr:9673/atl/atldemo/oclturorial/index_html" />
+        
+    
+
+    <meta name="generator" content="Plone - http://plone.org" />
+
+    <meta content="2005-01-31 14:00:07"
+          name="DC.date.created" />
+    <meta content="2009-07-15 20:01:03"
+          name="DC.date.modified" />
+    <meta content="Document" name="DC.type" />
+    <meta content="text/plain" name="DC.format" />
+
+    <!-- Basic crude style for Netscape4.x - This can be removed
+         if you don't want the special NS4 look - it will still work,
+         just be plain text instead. Column layout for Netscape4.x included -->
+    <link rel="Stylesheet" type="text/css"
+          href="http://atl.emn.fr:9673/atl/ploneNS4.css" />
+
+    <!-- Column style sheet. -->
+    <style type="text/css" media="all">@import url(http://atl.emn.fr:9673/atl/ploneColumns.css);</style>
+
+    <!-- Main style sheets for CSS2 capable browsers -->
+    <style type="text/css" media="screen"> @import url(http://atl.emn.fr:9673/atl/plone.css);</style>
+
+    <!-- Old style sheet from Plone 1.0, remove tal:condition="nothing" if you need to use the old styles.
+         Will be removed in Plone 2.1. -->
+    
+
+    <!-- Alternate style sheets for the bigger/smaller text switcher -->
+    <link rel="alternate stylesheet" type="text/css"
+          media="screen"
+          href="http://atl.emn.fr:9673/atl/ploneTextSmall.css"
+          title="Small Text" />
+    <link rel="alternate stylesheet" type="text/css"
+          media="screen"
+          href="http://atl.emn.fr:9673/atl/ploneTextLarge.css"
+          title="Large Text" />
+
+    <!-- Custom style sheet if available -->
+    <style type="text/css" media="all">@import url(http://atl.emn.fr:9673/atl/ploneCustom.css);</style>
+
+    <!-- Style sheet used for printing -->
+    <link rel="stylesheet" type="text/css" media="print"
+          href="http://atl.emn.fr:9673/atl/plonePrint.css" />
+
+    <!-- Style sheet used for presentations (Opera is the only browser supporting this at the moment) -->
+    <link rel="stylesheet" type="text/css"
+          media="projection"
+          href="http://atl.emn.fr:9673/atl/plonePresentation.css" />
+
+    <!-- Internet Explorer CSS Fixes -->
+    <!--[if IE]>
+    <style type="text/css" media="all">@import url(http://atl.emn.fr:9673/atl/ploneIEFixes.css);</style>
+    <![endif]-->
+
+    <link rel="shortcut icon"
+          href="http://atl.emn.fr:9673/atl/favicon.ico"
+          type="image/x-icon" />
+
+    <link rel="search"
+          href="http://atl.emn.fr:9673/atl/search_form"
+          title="Search this site" />
+
+    
+    <link rel="up" href="http://atl.emn.fr:9673/atl/atldemo"
+          title="Up one level" />
+    <link rel="copyright" href="copyright"
+          title="Copyright information" />
+    <link rel="author" href="author"
+          title="Author information" />
+
+    
+
+    <!-- Disable IE6 image toolbar -->
+    <meta http-equiv="imagetoolbar" content="no" />
+
+    
+      <!-- A slot where you can insert CSS in the header from a template -->
+        
+    
+
+    
+
+        
+    
+    
+    
+    
+
+
+        
+          <!-- A slot where you can insert elements in the header from a template -->
+    
+
+    
+      <!-- A slot where you can insert javascript in the header from a template -->
+        
+    
+
+    <!-- Common Plone ECMAScripts -->
+
+    <!-- Pull-down ECMAScript menu, only active if logged in -->
+    
+
+    <!-- Define dynamic server-side variables for javascripts in this one  -->
+    <script type="text/javascript"
+            src="http://atl.emn.fr:9673/atl/plone_javascript_variables.js">
+    </script>
+
+    <script type="text/javascript"
+            src="http://atl.emn.fr:9673/atl/plone_javascripts.js">
+    </script>
+
+    
+
+      <!-- Old JS from Plone 1.0, remove tal:condition="nothing" if you need to use the old pop-ups.
+           Will be removed in Plone 2.1 -->
+      
+
+    
+  </head>
+
+<body>
+
+<div id="visual-portal-wrapper">
+
+<div id="portal-top">
+
+    <a class="hiddenStructure"
+       href="http://atl.emn.fr:9673/atl/atldemo/oclturorial#documentContent">Pular para o conteúdo.</a>
+
+    
+
+        <div class="inria-logo"><img src="inria.png" alt="INRIA" /></div>
+        <div class="header_title"><h1>The AMMA home page</h1></div>
+        <div class="univ-nantes-logo">
+             <img src="univ-nantes.jpg" alt="University of Nantes" />
+        </div>
+
+
+
+
+
+    <div id="portal-searchbox">
+    <form name="searchform"
+          action="http://atl.emn.fr:9673/atl/search">
+        <label for="searchGadget" class="hiddenStructure">Busca</label>
+        <input id="searchGadget" name="SearchableText"
+               type="text" size="20" alt="Buscar"
+               title="Buscar" accesskey="s"
+               class="visibility:visible" tabindex="30001" />
+        <input class="searchButton" type="submit"
+               value="Buscar" accesskey="s" tabindex="30002" />
+    </form>
+</div>
+
+    
+
+<h5 class="hiddenStructure">Ferramentas Pessoais</h5>
+
+<ul id="portal-personaltools">
+    
+     
+    
+        <li>
+            <a href="http://atl.emn.fr:9673/atl/login_form"
+               accesskey="a">
+               Acessar
+            </a>
+        </li>
+    
+
+</ul>
+
+</div>
+
+<div class="visualClear"></div>
+
+<!-- The wrapper table. It contains the three columns. There's a table-less
+     alternative in the plone_tableless skin layer that you can use if you 
+     prefer layouts that don't use tables. -->
+<table id="portal-columns">
+    <tbody>
+        <tr>
+            <!-- start of the left (by default at least) column -->
+            <td id="portal-column-one">
+                <div class="visualPadding">
+                    
+
+    
+
+        
+            
+    <div class="portlet" id="portlet-navigation-tree">
+    <div>
+        <div class="portletBody">
+            <div class="portletContent odd">
+                
+                <div>
+                    <span>
+                        
+                        <a href="http://atl.emn.fr:9673/atl/"
+                           accesskey="n" class="menu_item1"
+                           title="index_html">
+                            <span class="">Página Inicial</span>
+                        </a>
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/IndustrialPartners/"
+                           accesskey="n" class="menu_item1"
+                           title="">
+                            <span>Industry Initiative</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/activities/"
+                           accesskey="n" class="menu_item1"
+                           title="">
+                            <span>Activities</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/contrib/"
+                           accesskey="n" class="menu_item1"
+                           title="">
+                            <span>Contributors</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/resources/"
+                           accesskey="n" class="menu_item1"
+                           title="">
+                            <span>Resources</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/publications/"
+                           accesskey="n" class="menu_item1"
+                           title="">
+                            <span>Publications and Presentations</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/references/"
+                           accesskey="n" class="menu_item1"
+                           title="">
+                            <span>External references</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/atldemo/"
+                           accesskey="n" class="menu_item1"
+                           title="">
+                            <span>ATL Tools &amp; Download</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/atldemo/adt/"
+                           accesskey="n" class="menu_item2"
+                           title="">
+                            <span>Download ATL Development Tools</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/atldemo/oclonline/"
+                           accesskey="n" class="menu_item2"
+                           title="">
+                            <span>OCL Web Tester</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/atldemo/prronline/"
+                           accesskey="n" class="menu_item2"
+                           title="">
+                            <span>PRR Web Tester</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/atldemo/simpleOCLWebTester/"
+                           accesskey="n" class="menu_item2"
+                           title="">
+                            <span>SimpleOCL Web Tester</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/atldemo/oclturorial/"
+                           accesskey="n" class="menu_item2"
+                           title="">
+                            <span class="currentNavItem">Interactive OCL Tutorial</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/atldemo/fiacre2lotos/"
+                           accesskey="n" class="menu_item2"
+                           title="">
+                            <span>FIACRE to LOTOS</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/AMMAROOT/"
+                           accesskey="n" class="menu_item1"
+                           title="">
+                            <span>The AMMA Platform</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/PostDoc/"
+                           accesskey="n" class="menu_item1"
+                           title="">
+                            <span>Available PostDoc Positions</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/Jobs/"
+                           accesskey="n" class="menu_item1"
+                           title="">
+                            <span>Job offering</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/LocalInfo/"
+                           accesskey="n" class="menu_item1"
+                           title="">
+                            <span>Local Information</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/Events/"
+                           accesskey="n" class="menu_item1"
+                           title="">
+                            <span>Events</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/ModelWare/"
+                           accesskey="n" class="menu_item1"
+                           title="">
+                            <span>ModelWare</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <a href="http://atl.emn.fr:9673/atl/AMMA/"
+                           accesskey="n" class="menu_item1"
+                           title="">
+                            <span>AMMA</span>
+                        </a>
+                        
+                    </span>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+        
+
+        
+    
+    
+
+        
+            
+        
+
+        
+    
+
+                    &nbsp;
+                </div>
+            </td>
+            <!-- end of the left (by default at least) column -->
+
+        <!-- start of main content block -->
+            <td id="portal-column-content">
+
+            <div id="content" class="">
+
+                
+
+                <div class="documentContent">
+
+                    <a name="documentContent"></a>
+
+                    
+
+                    
+
+                    
+    
+        <h1 class="documentFirstHeading">Interactive OCL Tutorial</h1>
+    
+        <div class="documentActions">
+    <ul>
+    
+        <li>
+            <a href="http://atl.emn.fr:9673/atl/atldemo/oclturorial/index_html/sendto_form">
+            
+                <img src="http://atl.emn.fr:9673/atl/mail_icon.gif"
+                     alt="Send this page to somebody"
+                     title="Enviar esta página a alguém"
+                     height="16" width="16" />
+            </a>
+        </li>
+    
+    
+        <li>
+            <a href="javascript:this.print();">
+            
+                <img src="http://atl.emn.fr:9673/atl/print_icon.gif"
+                     alt="Print this page"
+                     title="Imprimir esta página"
+                     height="16" width="16" />
+            </a>
+        </li>
+    
+    </ul>
+</div>
+    
+        <div class="documentDescription"></div>
+    
+        
+    
+        <div class="plain">
+            <h2>Introduction</h2>
+<p>  This in an interactive tutorial on OCL, the Object Constraint Language. You may test your own OCL expressions with the <a href="simpleOCLWebTester">Simple OCL Web Tester</a> .</p>
+<p>  This tutorial is based on  <a href="http://www.omg.org/docs/ptc/03-10-14.pdf">UML 2.0 OCL Specification (in particular see chapter 7)</a> </p>
+<p>  Please note that there may be a displaying problem with Microsoft explorer when executing the interactive OCL Web Tester since there is a problem representing apostrophes.</p>
+<h2>OCL primitive types</h2>
+<h3> OCL has four basic primitive datatypes</h3>
+
+<ul>
+<li>Boolean (true, false)</li>
+<li>Integer  (1, -5, 2, 34, 26524, ...)</li>
+<li>Real  (with the values 1.5, 3.14, ...) </li>
+<li>String (`To be or not to be...`)</li>
+
+</ul>
+<p>  Furthermore, OCL has the following comparators: <, >, =, =>, =<</p>
+<h3> Operations on primitive types</h3>
+
+<ul>
+<li>Integer has the operations: *, +, -, /, div(), abs(), mod(), max(), min(), sum(), sin(), cos() </li>
+<li>Real has the operations: *, +, -, /, floor(), sum(), sin(), cos() </li>
+<li>Boolean has the operations: and, or, xor, not, implies, if-then-else</li>
+<li>String has the operations: concat(), size(), substring(), toInteger() and toReal()</li>
+
+</ul>
+<h3> Differences between OCL and ATL </h3>
+
+<ul>
+<li>In ATL you can use the operator + for the concatenation of Strings</li>
+<li>Early versions of ATL use div instead of / or div() for division</li>
+
+</ul>
+<h2>Examples of operation on primitive datatypes</h2>
+
+<ul>
+<li>Addition of two integers: <a href="/cgi-bin/atlwebservice.sh?query=1+%2B+1">1 + 1</a> (<a href="simpleOCLWebTester?query=1+%2B+1">iframe</a>)</li>
+<li>Further mathematical operations: <a href="/cgi-bin/atlwebservice.sh?query=1+-+80+div+2">1 - 80 div 2</a> (<a href="simpleOCLWebTester?query=1+-+80+div+2">iframe</a>)</li>
+<li>Comparisons of integers: <a href="/cgi-bin/atlwebservice.sh?query=1+%3C+2">1 < 2</a> (<a href="simpleOCLWebTester?query=1+%3C+2">iframe</a>) and <a href="/cgi-bin/atlwebservice.sh?query=1+%3E+2">1 > 2</a> (<a href="simpleOCLWebTester?query=1+%3E+2">iframe</a>)</li>
+<li>Boolean operations: <a href="http://www.sciences.univ-nantes.fr/cgi-bin/atlwebservice.sh?query=true+or+false">true or false</a> (<a href="simpleOCLWebTester?query=true+or+false">iframe</a>)</li>
+
+</ul>
+<h2>Let expressions</h2>
+
+<ul>
+<li>The let command to define variables: <a href="/cgi-bin/atlwebservice.sh?query=let+a+%3A+Integer+%3D+1+in+a+%2B+1">let a : Integer = 1 in a + 1</a>
+(<a href="simpleOCLWebTester?query=let+a+%3A+Integer+%3D+1+in+a+%2B+1">iframe</a>)</li>
+<li>Enchaining let expressions:<a href="/cgi-bin/atlwebservice.sh?query=let+a+%3A+Integer+%3D+1+in+let+b+%3A+Integer+%3D+2+in+a+%2B+b">let a : Integer = 1 in let b : Integer = 2 in a + b</a> (<a href="simpleOCLWebTester?query=let+a+%3A+Integer+%3D+1+in+let+b+%3A+Integer+%3D+2+in+a+%2B+b">iframe</a>)</li>
+
+</ul>
+<h2>OCL collections</h2>
+<p>  Collection is the abstract superclass of Set, OrderedSet, Bag and Sequence.</p>
+
+<ul>
+<li>Set is a collection without duplicates. Set has no order. </li>
+<li>OrderedSet is a collection without duplicates. OrderedSet has an order.</li>
+<li>Bag is a collection in which duplicates are allowed. Bag has no order.</li>
+<li>Sequence is a collection in which duplicates are allowed. Sequence has an order.</li>
+
+</ul>
+<h3> Collection operations</h3>
+
+<ul>
+<li>The number of elements in the collection self: size()</li>
+<li>The information of whether an object is part of a collection: includes()</li>
+<li>The information of whether an object isn't part of a collection: excludes()</li>
+<li>The number of times that object occurs in the collection self. count()</li>
+<li>The information of whether all objects of a given collection are part of a specific collection: includesAll()</li>
+<li>The information of whether none of the objects of a given collection are part of a specific collection: excludesAll()</li>
+<li>The information if a collection is empty: isEmpty()</li>
+<li>The information if a collection is not empty: notEmpty()</li>
+
+</ul>
+<h4> Iterators over collections</h4>
+
+<ul>
+<li>The selection of a sub-collection: select()</li>
+<li>When specifying a collection which is derived from some other collection, but which contains different objects from the original collection (i.e., it is not a sub-collection) use: collect()</li>
+<li>The information of whether an expression is true for all objects of a given collection: forAll()</li>
+<li>The addition of all elements of a collection: sum() Elements must be of a type supporting the + operation.  </li>
+
+</ul>
+<h2>OCL collection operation examples</h2>
+
+<ul>
+<li>Specifying a sequence literal: <a href="/cgi-bin/atlwebservice.sh?query=Sequence+%7B1%2C+2%2C+3%7D">Sequence {1, 2, 3}</a> (<a href="simpleOCLWebTester?query=Sequence+%7B1%2C+2%2C+3%7D">iframe</a>)</li>
+<li>Is a collection empty?: <a href="/cgi-bin/atlwebservice.sh?query=Sequence+%7B1%2C+2%2C+3%7D-%3EisEmpty%28%29">Sequence {1, 2, 3}->isEmpty()</a> (<a href="simpleOCLWebTester?query=1+%2B+1">iframe</a>)</li>
+<li>Getting the size of a collection: <a href="/cgi-bin/atlwebservice.sh?query=Sequence+%7B1%2C+2%2C+3%7D-%3Esize%28%29">Sequence {1, 2, 3}->size()</a> (<a href="simpleOCLWebTester?query=Sequence+%7B1%2C+2%2C+3%7D-%3EisEmpty%28%29">iframe</a>)</li>
+<li>Please compare: <a href="/cgi-bin/atlwebservice.sh?query=Sequence+%7B3%2C+3%2C+3+%7D-%3Esize%28%29">Sequence {3, 3, 3 }->size()</a> 
+returns 3 (<a href="simpleOCLWebTester?query=Sequence+%7B3%2C+3%2C+3+%7D-%3Esize%28%29">iframe</a>) while 
+<a href="/cgi-bin/atlwebservice.sh?query=Set+%7B3%2C+3%2C+3+%7D-%3Esize%28%29">Set {3, 3, 3 }->size()</a> returns 1 (<a href="simpleOCLWebTester?query=Set+%7B3%2C+3%2C+3+%7D-%3Esize%28%29">iframe</a>)</li>
+<li>Nesting sequences: <a href="/cgi-bin/atlwebservice.sh?query=Sequence+%7B+Sequence+%7B1%2C+2%7D%2C+Sequence+%7B+2%2C+3%7D%2C+Sequence+%7B1%2C+2%2C+3%7D%7D">Sequence { Sequence { 2, 3}, Sequence {1, 2, 3}}</a> (<a href="simpleOCLWebTester?query=Sequence+%7B+Sequence+%7B1%2C+2%7D%2C+Sequence+%7B+2%2C+3%7D%2C+Sequence+%7B1%2C+2%2C+3%7D%7D">iframe</a>)</li>
+<li>Getting the first element of a sequence: <a href="/cgi-bin/atlwebservice.sh?query=Sequence+%7B1%2C+2%2C+3%7D-%3Efirst%28%29">Sequence {1, 2, 3}->first()</a> (<a href="simpleOCLWebTester?query=Sequence+%7B1%2C+2%2C+3%7D-%3Efirst%28%29">iframe</a>)</li>
+<li>Getting the last element of a sequence: <a href="/cgi-bin/atlwebservice.sh?query=Sequence+%7B1%2C+2%2C+3%7D-%3Elast%28%29">Sequence {1, 2, 3}->last()</a> (<a href="simpleOCLWebTester?query=Sequence+%7B1%2C+2%2C+3%7D-%3Elast%28%29">iframe</a>)</li>
+<li>Selecting all elements of a sequence that are smaller than 3: <a href="/cgi-bin/atlwebservice.sh?query=Sequence+%7B1%2C+2%2C+3%2C+4%2C+5%2C+6%7D-%3Eselect%28+i+%7C+i+%3C%3D+3%29">Sequence {1, 2, 3, 4, 5, 6}->select( i | i <= 3)</a> (<a href="simpleOCLWebTester?query=Sequence+%7B1%2C+2%2C+3%2C+4%2C+5%2C+6%7D-%3Eselect%28+i+%7C+i+%3C%3D+3%29">iframe</a>)</li>
+<li>Rejecting all elements of a sequence that are smaller than 3:<a href="/cgi-bin/atlwebservice.sh?query=Sequence+%7B1%2C+2%2C+3%2C+4%2C+5%2C+6%7D-%3Ereject%28+i+%7C+i+%3C%3D+3%29">Sequence {1, 2, 3, 4, 5, 6}->reject( i | i <= 3)</a> (<a href="simpleOCLWebTester?query=Sequence+%7B1%2C+2%2C+3%2C+4%2C+5%2C+6%7D-%3Ereject%28+i+%7C+i+%3C%3D+3%29">iframe</a>)</li>
+<li>Collect the names of all MOF classes: <a href="/cgi-bin/atlwebservice.sh?query=MOF%21Class.allInstances%28%29-%3Ecollect%28e%7Ce.name%29">MOF!Class.allInstances()->collect(e|e.name)</a>. The OCL shorthand expression "MOF!Class.allInstances()->collect(name)" means the same but is not yet implemented in ATL. (<a href="simpleOCLWebTester?query=MOF%21Class.allInstances%28%29-%3Ecollect%28e%7Ce.name%29">iframe</a>)</li>
+<li>Are all numbers in the sequence greater than 2?: <a href="/cgi-bin/atlwebservice.sh?query=Sequence%7B+12%2C+13%2C+12%7D-%3EforAll%28+i+%7C+i%3E2+++%29">Sequence{ 12, 13, 12}->forAll( i | i>2 )</a> (<a href="simpleOCLWebTester?query=Sequence%7B+12%2C+13%2C+12%7D-%3EforAll%28+i+%7C+i%3E2+++%29">iframe</a>)</li>
+<li>Exists a number in the sequence that is greater than 2?: <a href="/cgi-bin/atlwebservice.sh?query=Sequence%7B+12%2C+13%2C+12%7D-%3Eexists%28+i+%7C+i%3E2+++%29">Sequence{ 12, 13, 12}->exists( i | i>2 )</a> (<a href="simpleOCLWebTester?query=Sequence%7B+12%2C+13%2C+12%7D-%3Eexists%28+i+%7C+i%3E2+++%29">iframe</a>)</li>
+<li>Concatenating Sequences: <a href="/cgi-bin/atlwebservice.sh?query=Sequence+%7B1%2C+2%2C+3%7D-%3Eunion%28Sequence+%7B4%2C+5%2C+6%7D%29">Sequence {1, 2, 3}->union(Sequence {4, 5, 6})</a> (<a href="simpleOCLWebTester?query=Sequence+%7B1%2C+2%2C+3%7D-%3Eunion%28Sequence+%7B4%2C+5%2C+6%7D%29">iframe</a>)</li>
+
+</ul>
+<h2>OCL conditional expression: "if"</h2>
+<p>  You can formulate an if-clause in OCL: if-then-else-endif. Else cannot be dropped.  </p>
+
+<ul>
+<li>If three is greater than two return <three is greater than two> else return <Oh>: <a href="/cgi-bin/atlwebservice.sh?query=if+3+%3E+2+then+%27three+is+greater+than+two%27++else+%27oh%27+endif">if 3 > 2 then  `three is greater than two`  else `oh` endif</a> (<a href="simpleOCLWebTester?query=if+3+%3E+2+then+%27three+is+greater+than+two%27++else+%27oh%27+endif">iframe</a>)</li>
+
+</ul>
+<h2>OCL classes</h2>
+<p>  In  ATL the notation "Metamodel!Class" is used to be able to differentiate classes of different metamodels. This means in ATL it is possible to use several metamodels in the same file. In OCL this is not the case. There are different operations to treat and analyze classes.</p>
+
+<ul>
+<li>The operation oclIsTypeOf() checks if a given instance is an instance  of a certain type (and not of one of its subtypes or of other types).</li>
+<li>The operation oclIsKindOf() checks if a given instance is an instance of a certain type or of one of its subtypes.</li>
+<li>The operation allInstances() returns you all instances of a given Type.</li>
+<li>The operation oclIsUndefined() tests if the value of an expression is undefined (e.g. if an attribute with the multiciplicity zero to one is void or not. Please note: attributes with the multiplicity n are often represented with collections, which may be empty and not void).</li>
+
+</ul>
+<h2>Examples on OCL class operations</h2>
+
+<ul>
+<li>Please compare <a href="/cgi-bin/atlwebservice.sh?query=MOF%21Attribute.oclIsKindOf%28MOF%21ModelElement%29">MOF!Attribute.oclIsKindOf(MOF!ModelElement)</a>  (<a href="simpleOCLWebTester?query=MOF%21Attribute.oclIsKindOf%28MOF%21ModelElement%29">iframe</a>) is true while <a href="/cgi-bin/atlwebservice.sh?query=MOF%21Attribute.oclIsTypeOf%28MOF%21ModelElement%29">MOF!Attribute.oclIsTypeOf(MOF!ModelElement)</a> (<a href="simpleOCLWebTester?query=MOF%21Attribute.oclIsTypeOf%28MOF%21ModelElement%29">iframe</a>) is false</li>
+<li>Collect the names of all MOF classes: <a href="/cgi-bin/atlwebservice.sh?query=MOF%21Class.allInstances%28%29-%3Ecollect%28e%7Ce.name%29">MOF!Class.allInstances()->collect(e|e.name)</a> (<a href="simpleOCLWebTester?query=MOF%21Class.allInstances%28%29-%3Ecollect%28e%7Ce.name%29">iframe</a>)</li>
+
+</ul>
+<h2>OCL queries on MOF 1.4</h2>
+<p>  The following examples are based on the metamodel <a href="http://www.omg.org/technology/documents/formal/mof.htm">MOF 1.4</a>
+which you may use to test OCL expressions with.
+You may also have a look at the <a href="http://www.omg.org/docs/formal/04-04-03.htm">MOF XMI file</a> or at the <a href="http://java.sun.com/products/jmi/jmi-1_0-fr-doc/javax/jmi/model/package-frame.html">Java JMI implementation</a> (<a href="http://java.sun.com/products/jmi/jmi-1_0-fr-doc/">JMI overview with frames</a>) to learn about MOF. Start with <a href="http://java.sun.com/products/jmi/jmi-1_0-fr-doc/javax/jmi/model/MofClass.html">MofClass</a>. </p>
+
+<ul>
+<li>Count the number of classes in MOF: <a href="/cgi-bin/atlwebservice.sh?query=MOF%21Class.allInstances%28%29-%3Esize%28%29">MOF!Class.allInstances()->size()</a> (<a href="simpleOCLWebTester?query=MOF%21Class.allInstances%28%29-%3Esize%28%29">iframe</a>)</li>
+<li>Getting the names of all primitive MOF types by filtering: <a href="/cgi-bin/atlwebservice.sh?query=MOF%21DataType.allInstances%28%29-%3Eselect%28e%7Ce.oclIsTypeOf%28MOF%21PrimitiveType%29%29-%3Ecollect%28e%7Ce.name%29">MOF!DataType.allInstances()->select(e|e.oclIsTypeOf(MOF!PrimitiveType))->collect(e|e.name)</a> (<a href="simpleOCLWebTester?query=MOF%21DataType.allInstances%28%29-%3Eselect%28e%7Ce.oclIsTypeOf%28MOF%21PrimitiveType%29%29-%3Ecollect%28e%7Ce.name%29">iframe</a>)</li>
+<li>Getting the names of all primitive MOF types the simple way:<a href="/cgi-bin/atlwebservice.sh?query=MOF%21PrimitiveType.allInstances%28%29-%3Ecollect%28e%7Ce.name%29">MOF!PrimitiveType.allInstances()->collect(e|e.name)</a>
+(<a href="simpleOCLWebTester?query=MOF%21PrimitiveType.allInstances%28%29-%3Ecollect%28e%7Ce.name%29">iframe</a>)</li>
+<li>An enumeration instance in MOF: <a href="/cgi-bin/atlwebservice.sh?query=MOF%21VisibilityKind.labels">MOF!VisibilityKind.labels</a> (<a href="simpleOCLWebTester?query=MOF%21VisibilityKind.labels">iframe</a>)</li>
+<li>Getting all (local and inherited) StructuralFeatures of a Class. In the following code example the names of all StructuralFeatures of the class PrimitiveTypes are displayed: <a href="/cgi-bin/atlwebservice.sh?query=MOF%21PrimitiveType.findElementsByTypeExtended%28MOF%21StructuralFeature%2C+true%29-%3Ecollect%28e+%7C+e.name%29">MOF!PrimitiveType.findElementsByTypeExtended(MOF!StructuralFeature, true)->collect(e | e.name)</a> (<a href="simpleOCLWebTester?query=MOF%21PrimitiveType.findElementsByTypeExtended%28MOF%21StructuralFeature%2C+true%29-%3Ecollect%28e+%7C+e.name%29">iframe</a>)</li>
+<li>Getting the names of all classes inheriting from more than one class: <a href="/cgi-bin/atlwebservice.sh?query=MOF%21Class.allInstances%28%29-%3Eselect%28e+%7C+e.supertypes-%3Esize%28%29+%3E+1%29-%3Ecollect%28e+%7C+e.name%29">MOF!Class.allInstances()->select(e | e.supertypes->size() > 1)->collect(e | e.name)</a> (<a href="simpleOCLWebTester?query=MOF%21Class.allInstances%28%29-%3Eselect%28e+%7C+e.supertypes-%3Esize%28%29+%3E+1%29-%3Ecollect%28e+%7C+e.name%29">iframe</a>)</li>
+<li>Continue testing, try to understand MOF and find out what these expressions mean:
+<ul>
+<li><a href="/cgi-bin/atlwebservice.sh?query=MOF%21Attribute.contents-%3Eselect%28e+%7C+e.oclIsKindOf%28MOF%21Attribute%29%29">MOF!Attribute.contents->select(e | e.oclIsKindOf(MOF!Attribute))</a> (<a href="simpleOCLWebTester?query=MOF%21Attribute.contents-%3Eselect%28e+%7C+e.oclIsKindOf%28MOF%21Attribute%29%29">iframe</a>)</li>
+<li><a href="/cgi-bin/atlwebservice.sh?query=MOF%21Attribute.oclIsKindOf%28MOF%21Class%29">MOF!Attribute.oclIsKindOf(MOF!Class)</a> (<a href="simpleOCLWebTester?query=MOF%21Attribute.oclIsKindOf%28MOF%21Class%29">iframe</a>)</li>
+<li><a href="/cgi-bin/atlwebservice.sh?query=MOF%21Class.allInstances%28%29-%3Ecollect%28e+%7C+e.oclIsKindOf%28MOF%21Class%29%29">MOF!Class.allInstances()->collect(e | e.oclIsKindOf(MOF!Class))</a> (<a href="simpleOCLWebTester?query=MOF%21Class.allInstances%28%29-%3Ecollect%28e+%7C+e.oclIsKindOf%28MOF%21Class%29%29">iframe</a>)</li>
+<li><a href="/cgi-bin/atlwebservice.sh?query=MOF%21Attribute.allInstances%28%29-%3Ecollect%28e+%7C+e.oclIsKindOf%28MOF%21Class%29%29">MOF!Attribute.allInstances()->collect(e | e.oclIsKindOf(MOF!Class))</a> (<a href="simpleOCLWebTester?query=MOF%21Attribute.allInstances%28%29-%3Ecollect%28e+%7C+e.oclIsKindOf%28MOF%21Class%29%29">iframe</a>)</li>
+<li><a href="/cgi-bin/atlwebservice.sh?query=MOF%21Attribute.allInstances%28%29-%3Ecollect%28e+%7C+e.oclIsKindOf%28MOF%21Attribute%29%29">MOF!Attribute.allInstances()->collect(e | e.oclIsKindOf(MOF!Attribute))</a> (<a href="simpleOCLWebTester?query=MOF%21Attribute.allInstances%28%29-%3Ecollect%28e+%7C+e.oclIsKindOf%28MOF%21Attribute%29%29">iframe</a>)</li>
+<li><a href="/cgi-bin/atlwebservice.sh?query=MOF%21Attribute.allInstances%28%29-%3Ecollect%28e+%7C+e.oclIsKindOf%28MOF%21StructuralFeature%29%29">MOF!Attribute.allInstances()->collect(e | e.oclIsKindOf(MOF!StructuralFeature))</a> (<a href="simpleOCLWebTester?query=MOF%21Attribute.allInstances%28%29-%3Ecollect%28e+%7C+e.oclIsKindOf%28MOF%21StructuralFeature%29%29">iframe</a>)</li>
+<li><a href="/cgi-bin/atlwebservice.sh?query=1.oclIsKindOf%28Integer%29">1.oclIsKindOf(Integer)</a> (<a href="simpleOCLWebTester?query=1.oclIsKindOf%28Integer%29">iframe</a>)</li>
+<li><a href="/cgi-bin/atlwebservice.sh?query=MOF%21Long.oclIsKindOf%28MOF%21PrimitiveType%29">MOF!Long.oclIsKindOf(MOF!PrimitiveType)</a> (<a href="simpleOCLWebTester?query=MOF%21Long.oclIsKindOf%28MOF%21PrimitiveType%29">iframe</a>)</li>
+<li><a href="/cgi-bin/atlwebservice.sh?query=MOF%21Class.allInstances%28%29-%3Ecollect%28e+%7C+e.name+%2B+%27+extends+%27+%2B+e.supertypes-%3Eiterate%28e%3B+acc+%3A+String+%3D+%27%27+%7C+acc+%2B+if+acc+%3D+%27%27+then+%27%27+else+%27+and+%27+endif+%2B+e.name%29%29">MOF!Class.allInstances()->collect(e | e.name + ` extends ` + e.supertypes->iterate(e; acc : String = `` | acc + if acc = `` then `` else ` and ` endif + e.name))</a> (<a href="simpleOCLWebTester?query=MOF%21Class.allInstances%28%29-%3Ecollect%28e+%7C+e.name+%2B+%27+extends+%27+%2B+e.supertypes-%3Eiterate%28e%3B+acc+%3A+String+%3D+%27%27+%7C+acc+%2B+if+acc+%3D+%27%27+then+%27%27+else+%27+and+%27+endif+%2B+e.name%29%29">iframe</a>)</li>
+
+</ul>
+</li>
+
+</ul>
+<h2>OCL comments</h2>
+<p>  OCL comments start with two consecutive hyphens "--" and end at the end of the line.</p>
+
+        </div>
+    
+        <div class="documentByLine">
+
+
+
+  
+
+  
+
+  <span>Última modificação</span>
+  2009-07-15 08:01 PM
+
+  
+
+</div>
+    
+
+
+                    
+                       <div class="discussion">
+
+    
+
+</div> 
+                    
+
+                </div>
+
+            </div>
+
+            </td>
+        <!-- end of main content block -->
+
+        <!-- start of right (by default at least) column -->
+            
+    <!-- end of the right (by default at least) column -->
+        </tr>
+    </tbody>
+</table>
+<!-- end column wrapper -->
+
+<div class="visualClear">&nbsp;</div>
+
+
+<hr class="netscape4" />
+
+<div id="portal-footer">
+
+
+
+</div>
+
+<div id="portal-colophon">
+
+<a href="http://plone.org">Plone</a> powered, 
+        <a href="http://validator.w3.org/check/referer"
+           title="Este site Plone possui XHTML válido.">
+        XHTML valid
+       </a>
+        and
+        <a href="http://jigsaw.w3.org/css-validator/check/referer"
+           title="Este Plone site foi construído com CSS válido">
+        CSS valid
+        </a>
+
+ 
+</div>
+
+</div>
+
+</body>
+</html>
+
+
