@@ -1,2 +1,2 @@
 context MinhaClasse::meuMetodoDaMinhaLindaClasseBunita(): MeuTipoDeRetorno
-	post: a->forAll(a, b | true)
+	post: a = 2 = 3
