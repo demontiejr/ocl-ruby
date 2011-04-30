@@ -256,7 +256,7 @@ additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAu
                                                                                      	 	type = ((Node)me1).getType();
                                                                                      	 	if (!(type.equals("Float") || type.equals("Integer"))){
                                                                                      	 		parser.as.error(me1left, "operador ' + ' indefinido para o tipo " + type);
-                                                                                     	 		type = "Integer";
+                                                                                     	 		
                                                                                          	}
                                                                                          	node.setType(type);
                                                                                          } else{
@@ -272,7 +272,7 @@ additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAu
                                                                                      		 	   	  type = ((Node)me1).getType();
                                                                                      		 	   if (!(type.equals("Float") || type.equals("Integer"))){
                                                                                      		 		  parser.as.error(me1left, "operador ' - ' indefinido para o tipo " + type);
-                                                                                     		 		  type = "Integer";
+                                                                                     		 		  
                                                                                         	 	   }
                                                                                         	 		  node.setType(type);
                                                                                         	 	   } else{
@@ -302,7 +302,7 @@ multiplicativeExpressionAux ::= STAR unaryExpression:ue1 multiplicativeExpressio
                                                                                      		 	type = ((Node)ue1).getType();
                                                                                      		 	if (!(type.equals("Float") || type.equals("Integer"))){
                                                                                      		 		parser.as.error(ue1left, "operador ' * ' indefinido para o tipo " + type);
-                                                                                     		 		type = "Integer";
+                                                                                     		 		
                                                                                         	 	}
                                                                                         	 	node.setType(type);
                                                                                         	 } else{
@@ -319,7 +319,7 @@ multiplicativeExpressionAux ::= STAR unaryExpression:ue1 multiplicativeExpressio
                                                                                      		 	type = ((Node)ue1).getType();
                                                                                      		 	if (!(type.equals("Float") || type.equals("Integer"))){
                                                                                      		 		parser.as.error(ue1left, "operador ' / ' indefinido para o tipo " + type);
-                                                                                     		 		type = "Integer";
+                                                                                     		 		
                                                                                         	 	}
                                                                                         	 	else if (type.equals("Float")){
                                                                                         	 		if ((Float)((Node)ue1).getValue() == 0f)
