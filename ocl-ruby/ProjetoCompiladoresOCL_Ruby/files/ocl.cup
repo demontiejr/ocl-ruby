@@ -258,7 +258,20 @@ multiplicativeExpressionAux ::= STAR unaryExpression:ue1 multiplicativeExpressio
 								| DIV unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: RESULT = new Node("", ""); :}
 								| ;
 
-unaryExpression ::= unaryOperator:uo1 postfixExpression:pfe1
+unaryExpression ::= unaryOperator:uo1 postfixExpression:pfe1 {: Node node = (Node)pfe1;
+																if (((String)uo1).equals("NOT")){
+																	if (node.getType().equals("Integer") || node.getType().equals("Float") || node.getType().equals("String"))
+																		parser.as.error(pfe1left, "operador 'NOT' nao eh definido para o tipo " + node.getType());
+																	else
+																		node.setValue(!node.getValue());
+																} else {
+																	if (node.getType().equals("String") || node.getType().equals("Boolean"))
+																		parser.as.error(pfe1left, "operador ' - ' nao eh definido para o tipo " + node.getType());
+																	else
+																		node.setValue(-node.getValue());
+																}
+																RESULT = node;
+															 :}
 			     | postfixExpression:pfe1 {: System.out.println("Entrou unary exp"); RESULT = pfe1; :};
 
 unaryOperator ::= NOT
