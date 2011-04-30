@@ -263,20 +263,12 @@ unaryExpression ::= unaryOperator:uo1 postfixExpression:pfe1
 unaryOperator ::= NOT
 			   | MINUS;
 
-postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1 {: System.out.println("Entrou post fix"); 
+postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1 {: Node node = new Node();
                                                                           if (pfea1 == null)
-                                                                             System.out.println("Esta nulo");
-                                                                          if (pe1 == null)
-                                                                             System.out.println("Esta nulo tambem");
-                                                                          System.out.println("PFEA: " + pfea1 + " ..... " + ((Node)pfea1).getType());
-                                                                          System.out.println("PE: " + pe1 + " ..... " + ((Node)pe1).getType());
-                                                                          Node node = new Node();
-                                                                          if (pfea1 == null)
-                                                                              node.setType(((Node)pe1).getType());
+                                                                             node.setType(((Node)pe1).getType());
                                                                           else
-                                                                              node.setType(((Node)pfea1).getType());
-                                                                          RESULT = node; 
-                                                                          System.out.println("Tipo postExp: " + node.getType());:}
+                                                                             node.setType(((Node)pfea1).getType());
+                                                                          RESULT = node; :}
 				   | SELF featureAccess:fa1
 				   | SELF AROBAPRE featureAccess:fa1 {: parser.as.checkStereotype("@pre", fa1left); :};
 
@@ -288,9 +280,9 @@ featureAccess ::=  POINT featureCall:fCall1 postfixExpressionAux:pfea1
 			   | ;
 
 primaryExpression ::= litteralCollection:lc1
-		           | litteral:l1 {: System.out.println("Entrou primExp como literal"); RESULT = l1; :}
+		           | litteral:l1 {: System.out.println("Entrou primExp como literal: " + ((Node)l1).getValue() + " " + ((Node)l1).getType()); RESULT = l1; :}
 				   | RESULT:r {: parser.as.checkStereotype("result", rleft); :} 
-				   | featureCall:fCall1 {: RESULT = fCall1; :} 
+				   | featureCall:fCall1 {: System.out.println("Entrou primExp como featureCall"); RESULT = fCall1; :} 
 				   | LPAREN expression:exp1 RPAREN {: System.out.println("Entrou primExp");
 				   									  Node node = new Node();
 				                                      node.setType(((Node)exp1).getType());
@@ -317,7 +309,8 @@ featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft
 				| pathName:pn {: System.out.println("Entrou no canto certo"); RESULT = new Node(((Node)pn).getValue(), ""); :};
 
 featureCallCollection ::= pathName:pn collectionParameters:params {: 
-                      parser.as.checkCollectionOperation(((Node)pn).toString(), ((Node)params).getType(), pnleft); 
+                      parser.as.checkCollectionOperation(((Node)pn).toString(), ((Node)params).getType(), pnleft);
+                      RESULT = new Node("","");
                       :};
 
 collectionParameters ::= LPAREN declarator:d1 expression:exp1 RPAREN
@@ -351,7 +344,7 @@ oclType ::= OCL_SUPER_TYPE:super1
 		 | OCL_BASIC_TYPE:basic1 
 		 | OCL_COLLECTION:collection1 LPAREN typeName:tn RPAREN;
 
-pathName ::= ID:id pathNameAux:pna {: RESULT = new Node((String)id + ((Node)pna).toString()); :};
+pathName ::= ID:id pathNameAux:pna {: System.out.println("Entrou em pathName com " + (String)id + ((Node)pna).toString()); RESULT = new Node((String)id + ((Node)pna).toString()); :};
 
 pathNameAux ::= FOUR_POINTS ID:id pathNameAux:pna {: RESULT = new Node("::" + (String)id + ((Node)pna).toString()); :} 
 				| {: RESULT = new Node("") ; :};
