@@ -113,6 +113,8 @@ public class CompilerOCLtoRuby {
 		System.out.println("============================================");
 		System.out.println("Realizando analise...");
 		System.out.println("============================================");
+		System.out.println("Lendo arquivo XMI...");
+		xmiParser.XMIParser.main(new String[]{"./files/Profe.xml"});
 		ScannerOCL scanner = createScanner(fileName);
 		List<String> fatalErrors = new ArrayList<String>();
 		if (scanner != null) {
