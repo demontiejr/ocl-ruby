@@ -150,6 +150,7 @@ non terminal additiveExpressionAux, multiplicativeExpressionAux;
 non terminal expressionListOrRangeAux, declarator, declaratorAux;
 non terminal actualParameterListAux, pathNameAux;
 non terminal featureCallCollection, collectionParameters;
+non terminal relationalExpressionAux;
 
 /*Precedencias*/
 precedence left COMA;
@@ -222,10 +223,12 @@ logicalOperator ::= AND
 				 | XOR
 				 | IMPLIES;
 
-relationalExpression ::= additiveExpression:ae1 relationalOperator:ro1 additiveExpression:ae2 {: System.out.println("Sera que isso aqui deu merda?");
+relationalExpression ::= additiveExpression:ae1 relationalExpressionAux:rea {: System.out.println("Sera que isso aqui deu merda?");
 													// checar conformidade de tipos e retornar boolean em caso afirmativo
 													:}
 						 | additiveExpression:ae1 {: System.out.println("Entrou relational exp"); RESULT = ae1; :};
+
+relationalExpressionAux ::= relationalOperator:ro1 additiveExpression:ae2 relationalExpressionAux:rea | relationalOperator:ro1 additiveExpression:ae2;
 
 relationalOperator ::= EQ
 					| GT
@@ -263,12 +266,16 @@ unaryExpression ::= unaryOperator:uo1 postfixExpression:pfe1 {: Node node = (Nod
 																	if (node.getType().equals("Integer") || node.getType().equals("Float") || node.getType().equals("String"))
 																		parser.as.error(pfe1left, "operador 'NOT' nao eh definido para o tipo " + node.getType());
 																	else
-																		node.setValue(!node.getValue());
+																		node.setValue(!((Boolean)node.getValue()));
 																} else {
 																	if (node.getType().equals("String") || node.getType().equals("Boolean"))
 																		parser.as.error(pfe1left, "operador ' - ' nao eh definido para o tipo " + node.getType());
-																	else
-																		node.setValue(-node.getValue());
+																	else{
+																		if (node.getType().equals("Float"))
+																			node.setValue(-((Float)node.getValue()));
+																		else
+																			node.setValue(-((Integer)node.getValue()));
+																	}
 																}
 																RESULT = node;
 															 :}
