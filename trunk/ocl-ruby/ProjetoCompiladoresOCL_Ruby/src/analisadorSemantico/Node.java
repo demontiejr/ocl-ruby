@@ -1,6 +1,7 @@
 package analisadorSemantico;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -16,21 +17,21 @@ public class Node {
 
 	private Object value;
 	private String type;
-	private List<String> attributesTypes;
+	private List<String> list;
 	
 	public Node(Object value, String type) {
 		this.value = value;
 		this.type = type;
-		this.attributesTypes = new ArrayList<String>();
+		this.list = new ArrayList<String>();
 	}
 
 	public Node(Object value) {
 		this.value = value;
-		this.attributesTypes = new ArrayList<String>();
+		this.list = new ArrayList<String>();
 	}
 	
 	public Node() {
-		this.attributesTypes = new ArrayList<String>();
+		this.list = new ArrayList<String>();
 	}
 	
 	public Object getValue() {
@@ -46,8 +47,12 @@ public class Node {
 		this.type = type;
 	}
 	
-	public void addAttributesTypes(String attribute){
-		attributesTypes.add(attribute);
+	public void addElement(String element){
+		list.add(0, element);
+	}
+	
+	public Iterator<String> iterator(){
+		return list.iterator();
 	}
 	
 	@Override

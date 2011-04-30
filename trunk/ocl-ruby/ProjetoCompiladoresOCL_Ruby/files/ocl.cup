@@ -6,7 +6,7 @@ package analisadorSintatico;
 * Departamento de Sistemas e Computacao - DSC            *
 *                                                        *
 * Projeto da disciplina de Compiladores, 2011.1          *
-* Analisador Sintatico para OCL                          *
+* Analisador Sintatico e Semantico para OCL              *
 *                                                        *
 * Grupo: Francisco Demontie dos Santos Junior - 20911084 *
 *        Izabela Vanessa de Almeida Melo - 20811018      *
@@ -16,6 +16,7 @@ package analisadorSintatico;
 import java_cup.runtime.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
 import analisadorSemantico.SemanticAnalyzer;
 import analisadorSemantico.Node;
 
@@ -327,10 +328,21 @@ collectionParameters ::= LPAREN declarator:d1 expression:exp1 RPAREN
 
 parameters ::= LPAREN actualParameterList:apl1 RPAREN;
 
-declarator ::= ID:id declaratorAux:da1 POINTS typeName:tn PIPE
-				| ID:id declaratorAux:da1 PIPE;
+declarator ::= ID:id declaratorAux:da1 POINTS typeName:tn PIPE {: Node node = (Node)da1;
+												  				  node.addElement((String)id);
+												  				  RESULT = node; :}
+				| ID:id declaratorAux:da1 PIPE {: Node node = (Node)da1;
+												  node.addElement((String)id);
+												  RESULT = node;
+				                                  Iterator<String> it = ((Node)RESULT).iterator();
+				                                  while(it.hasNext()){
+				                                     System.out.println(it.next());
+				                                  }; :} ;
 
-declaratorAux ::= COMA ID:id declaratorAux:da1 | ;
+declaratorAux ::= COMA ID:id declaratorAux:da1 {: Node node = (Node)da1;
+												  node.addElement((String)id);
+												  RESULT = node; :} 
+				| {: RESULT = new Node(); :};
 			
 actualParameterList ::= expression:exp1 actualParameterListAux:apla1 
 						| ;
