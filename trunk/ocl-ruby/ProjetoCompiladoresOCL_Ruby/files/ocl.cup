@@ -203,11 +203,17 @@ formalParameterListAux ::= COMA formalParameter:fp1 formalParameterListAux:fpla1
 
 formalParameter ::= ID:id POINTS typeName:tn;
 
-expression ::= logicalExpression:le1;
+expression ::= logicalExpression:le1 {: System.out.println("Entrou exp"); RESULT = le1; :};
 
-logicalExpression ::= relationalExpression:re1 logicalExpressionAux:lea1;
+logicalExpression ::= relationalExpression:re1 logicalExpressionAux:lea1 {: System.out.println("Entrou logical exp"); Node node = new Node(); 
+                                                                            if (lea1 == null)
+                                                                                 node.setType(((Node)re1).getType());
+                                                                            else
+                                                                                 node.setType(((Node)lea1).getType());
+                                                                          	RESULT = node; 
+                                                                          	System.out.println("Tipo logicalExp: " + node.getType());:};
 
-logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExpressionAux:lea1
+logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExpressionAux:lea1 {: RESULT = new Node("", ""); :}
 					  | ;
 
 logicalOperator ::= AND
@@ -215,8 +221,10 @@ logicalOperator ::= AND
 				 | XOR
 				 | IMPLIES;
 
-relationalExpression ::= additiveExpression:ae1 relationalOperator:ro1 additiveExpression:ae2
-						 | additiveExpression:ae1;
+relationalExpression ::= additiveExpression:ae1 relationalOperator:ro1 additiveExpression:ae2 {: System.out.println("Sera que isso aqui deu merda?");
+													// checar conformidade de tipos e retornar boolean em caso afirmativo
+													:}
+						 | additiveExpression:ae1 {: System.out.println("Entrou relational exp"); RESULT = ae1; :};
 
 relationalOperator ::= EQ
 					| GT
@@ -225,45 +233,73 @@ relationalOperator ::= EQ
 					| LE
 					| NE;
 
-additiveExpression ::= multiplicativeExpression:me1 additiveExpressionAux:aea1;
+additiveExpression ::= multiplicativeExpression:me1 additiveExpressionAux:aea1 {: System.out.println("Entrou additive exp"); Node node = new Node(); 
+                                                                                  if (aea1 == null)
+                                                                                      node.setType(((Node)me1).getType());
+                                                                                  else
+                                                                              	      node.setType(((Node)aea1).getType());
+                                                                          		  RESULT = node; 
+                                                                          		  System.out.println("Tipo additiveExp: " + node.getType());:};
 
-additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAux:aea1
-								| MINUS multiplicativeExpression:me1 additiveExpressionAux:aea1
+additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAux:aea1 {: RESULT = new Node("", ""); :}
+								| MINUS multiplicativeExpression:me1 additiveExpressionAux:aea1 {: RESULT = new Node("", ""); :}
 								| ;
 
-multiplicativeExpression ::= unaryExpression:ue1 multiplicativeExpressionAux:mea1;
+multiplicativeExpression ::= unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: System.out.println("Entrou mult exp"); Node node = new Node(); 
+                                                                                     if (mea1 == null)
+                                                                                         node.setType(((Node)ue1).getType());
+                                                                                     else
+                                                                              			 node.setType(((Node)mea1).getType());
+                                                                          			 RESULT = node; 
+                                                                          			 System.out.println("Tipo multExp: " + node.getType());:};
 
-multiplicativeExpressionAux ::= STAR unaryExpression:ue1 multiplicativeExpressionAux:mea1
-								| DIV unaryExpression:ue1 multiplicativeExpressionAux:mea1
+multiplicativeExpressionAux ::= STAR unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: RESULT = new Node("", ""); :}
+								| DIV unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: RESULT = new Node("", ""); :}
 								| ;
 
 unaryExpression ::= unaryOperator:uo1 postfixExpression:pfe1
-			     | postfixExpression:pfe1;
+			     | postfixExpression:pfe1 {: System.out.println("Entrou unary exp"); RESULT = pfe1; :};
 
 unaryOperator ::= NOT
 			   | MINUS;
 
-postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1
+postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1 {: System.out.println("Entrou post fix"); 
+                                                                          if (pfea1 == null)
+                                                                             System.out.println("Esta nulo");
+                                                                          if (pe1 == null)
+                                                                             System.out.println("Esta nulo tambem");
+                                                                          System.out.println("PFEA: " + pfea1 + " ..... " + ((Node)pfea1).getType());
+                                                                          System.out.println("PE: " + pe1 + " ..... " + ((Node)pe1).getType());
+                                                                          Node node = new Node();
+                                                                          if (pfea1 == null)
+                                                                              node.setType(((Node)pe1).getType());
+                                                                          else
+                                                                              node.setType(((Node)pfea1).getType());
+                                                                          RESULT = node; 
+                                                                          System.out.println("Tipo postExp: " + node.getType());:}
 				   | SELF featureAccess:fa1
 				   | SELF AROBAPRE featureAccess:fa1 {: parser.as.checkStereotype("@pre", fa1left); :};
 
-postfixExpressionAux ::= POINT featureCall:fCall1 postfixExpressionAux:pfea1
-					  | ARROW featureCallCollection:fCol1 postfixExpressionAux:pfea1 
+postfixExpressionAux ::= POINT featureCall:fCall1 postfixExpressionAux:pfea1 {: RESULT = new Node("", ""); :}
+					  | ARROW featureCallCollection:fCol1 postfixExpressionAux:pfea1 {: System.out.println("Entrou na setinha"); RESULT = new Node("", ""); :}
 					  | ;
 
 featureAccess ::=  POINT featureCall:fCall1 postfixExpressionAux:pfea1
 			   | ;
 
 primaryExpression ::= litteralCollection:lc1
-		           | litteral:l1 {: RESULT = l1 ;:}
+		           | litteral:l1 {: System.out.println("Entrou primExp como literal"); RESULT = l1; :}
 				   | RESULT:r {: parser.as.checkStereotype("result", rleft); :} 
 				   | featureCall:fCall1 {: RESULT = fCall1; :} 
-				   | LPAREN expression:exp1 RPAREN {: Node node = new Node();
+				   | LPAREN expression:exp1 RPAREN {: System.out.println("Entrou primExp");
+				   									  Node node = new Node();
 				                                      node.setType(((Node)exp1).getType());
-				                                      RESULT = node; :}
+				                                      RESULT = node; 
+				                                      System.out.println("Tipo primExp: " + node.getType());:}
 				   | ifExpression:ifexp1 {: Node node = new Node(); 
 				                            node.setType("Boolean");
-				                            RESULT = node; :};
+				                            RESULT = node; 
+				                            System.out.println("Tipo primExp: " + node.getType());:};
 
 litteralCollection ::= OCL_COLLECTION:collection1 LCURLY expressionListOrRange:elor1 RCURLY
 						| OCL_COLLECTION:collection1 LCURLY RCURLY;
@@ -278,7 +314,7 @@ ifExpression ::= IF expression:exp1 THEN expression:exp2 ELSE expression:exp3 EN
 featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft); :} parameters:params1
 				| pathName:pn parameters:params1 {: RESULT	= pn; :}
 				| pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft); :}
-				| pathName:pn;
+				| pathName:pn {: System.out.println("Entrou no canto certo"); RESULT = new Node(((Node)pn).getValue(), ""); :};
 
 featureCallCollection ::= pathName:pn collectionParameters:params {: 
                       parser.as.checkCollectionOperation(((Node)pn).toString(), ((Node)params).getType(), pnleft); 
@@ -286,8 +322,13 @@ featureCallCollection ::= pathName:pn collectionParameters:params {:
 
 collectionParameters ::= LPAREN declarator:d1 expression:exp1 RPAREN
 				| LPAREN declarator:d1 RPAREN
-				| LPAREN expression:exp1 RPAREN
-				| LPAREN RPAREN {: Node node = new Node();
+				| LPAREN expression:exp1 RPAREN {: System.out.println("Entrou nos parametros com expression");
+				 								   Node node = new Node();
+				                   				   node.setType(((Node)exp1).getType());
+				                   				   RESULT = node;
+				                   				   System.out.println("Tipo collPar: " + node.getType()); :}
+				| LPAREN RPAREN {: System.out.println("Entrou nos parametros vazios");
+				                   Node node = new Node();
 				                   node.setType("void");
 				                   RESULT = node; :};
 
