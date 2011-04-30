@@ -88,4 +88,18 @@ public class SemanticAnalyzer {
 		this.stereotype = stereotype;
 	}
 	
+	public String maxType(String type1, String type2, int line){
+		if(type1.equalsIgnoreCase(type2)){
+			return type1;
+		}else{
+			if(type1.equalsIgnoreCase("Float") && type2.equalsIgnoreCase("Integer")){
+				return type1;
+			}else if(type2.equalsIgnoreCase("Float") && type1.equalsIgnoreCase("Integer")){
+				return type2;
+			}else{
+				error(line,"Impossivel realizar operacao entre " + type1 + " e " + type2);
+			}
+		}
+		return null;
+	}
 }
