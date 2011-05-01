@@ -3,6 +3,7 @@ package analisadorSemantico;
 import java.util.ArrayList;
 import java.util.List;
 
+import excecoes.RelationalErrorException;
 import excecoes.SemanticErrorException;
 
 /**
@@ -114,7 +115,7 @@ public class SemanticAnalyzer {
         		type = ((Node)rule2).getType();
         	    value = ((Node)rule2).getValue(); //TODO: testar isso
         	}else{
-        		value = calcValue((Node)rule1, (Node)rule2, rule2.getOperation(), type);
+        		value = calcArithmeticValue((Node)rule1, (Node)rule2, rule2.getOperation(), type);
         		System.err.println("value no aux: " + value + "  " + value.getClass());
         	}
  			node.setType(type);
@@ -143,7 +144,7 @@ public class SemanticAnalyzer {
 				type = ((Node) rule2).getType();
 				value = ((Node) rule2).getValue(); // TODO: testar isso
 			} else {
-				value = calcValue((Node) rule1, (Node) rule2,
+				value = calcArithmeticValue((Node) rule1, (Node) rule2,
 						rule2.getOperation(), type);
 				System.err.println("value no aux: " + value + "  " + value.getClass());
 			}
@@ -158,7 +159,7 @@ public class SemanticAnalyzer {
 	/**
 	 * TODO: extender para aceitar double e long
 	 */
-	private Object calcValue(Node rule1, Node rule2, String operator, String type) {
+	private Object calcArithmeticValue(Node rule1, Node rule2, String operator, String type) {
 		Float v1 = 0f, v2 = 0f, result = 0f;
 		if (rule1.getType().equals("Float"))
 			v1 = (Float) rule1.getValue();
@@ -186,5 +187,44 @@ public class SemanticAnalyzer {
 			return (Integer)result.intValue();
 	}
 	
+	public Boolean calcRelationalValue(Node rule1, Node rule2, String operator, String type) {
+		if (type == null)
+			return false;
+		if (type.equals("Boolean") || type.equals("String")){
+			Object v1 = rule1.getValue();
+			Object v2 = rule2.getValue();
+			if (operator.equals("="))
+				return v1.equals(v2);
+			else if (operator.equals("<>"))
+				return !v1.equals(v2);
+			else
+				throw new RelationalErrorException("o operador " + operator + " nao pode ser usado para comparar valores do tipo " + type);
+		}
+		if (type.equals("Float") || type.equals("Integer")) {
+			Float v1 = 0f, v2 = 0f;
+			if (rule1.getType().equals("Float"))
+				v1 = (Float) rule1.getValue();
+			else if (rule1.getType().equals("Integer"))
+				v1 = ((Integer) rule1.getValue()).floatValue();
+			if (rule2.getType().equals("Float"))
+				v2 = (Float) rule2.getValue();
+			else if (rule2.getType().equals("Integer"))
+				v2 = ((Integer) rule2.getValue()).floatValue();
+			
+			if (operator.equals("="))
+				return v1.equals(v2);
+			else if (operator.equals(">"))
+				return v1 > v2;
+			else if (operator.equals("<"))
+				return v1 < v2;
+			else if (operator.equals(">="))
+				return v1 >= v2;
+			else if (operator.equals("<="))
+				return v1 <= v2;
+			else if (operator.equals("<>"))
+				return !(v1.equals(v2));
+		}
+		return false;
+	}
 	
 }
