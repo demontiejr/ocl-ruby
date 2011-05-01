@@ -337,7 +337,8 @@ public class XMIParser {
 	
 	public static void main(String[] args) {
 		try {
-			File xmi = new File(args[0]);
+			//File xmi = new File(args[0]);
+			File xmi = new File("./files/profe.xml");
 			XMIParser parser = new XMIParser(xmi);
 			parser.readXMI();
 			

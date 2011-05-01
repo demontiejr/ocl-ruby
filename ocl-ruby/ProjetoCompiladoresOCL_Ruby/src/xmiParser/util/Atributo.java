@@ -28,7 +28,11 @@ public class Atributo {
 	public String getIdTipo() {
 		return idTipo;
 	}
-
+	
+	public boolean ehColecao(){
+		
+		return false;
+	}
 
 	public void setIdTipo(String idTipo) {
 		this.idTipo = idTipo;
