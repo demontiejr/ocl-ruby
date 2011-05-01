@@ -123,7 +123,8 @@ public class CompilerOCLtoRuby {
 			try {
 				parser.parse();
 			} catch (RuntimeException e) {
-				errors.add(e.getMessage()); 
+				errors.add(e.getMessage());
+				e.printStackTrace();
 			} catch (FatalErrorException e) {
 				fatalErrors.add(e.getMessage());
 			} catch (Exception e) {

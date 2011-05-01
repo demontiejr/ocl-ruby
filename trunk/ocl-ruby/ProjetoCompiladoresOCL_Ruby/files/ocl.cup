@@ -272,6 +272,7 @@ additiveExpression ::= multiplicativeExpression:me1 additiveExpressionAux:aea1 {
 																				  Node node = parser.as.checkTypesOpArithmetic((Node)me1, (Node)aea1, me1left);
                                                                           		  RESULT = node; 
                                                                           		  System.out.print("Valor addExp: " + node.getValue() + "    ");
+                                                                          		  System.out.print("Tipo real do atributo valor: " + node.getValue().getClass());
                                                                           		  System.out.println("Tipo additiveExp: " + node.getType()); :};
 
 additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAux:aea1 {: Node node = parser.as.checkTypesOpArithmeticAux((Node)me1, (Node)aea1, "+", me1left);
@@ -284,6 +285,7 @@ multiplicativeExpression ::= unaryExpression:ue1 multiplicativeExpressionAux:mea
 																					 Node node = parser.as.checkTypesOpArithmetic((Node)ue1, (Node)mea1, ue1left);
                                                                           			 RESULT = node; 
                                                                           			 System.out.print("Valor multExp: " + node.getValue() + "    ");
+                                                                          			 System.out.print("Tipo real do atributo valor: " + node.getValue().getClass());
                                                                           			 System.out.println("Tipo multExp: " + node.getType()); :};
 
 multiplicativeExpressionAux ::= STAR unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: Node node = parser.as.checkTypesOpArithmeticAux((Node)ue1, (Node)mea1, "*", ue1left);
