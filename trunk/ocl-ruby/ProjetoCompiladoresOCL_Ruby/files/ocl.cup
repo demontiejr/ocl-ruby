@@ -238,104 +238,36 @@ relationalOperator ::= EQ
 					| NE;
 
 additiveExpression ::= multiplicativeExpression:me1 additiveExpressionAux:aea1 {: System.out.println("Entrou additive exp"); 
-																				  Node node = new Node(); 
-                                                                                  if (aea1 == null)
-                                                                                      node = (Node)me1;
-                                                                                  else{
-                                                                              	      String type = parser.as.maxType(((Node)me1).getType(), ((Node)aea1).getType(), me1left);
-                                                                                      if (type == null)
-                                                                                      	type = ((Node)aea1).getType();
-                                                                              		  node.setType(type);
-                                                                                  }
+																				  Node node = parser.as.checkTypesOpArithmetic((Node)me1, (Node)aea1, me1left);
                                                                           		  RESULT = node; 
                                                                           		  System.out.println("Tipo additiveExp: " + node.getType()); :};
 
-additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAux:aea1 {: Node node = new Node(); 
-                                                                                     	 String type;
-                                                                                     	 if (aea1 == null){
-                                                                                     	 	type = ((Node)me1).getType();
-                                                                                     	 	if (!(type.equals("Float") || type.equals("Integer"))){
-                                                                                     	 		parser.as.error(me1left, "operador ' + ' indefinido para o tipo " + type);
-                                                                                     	 		
-                                                                                         	}
-                                                                                         	node.setType(type);
-                                                                                         } else{
-                                                                                     	 	type = parser.as.maxType(((Node)me1).getType(), ((Node)aea1).getType(), me1left);
-                                                                                     	 	if (type == null)
-                                                                                     	 		type = ((Node)aea1).getType();
-                                                                              			 	node.setType(type);
-                                                                          			 	 }
+additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAux:aea1 {: Node node = parser.as.checkTypesOpArithmeticAux((Node)me1, (Node)aea1, "+", me1left);
                                                                           			 	 RESULT = node; :}
-								| MINUS multiplicativeExpression:me1 additiveExpressionAux:aea1 {: Node node = new Node(); 
-                                                                                     		 	   String type;
-                                                                                     		 	   if (aea1 == null){
-                                                                                     		 	   	  type = ((Node)me1).getType();
-                                                                                     		 	   if (!(type.equals("Float") || type.equals("Integer"))){
-                                                                                     		 		  parser.as.error(me1left, "operador ' - ' indefinido para o tipo " + type);
-                                                                                     		 		  
-                                                                                        	 	   }
-                                                                                        	 		  node.setType(type);
-                                                                                        	 	   } else{
-                                                                                     		 	      type = parser.as.maxType(((Node)me1).getType(), ((Node)aea1).getType(), me1left);
-                                                                                     		 	      if (type == null)
-                                                                                     		 		     type = ((Node)aea1).getType();
-                                                                              				 	      node.setType(type);
-                                                                          			 		       }
+								| MINUS multiplicativeExpression:me1 additiveExpressionAux:aea1 {: Node node = parser.as.checkTypesOpArithmeticAux((Node)me1, (Node)aea1, "-", me1left);
                                                                           			 		       RESULT = node; :}
 								| ;
 
-multiplicativeExpression ::= unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: System.out.println("Entrou mult exp"); Node node = new Node(); 
-                                                                                     if (mea1 == null)
-                                                                                     	node = (Node)ue1;
-                                                                                     else{
-                                                                                     	String type = parser.as.maxType(((Node)ue1).getType(), ((Node)mea1).getType(), ue1left);
-                                                                                     	if (type == null)
-                                                                                     		type = ((Node)mea1).getType();
-                                                                              			node.setType(type);
-                                                                          			 }
+multiplicativeExpression ::= unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: System.out.println("Entrou mult exp"); 
+																					 Node node = parser.as.checkTypesOpArithmetic((Node)ue1, (Node)mea1, ue1left);
                                                                           			 RESULT = node; 
                                                                           			 System.out.println("Tipo multExp: " + node.getType()); :};
 
-multiplicativeExpressionAux ::= STAR unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: Node node = new Node(); 
-                                                                                     		 String type;
-                                                                                     		 if (mea1 == null){
-                                                                                     		 	type = ((Node)ue1).getType();
-                                                                                     		 	if (!(type.equals("Float") || type.equals("Integer"))){
-                                                                                     		 		parser.as.error(ue1left, "operador ' * ' indefinido para o tipo " + type);
-                                                                                     		 		
-                                                                                        	 	}
-                                                                                        	 	node.setType(type);
-                                                                                        	 } else{
-                                                                                     		 	type = parser.as.maxType(((Node)ue1).getType(), ((Node)mea1).getType(), ue1left);
-                                                                                     		 	if (type == null)
-                                                                                     		 		type = ((Node)mea1).getType();
-                                                                              				 	node.setType(type);
-                                                                          			 		 }
+multiplicativeExpressionAux ::= STAR unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: Node node = parser.as.checkTypesOpArithmeticAux((Node)ue1, (Node)mea1, "*", ue1left);
                                                                           			 		 RESULT = node; :}
 							    
-							    | DIV unaryExpression:ue1 multiplicativeExpressionAux:mea1{: Node node = new Node();
-                                                                                     		 String type;
-                                                                                     		 if (mea1 == null){
-                                                                                     		 	type = ((Node)ue1).getType();
-                                                                                     		 	if (!(type.equals("Float") || type.equals("Integer"))){
-                                                                                     		 		parser.as.error(ue1left, "operador ' / ' indefinido para o tipo " + type);
-                                                                                     		 		
-                                                                                        	 	}
-                                                                                        	 	else if (type.equals("Float")){
+							    | DIV unaryExpression:ue1 multiplicativeExpressionAux:mea1{: if (mea1 == null){
+							    																String type = ((Node)ue1).getType();
+                                                                                     		 	if (type.equals("Float")){
                                                                                         	 		if ((Float)((Node)ue1).getValue() == 0f)
                                                                                         	 			throw new excecoes.ArithmeticException("divisao por zero na linha " + (ue1left+1));
                                                                                         	 	} else {
                                                                                         	 		if ((Integer)((Node)ue1).getValue() == 0)
                                                                                         	 			throw new excecoes.ArithmeticException("divisao por zero na linha " + (ue1left+1));
                                                                                         	 	}
-                                                                                        	 	node.setType(type);
-                                                                                        	 } else{
-                                                                                     		 	type = parser.as.maxType(((Node)ue1).getType(), ((Node)mea1).getType(), ue1left);
-                                                                                     		 	if (type == null)
-                                                                                     		 		type = ((Node)mea1).getType();
-                                                                              				 	node.setType(type);
-                                                                          			 		 }
-                                                                          			 		 RESULT = node; :}
+                                                                                        	 }
+                                                                                        	 Node node = parser.as.checkTypesOpArithmeticAux((Node)ue1, (Node)mea1, "/", ue1left);
+                                                                                        	 RESULT = node; :}
 								| ;
 
 unaryExpression ::= unaryOperator:uo1 postfixExpression:pfe1 {: Node node = (Node)pfe1;

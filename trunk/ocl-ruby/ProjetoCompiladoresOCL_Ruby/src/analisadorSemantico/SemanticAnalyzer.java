@@ -102,4 +102,38 @@ public class SemanticAnalyzer {
 		}
 		return null;
 	}
+	
+	public Node checkTypesOpArithmetic(Node rule1, Node rule2, int line ){
+		Node node = new Node(); 
+        if (rule2 == null)
+        	node = (Node)rule1;
+        else{
+        	String type = maxType(((Node)rule1).getType(), ((Node)rule2).getType(), line);
+        	if (type == null)
+        		type = ((Node)rule2).getType();
+ 			node.setType(type);
+        }
+        return node;
+	}
+	
+	public Node checkTypesOpArithmeticAux(Node rule1, Node rule2, String operator, int line ){
+		 Node node = new Node(); 
+    	 String type;
+    	 if (rule2 == null){
+    	 	type = ((Node)rule1).getType();
+    	 	if (!(type.equals("Float") || type.equals("Integer"))){
+    	 		error(line, "operador ' " + operator + " ' indefinido para o tipo " + type);
+    	 		
+        	}
+        	node.setType(type);
+        } else{
+    	 	type = maxType(((Node)rule1).getType(), ((Node)rule2).getType(), line);
+    	 	if (type == null)
+    	 		type = ((Node)rule2).getType();
+			node.setType(type);
+		 }
+		return node;
+	}
+	
+	
 }
