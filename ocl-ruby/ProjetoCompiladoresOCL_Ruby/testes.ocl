@@ -1,2 +1,2 @@
 context MinhaClasse::meuMetodoDaMinhaLindaClasseBunita(): MeuTipoDeRetorno
-	post: a->forAll(2<3)
+	post: (3 < 4) =  ((3=3) implies false)
