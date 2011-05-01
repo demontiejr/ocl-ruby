@@ -115,6 +115,7 @@ public class SemanticAnalyzer {
         	    value = ((Node)rule2).getValue(); //TODO: testar isso
         	}else{
         		value = calcValue((Node)rule1, (Node)rule2, rule2.getOperation(), type);
+        		System.err.println("value no aux: " + value + "  " + value.getClass());
         	}
  			node.setType(type);
     	 	node.setValue(value);
@@ -144,11 +145,13 @@ public class SemanticAnalyzer {
 			} else {
 				value = calcValue((Node) rule1, (Node) rule2,
 						rule2.getOperation(), type);
+				System.err.println("value no aux: " + value + "  " + value.getClass());
 			}
 			node.setType(type);
 			node.setValue(value);
 		}
 		node.setOperation(operator);
+		System.err.println(node.getValue().getClass());
 		return node;
 	}
 	
@@ -176,7 +179,11 @@ public class SemanticAnalyzer {
 			result = v1/v2;
 		else if (operator.equals("*"))
 			result = v1 * v2;
-		return type.equals("Float") ? result : result.intValue();
+		
+		if (type.equals("Float"))
+			return result;
+		else
+			return (Integer)result.intValue();
 	}
 	
 	
