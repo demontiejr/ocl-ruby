@@ -235,10 +235,10 @@ logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExp
                                                                           			 		 	   RESULT = node; :}
 					  | ;
 
-logicalOperator ::= AND
-			     | OR
-				 | XOR
-				 | IMPLIES;
+logicalOperator ::= AND {: RESULT = "and"; :}
+			     | OR {: RESULT = "or"; :}
+				 | XOR {: RESULT = "xor"; :}
+				 | IMPLIES {: RESULT = "implies"; :};
 
 relationalExpression ::= additiveExpression:ae1 relationalExpressionAux:rea {: System.out.println("Entrou relational exp");
 																			   Node node = new Node();
@@ -248,8 +248,11 @@ relationalExpression ::= additiveExpression:ae1 relationalExpressionAux:rea {: S
                                                                                   String type = parser.as.maxType(((Node)ae1).getType(), ((Node)rea).getType(), ae1left);
                                                                                   if (type == null)
                                                                                      type = ((Node)rea).getType();
+                                                                                  node.setValue(parser.as.calcRelationalValue((Node)ae1, (Node)rea, (String)((Node)rea).getOperation(), type));
                                                                                   node.setType(type);
                                                                           	   }
+                                                                          	   System.out.println("Relational   ... valorrr...   " + ((Node)node).getValue());
+                                                                          	   RESULT = node;
 																			:}
 						 | additiveExpression:ae1 {: System.out.println("Entrou relational exp"); RESULT = ae1; :};
 
@@ -257,16 +260,20 @@ relationalExpressionAux ::= relationalOperator:ro1 additiveExpression:ae2 relati
                                                                                      		 	   		 String type;
                                                                                      		 	   		 type = parser.as.maxType(((Node)ae2).getType(), ((Node)rea).getType(), ae2left);
                                                                                      		 	      	 //ver se eh necessario implementar calculo do valor
+                                                                                     		 	      	 node.setValue(parser.as.calcRelationalValue((Node)ae2, (Node)rea, (String)((Node)rea).getOperation(), type));
                                                                                      		 	      	 node.setType("Boolean");
+                                                                                     		 	      	 node.setOperation((String)ro1);
                                                                           			 		 	   		 RESULT = node; :}
-						| relationalOperator:ro1 additiveExpression:ae2 {: RESULT = ae2; :};
+						| relationalOperator:ro1 additiveExpression:ae2 {: Node node = (Node)ae2;
+																		   node.setOperation((String)ro1);
+																		   RESULT = node; :};
 
-relationalOperator ::= EQ
-					| GT
-					| LT
-					| GE
-					| LE
-					| NE;
+relationalOperator ::= EQ {: RESULT = "="; :}
+					| GT {: RESULT = ">"; :}
+					| LT {: RESULT = "<"; :}
+					| GE {: RESULT = ">="; :}
+					| LE {: RESULT = "<="; :}
+					| NE {: RESULT = "<>"; :};
 
 additiveExpression ::= multiplicativeExpression:me1 additiveExpressionAux:aea1 {: System.out.println("Entrou additive exp"); 
 																				  Node node = parser.as.checkTypesOpArithmetic((Node)me1, (Node)aea1, me1left);
@@ -306,7 +313,7 @@ multiplicativeExpressionAux ::= STAR unaryExpression:ue1 multiplicativeExpressio
 								| ;
 
 unaryExpression ::= unaryOperator:uo1 postfixExpression:pfe1 {: Node node = (Node)pfe1;
-																if (((String)uo1).equals("NOT")){
+																if (((String)uo1).equals("not")){
 																	if (node.getType().equals("Integer") || node.getType().equals("Float") || node.getType().equals("String"))
 																		parser.as.error(pfe1left, "operador 'NOT' nao eh definido para o tipo " + node.getType());
 																	else
@@ -325,8 +332,8 @@ unaryExpression ::= unaryOperator:uo1 postfixExpression:pfe1 {: Node node = (Nod
 															 :}
 			     | postfixExpression:pfe1 {: System.out.println("Entrou unary exp"); RESULT = pfe1; :};
 
-unaryOperator ::= NOT
-			   | MINUS;
+unaryOperator ::= NOT {: RESULT = "not"; :}
+			   | MINUS {: RESULT = "-"; :};
 
 postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1 {: Node node = new Node();
                                                                           if (pfea1 == null){
@@ -353,10 +360,8 @@ primaryExpression ::= litteralCollection:lc1
 				   | RESULT:r {: parser.as.checkStereotype("result", rleft); :} 
 				   | featureCall:fCall1 {: System.out.println("Entrou primExp como featureCall"); RESULT = fCall1; :} 
 				   | LPAREN expression:exp1 RPAREN {: System.out.println("Entrou primExp");
-				   									  Node node = new Node();
-				                                      node.setType(((Node)exp1).getType());
-				                                      RESULT = node; 
-				                                      System.out.println("Tipo primExp: " + node.getType());:}
+				   									  RESULT = exp1; 
+				                                      :}
 				   | ifExpression:ifexp1 {: Node node = new Node(); 
 				                            node.setType("Boolean");
 				                            RESULT = node; 
