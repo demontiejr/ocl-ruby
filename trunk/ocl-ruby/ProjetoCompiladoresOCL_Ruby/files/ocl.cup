@@ -155,7 +155,6 @@ non terminal relationalExpressionAux;
 /*Precedencias*/
 precedence left COMA;
 precedence left IMPLIES;
-precedence left NOT;
 precedence left AND;
 precedence left OR;
 precedence left XOR;
@@ -209,13 +208,31 @@ expression ::= logicalExpression:le1 {: System.out.println("Entrou exp"); RESULT
 
 logicalExpression ::= relationalExpression:re1 logicalExpressionAux:lea1 {: System.out.println("Entrou logical exp"); Node node = new Node(); 
                                                                             if (lea1 == null)
-                                                                                 node.setType(((Node)re1).getType());
-                                                                            else
-                                                                                 node.setType(((Node)lea1).getType());
+                                                                                node = (Node)re1;
+                                                                            else{
+                                                                            	String type = parser.as.maxType(((Node)re1).getType(), ((Node)lea1).getType(), re1left);
+                                                                                if (type == null)
+                                                                                	type = ((Node)lea1).getType();
+                                                                                node.setType(type);
+                                                                          	}
                                                                           	RESULT = node; 
                                                                           	System.out.println("Tipo logicalExp: " + node.getType());:};
 
-logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExpressionAux:lea1 {: RESULT = new Node("", ""); :}
+logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExpressionAux:lea1 {: Node node = new Node(); 
+                                                                                     		 	   String type;
+                                                                                     		 	   if (lea1 == null){
+                                                                                     		 	      type = ((Node)re1).getType();
+                                                                                     		 	      if (!type.equals("Boolean")){
+                                                                                     		 	         parser.as.error(re1left, "operador " + (String)lo1 + " so eh definido para valores booleanos");
+                                                                                        	 	      }
+                                                                                        	 	      node.setType(type);
+                                                                                        	       } else{
+                                                                                     		 	      type = parser.as.maxType(((Node)re1).getType(), ((Node)lea1).getType(), re1left);
+                                                                                     		 	      if (type == null)
+                                                                                     		 		     type = ((Node)lea1).getType();
+                                                                              				 		  node.setType(type);
+                                                                          			 		 	   }
+                                                                          			 		 	   RESULT = node; :}
 					  | ;
 
 logicalOperator ::= AND
@@ -223,12 +240,26 @@ logicalOperator ::= AND
 				 | XOR
 				 | IMPLIES;
 
-relationalExpression ::= additiveExpression:ae1 relationalExpressionAux:rea {: System.out.println("Sera que isso aqui deu merda?");
-													// checar conformidade de tipos e retornar boolean em caso afirmativo
-													:}
+relationalExpression ::= additiveExpression:ae1 relationalExpressionAux:rea {: System.out.println("Entrou relational exp");
+																			   Node node = new Node();
+																			   if (rea == null)
+																			      node = (Node)ae1;
+																			   else{
+                                                                                  String type = parser.as.maxType(((Node)ae1).getType(), ((Node)rea).getType(), ae1left);
+                                                                                  if (type == null)
+                                                                                     type = ((Node)rea).getType();
+                                                                                  node.setType(type);
+                                                                          	   }
+																			:}
 						 | additiveExpression:ae1 {: System.out.println("Entrou relational exp"); RESULT = ae1; :};
 
-relationalExpressionAux ::= relationalOperator:ro1 additiveExpression:ae2 relationalExpressionAux:rea | relationalOperator:ro1 additiveExpression:ae2 {: RESULT =  :};
+relationalExpressionAux ::= relationalOperator:ro1 additiveExpression:ae2 relationalExpressionAux:rea {: Node node = new Node(); 
+                                                                                     		 	   		 String type;
+                                                                                     		 	   		 type = parser.as.maxType(((Node)ae2).getType(), ((Node)rea).getType(), ae2left);
+                                                                                     		 	      	 //ver se eh necessario implementar calculo do valor
+                                                                                     		 	      	 node.setType("Boolean");
+                                                                          			 		 	   		 RESULT = node; :}
+						| relationalOperator:ro1 additiveExpression:ae2 {: RESULT = ae2; :};
 
 relationalOperator ::= EQ
 					| GT
