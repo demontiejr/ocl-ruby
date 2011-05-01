@@ -271,6 +271,7 @@ relationalOperator ::= EQ
 additiveExpression ::= multiplicativeExpression:me1 additiveExpressionAux:aea1 {: System.out.println("Entrou additive exp"); 
 																				  Node node = parser.as.checkTypesOpArithmetic((Node)me1, (Node)aea1, me1left);
                                                                           		  RESULT = node; 
+                                                                          		  System.out.print("Valor addExp: " + node.getValue() + "    ");
                                                                           		  System.out.println("Tipo additiveExp: " + node.getType()); :};
 
 additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAux:aea1 {: Node node = parser.as.checkTypesOpArithmeticAux((Node)me1, (Node)aea1, "+", me1left);
@@ -282,6 +283,7 @@ additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAu
 multiplicativeExpression ::= unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: System.out.println("Entrou mult exp"); 
 																					 Node node = parser.as.checkTypesOpArithmetic((Node)ue1, (Node)mea1, ue1left);
                                                                           			 RESULT = node; 
+                                                                          			 System.out.print("Valor multExp: " + node.getValue() + "    ");
                                                                           			 System.out.println("Tipo multExp: " + node.getType()); :};
 
 multiplicativeExpressionAux ::= STAR unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: Node node = parser.as.checkTypesOpArithmeticAux((Node)ue1, (Node)mea1, "*", ue1left);
@@ -326,15 +328,15 @@ unaryOperator ::= NOT
 
 postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1 {: Node node = new Node();
                                                                           if (pfea1 == null){
-                                                                          	node.setValue(((Node)pe1).getValue());
-                                                                            node.setType(((Node)pe1).getType());
+                                                                          	node = (Node)pe1;
                                                                           }
                                                                           else{
-                                                                          	node.setValue(((Node)pfea1).getValue());
-                                                                            node.setType(((Node)pfea1).getType());
+                                                                          	node = (Node)pfea1;
                                                                           }
                                                                           RESULT = node; :}
+				   
 				   | SELF featureAccess:fa1
+				   
 				   | SELF AROBAPRE featureAccess:fa1 {: parser.as.checkStereotype("@pre", fa1left); :};
 
 postfixExpressionAux ::= POINT featureCall:fCall1 postfixExpressionAux:pfea1 {: RESULT = new Node("", ""); :}

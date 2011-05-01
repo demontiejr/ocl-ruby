@@ -108,31 +108,75 @@ public class SemanticAnalyzer {
         if (rule2 == null)
         	node = (Node)rule1;
         else{
+        	Object value;
         	String type = maxType(((Node)rule1).getType(), ((Node)rule2).getType(), line);
-        	if (type == null)
+        	if (type == null){
         		type = ((Node)rule2).getType();
+        	    value = ((Node)rule2).getValue(); //TODO: testar isso
+        	}else{
+        		value = calcValue((Node)rule1, (Node)rule2, rule2.getOperation(), type);
+        	}
  			node.setType(type);
+    	 	node.setValue(value);
         }
         return node;
 	}
 	
-	public Node checkTypesOpArithmeticAux(Node rule1, Node rule2, String operator, int line ){
-		 Node node = new Node(); 
-    	 String type;
-    	 if (rule2 == null){
-    	 	type = ((Node)rule1).getType();
-    	 	if (!(type.equals("Float") || type.equals("Integer"))){
-    	 		error(line, "operador ' " + operator + " ' indefinido para o tipo " + type);
-    	 		
-        	}
-        	node.setType(type);
-        } else{
-    	 	type = maxType(((Node)rule1).getType(), ((Node)rule2).getType(), line);
-    	 	if (type == null)
-    	 		type = ((Node)rule2).getType();
+	public Node checkTypesOpArithmeticAux(Node rule1, Node rule2, String operator, int line) {
+		Node node = new Node();
+		String type;
+		if (rule2 == null) {
+			type = ((Node) rule1).getType();
+			if (!(type.equals("Float") || type.equals("Integer"))) {
+				error(line, "operador ' " + operator
+						+ " ' indefinido para o tipo " + type);
+
+			}
 			node.setType(type);
-		 }
+			node.setValue(((Node) rule1).getValue());
+		} else {
+			Object value;
+			type = maxType(((Node) rule1).getType(), ((Node) rule2).getType(),
+					line);
+			if (type == null) {
+				type = ((Node) rule2).getType();
+				value = ((Node) rule2).getValue(); // TODO: testar isso
+			} else {
+				value = calcValue((Node) rule1, (Node) rule2,
+						rule2.getOperation(), type);
+			}
+			node.setType(type);
+			node.setValue(value);
+		}
+		node.setOperation(operator);
 		return node;
+	}
+	
+	/**
+	 * TODO: extender para aceitar double e long
+	 */
+	private Object calcValue(Node rule1, Node rule2, String operator, String type) {
+		Float v1 = 0f, v2 = 0f, result = 0f;
+		if (rule1.getType().equals("Float"))
+			v1 = (Float) rule1.getValue();
+		else if (rule1.getType().equals("Integer"))
+			v1 = ((Integer) rule1.getValue()).floatValue();
+
+		if (rule2.getType().equals("Float"))
+			v2 = (Float) rule2.getValue();
+		else if (rule2.getType().equals("Integer"))
+			v2 = ((Integer) rule2.getValue()).floatValue();
+
+		//calculando as expressoes
+		if (operator.equals("+"))
+			result = v1 + v2;
+		else if (operator.equals("-"))
+			result = v1 - v2;
+		else if (operator.equals("/"))
+			result = v1/v2;
+		else if (operator.equals("*"))
+			result = v1 * v2;
+		return type.equals("Float") ? result : result.intValue();
 	}
 	
 	

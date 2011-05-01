@@ -17,6 +17,7 @@ public class Node {
 
 	private Object value;
 	private String type;
+	private String operation;
 	private List<String> list;
 	
 	public Node(Object value, String type) {
@@ -45,6 +46,14 @@ public class Node {
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	public String getOperation() {
+		return operation;
+	}
+
+	public void setOperation(String operation) {
+		this.operation = operation;
 	}
 	
 	public void addElement(String element){
