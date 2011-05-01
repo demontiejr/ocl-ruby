@@ -211,12 +211,16 @@ logicalExpression ::= relationalExpression:re1 logicalExpressionAux:lea1 {: Syst
                                                                                 node = (Node)re1;
                                                                             else{
                                                                             	String type = parser.as.maxType(((Node)re1).getType(), ((Node)lea1).getType(), re1left);
-                                                                                if (type == null)
+                                                                                if (type == null){
                                                                                 	type = ((Node)lea1).getType();
+                                                                                	node.setValue(new Boolean(false));
+                                                                                }
+                                                                                else
+                                                                                    node.setValue(parser.as.calcLogicalValue((Boolean), (Boolean), (String)lo1));
                                                                                 node.setType(type);
                                                                           	}
                                                                           	RESULT = node; 
-                                                                          	System.out.println("Tipo logicalExp: " + node.getType());:};
+                                                                          	System.out.println("Tipo logicalExp: " + node.getType()); :};
 
 logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExpressionAux:lea1 {: Node node = new Node(); 
                                                                                      		 	   String type;
@@ -226,12 +230,18 @@ logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExp
                                                                                      		 	         parser.as.error(re1left, "operador " + (String)lo1 + " so eh definido para valores booleanos");
                                                                                         	 	      }
                                                                                         	 	      node.setType(type);
+                                                                                        	 	      node.setValue(((Node)re1).getValue());
                                                                                         	       } else{
                                                                                      		 	      type = parser.as.maxType(((Node)re1).getType(), ((Node)lea1).getType(), re1left);
-                                                                                     		 	      if (type == null)
-                                                                                     		 		     type = ((Node)lea1).getType();
+                                                                                     		 	      if ((type == null) || !type.equals("Boolean")){
+                                                                                     		 		     type = "Boolean";
+                                                                                     		 		     node.setValue(new Boolean(false));
+                                                                                     		 		  }
+                                                                                     		 		  else
+                                                                                     		 		     node.setValue(parser.as.calcLogicalValue((Boolean), (Boolean), (String)lo1));
                                                                               				 		  node.setType(type);
                                                                           			 		 	   }
+                                                                          			 		 	   node.setOperation((String)lo1);
                                                                           			 		 	   RESULT = node; :}
 					  | ;
 
