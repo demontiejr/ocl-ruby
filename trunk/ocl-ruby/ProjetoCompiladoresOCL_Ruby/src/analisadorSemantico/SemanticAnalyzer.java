@@ -1,7 +1,7 @@
 package analisadorSemantico;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import excecoes.RelationalErrorException;
 import excecoes.SemanticErrorException;
@@ -20,9 +20,9 @@ public class SemanticAnalyzer {
 	private String[] collectionOperations = {"forAll", "exists", "includes", "excludes",
 			"including", "size", "excluding", "select", "empty", "first"};
 	private String opID;
-	private List<String> logErros = new ArrayList<String>();
+	private Set<String> logErros = new HashSet<String>();
 	
-	public List<String> getLogErros() {
+	public Set<String> getLogErros() {
 		return logErros;
 	}
 
