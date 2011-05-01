@@ -227,4 +227,16 @@ public class SemanticAnalyzer {
 		return false;
 	}
 	
+	public Boolean calcLogicalValue(Boolean value1, Boolean value2, String operator) {
+		if(operator.equals("and"))
+			return value1 && value2;
+		else if(operator.equals("or"))
+			return value1 || value2;
+		else if(operator.equals("implies"))
+			return !value1 || value2;
+		else // xor
+			return value1 ^ value2;
+		
+	}
+	
 }
