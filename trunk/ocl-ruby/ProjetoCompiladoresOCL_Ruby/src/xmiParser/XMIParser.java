@@ -337,8 +337,8 @@ public class XMIParser {
 	
 	public static void main(String[] args) {
 		try {
-			//File xmi = new File(args[0]);
-			File xmi = new File("./files/profe.xml");
+			//File xmi = new File(args[1]);
+			File xmi = new File("./files/Profe.xml");
 			XMIParser parser = new XMIParser(xmi);
 			parser.readXMI();
 			
@@ -351,7 +351,14 @@ public class XMIParser {
 					}
 					System.out.println();
 					for (Operacao op : c.getOperacoes()) {
-						System.out.println(op);
+						String return1 = op.getReturnType();
+						if(return1!=null && (return1.equals("String") || return1.equals("Float")
+							|| return1.equals("Integer") || return1.equals("Boolean"))){
+								System.out.println(op + return1);
+						}
+						else{
+							System.out.println(op);
+						}
 					}
 					System.out.println("\n=====================\n\n");
 				}

@@ -53,14 +53,6 @@ public class Classe implements Entidade{
 			heranca = classePai.getName();
 		return " "+name+"("+heranca+") ";
 	}
-	
-	public boolean temPai(){
-		return (getClassePai()!=null && getIdClassePai()!=null);
-	}
-	
-	public boolean ehFilho(Classe c){
-		return (temPai() && getClassePai().equals(c));
-	}
 
 	public void addAtributo(Atributo att) throws Exception {
 		this.atributos.add(att);
@@ -92,5 +84,19 @@ public class Classe implements Entidade{
 
 	public void addOperacao(Operacao op) {
 		this.operacoes.add(op);
+	}
+
+	public boolean temPai() {
+		return this.classePai!=null;
+	}
+
+	public boolean ehFilho(Classe c2) {
+		if(classePai!=null){
+			if(classePai.getName().equals(c2.getName()))
+				return true;
+			else
+				return classePai.ehFilho(c2);
+		}
+		return false;
 	}
 }
