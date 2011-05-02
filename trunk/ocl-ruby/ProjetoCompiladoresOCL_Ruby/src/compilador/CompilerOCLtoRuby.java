@@ -127,7 +127,9 @@ public class CompilerOCLtoRuby {
 				e.printStackTrace();
 			} catch (FatalErrorException e) {
 				fatalErrors.add(e.getMessage());
-			} catch (Exception e) {
+			} catch (SemanticErrorException e){
+				errors.add(e.getMessage());
+			}catch (Exception e) {
 				parser.log.add("\nErro durante a analise: " + e.getMessage() + "\n");
 			}
 			System.out.println("\n" + (errors.size() + parser.as.getLogErros().size()) + " erro(s)\n");
