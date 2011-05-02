@@ -3,6 +3,8 @@ package analisadorSemantico;
 import java.util.HashSet;
 import java.util.Set;
 
+import xmiParser.ManipuladorXMI;
+import xmiParser.util.Operacao;
 import excecoes.RelationalErrorException;
 import excecoes.SemanticErrorException;
 
@@ -15,6 +17,9 @@ import excecoes.SemanticErrorException;
  *
  */
 public class SemanticAnalyzer {
+
+	private String contextClass;
+	private String contextMethod;
 
 	private String stereotype;
 	private String[] collectionOperations = {"forAll", "exists", "includes", "excludes",
@@ -38,6 +43,22 @@ public class SemanticAnalyzer {
 		this.opID = collectionOpID;
 	}
 
+	public String getContextClass() {
+		return contextClass;
+	}
+
+	private void setContextClass(String contextClass) {
+		this.contextClass = contextClass;
+	}
+
+	public String getContextMethod() {
+		return contextMethod;
+	}
+
+	private void setContextMethod(String contextMethod) {
+		this.contextMethod = contextMethod;
+	}
+	
 	public void checkCollectionOperation(String operation, String parameterType, int line) throws SemanticErrorException {
 		if (!checkCollectionOpName(operation))
 			error(line, operation + " nao eh uma operacao de collection " +
@@ -146,7 +167,6 @@ public class SemanticAnalyzer {
 			} else {
 				value = calcArithmeticValue((Node) rule1, (Node) rule2,
 						rule2.getOperation(), type);
-				System.err.println("value no aux: " + value + "  " + value.getClass());
 			}
 			node.setType(type);
 			node.setValue(value);
@@ -237,6 +257,27 @@ public class SemanticAnalyzer {
 		else // xor
 			return value1 ^ value2;
 		
+	}
+	
+	public void setContext(String exp) throws SemanticErrorException {
+		String[] separate = exp.split("::");
+		
+		String classe = separate[separate.length-2];
+
+		String metodo = separate[separate.length-1]/*.substring(0,separate[1].indexOf("(")-1)*/;
+
+		System.out.println("Classe: "+classe);
+		System.out.println("Método: "+metodo);
+		
+		setContextClass(classe);
+		
+//		try {
+//			ManipuladorXMI.contemFuncao(classe,classe,metodo);
+//			setContextMethod(classe);
+//		} catch (Exception e) {
+//			throw new SemanticErrorException(e.getMessage());
+//		}
+		setContextMethod(classe); //TODO: substituir isso pelo comentario acima quando davi ajeitar
 	}
 	
 }
