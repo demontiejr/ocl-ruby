@@ -20,6 +20,7 @@ public class SemanticAnalyzer {
 
 	private String contextClass;
 	private String contextMethod;
+	private String contextType;
 
 	private String stereotype;
 	private String[] collectionOperations = {"forAll", "exists", "includes", "excludes",
@@ -57,6 +58,14 @@ public class SemanticAnalyzer {
 
 	private void setContextMethod(String contextMethod) {
 		this.contextMethod = contextMethod;
+	}
+	
+	public String getContextType() {
+		return contextType;
+	}
+
+	private void setContextType(String contextType) {
+		this.contextType = contextType;
 	}
 	
 	public void checkCollectionOperation(String operation, String parameterType, int line) throws SemanticErrorException {
@@ -264,20 +273,23 @@ public class SemanticAnalyzer {
 		
 		String classe = separate[separate.length-2];
 
-		String metodo = separate[separate.length-1]/*.substring(0,separate[1].indexOf("(")-1)*/;
+		String metodo = separate[separate.length-1];
 
 		System.out.println("Classe: "+classe);
 		System.out.println("Método: "+metodo);
 		
 		setContextClass(classe);
 		
-//		try {
-//			ManipuladorXMI.contemFuncao(classe,classe,metodo);
-//			setContextMethod(classe);
-//		} catch (Exception e) {
-//			throw new SemanticErrorException(e.getMessage());
-//		}
-		setContextMethod(classe); //TODO: substituir isso pelo comentario acima quando davi ajeitar
+		try {
+			Operacao op = ManipuladorXMI.contemFuncao(classe,classe,metodo);
+			setContextMethod(metodo);
+			String type = op.getReturnType();
+			if (type == null)
+				type = "Void";
+			setContextType(type);
+		} catch (Exception e) {
+			throw new SemanticErrorException(e.getMessage());
+		}
 	}
 	
 }

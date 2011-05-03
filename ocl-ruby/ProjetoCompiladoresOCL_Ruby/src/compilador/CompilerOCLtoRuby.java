@@ -1,12 +1,16 @@
 package compilador;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import xmiParser.ManipuladorXMI;
+import xmiParser.XMIParser;
 
 import excecoes.FatalErrorException;
 import excecoes.SemanticErrorException;
@@ -111,13 +115,22 @@ public class CompilerOCLtoRuby {
 	
 	public static void semanticAnalysis(String fileName) {
 		System.out.println("============================================");
-		System.out.println("Realizando analise...");
+		System.out.println("Iniciando analise...");
 		System.out.println("============================================");
 		System.out.println("Lendo arquivo XMI...");
-		xmiParser.XMIParser.main(new String[]{"./files/Profe.xml"});
+		File xmi = new File("./files/Profe.xml");
+		try {
+			XMIParser parserxmi = new XMIParser(xmi);
+			parserxmi.readXMI();
+			ManipuladorXMI.setStaticClasses(parserxmi.getArrayClasses());
+		} catch (Exception e1) {
+			System.err.println("Erro durante a leitura do arquivo xmi.");
+			System.exit(0);
+		}
 		ScannerOCL scanner = createScanner(fileName);
 		List<String> fatalErrors = new ArrayList<String>();
 		if (scanner != null) {
+			System.out.println("Realizando anlise...");
 			ParserOCL parser = new ParserOCL(scanner);
 			errors = parser.errorLog;
 			try {

@@ -1,22 +1,27 @@
 package xmiParser;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import xmiParser.util.Atributo;
 import xmiParser.util.Classe;
+import xmiParser.util.Entidade;
 import xmiParser.util.Operacao;
 
 //Classe que vai ter os métodos estáticos
 public class ManipuladorXMI {
 	
-	private static ArrayList<Classe> classes;
+	private static ArrayList<Entidade> classes;
 	private static ArrayList<String> hierarquiaNumbers;
 	
 	private ManipuladorXMI() {
 	}
 	
-	public static void setStaticClasses(ArrayList<Classe> cls){
-		classes = cls;
+	public static void setStaticClasses(Collection<Entidade> cls){
+		classes = new ArrayList<Entidade>();
+		for (Entidade entidade : cls) {
+			classes.add(entidade);
+		}
 		hierarquiaNumbers = new ArrayList<String>();
 		hierarquiaNumbers.add("Integer");
 		hierarquiaNumbers.add("Long");
@@ -25,15 +30,19 @@ public class ManipuladorXMI {
 	}
 	
 	private static Classe getClasse(String idClasse) throws Exception{
-		for (Classe classe : classes) {
-			if(classe.getName().equals(idClasse)){
-				return classe;
+		for (Entidade e : classes) {
+			if(e.getName().equals(idClasse)){
+				try{
+					return (Classe) e;
+				}catch(Exception ex){
+					throw new Exception("Type: <"+idClasse+"> isn't a class.");
+				}
 			}
 		}
 		throw new Exception("Type: <"+idClasse+"> doesn't exists.");
 	}
 	
-	private static Atributo getAtribtuoFromClass(Classe context, Classe classe,
+	private static Atributo getAtributoFromClass(Classe context, Classe classe,
 			String idAtributo) throws Exception {
 		Atributo att = findAttFromList(classe.getAtributos(),idAtributo);
 		if(att!=null){
@@ -43,7 +52,7 @@ public class ManipuladorXMI {
 			return att;
 		}else{
 			if(classe.temPai()){
-				return getAtribtuoFromClass(context, classe.getClassePai(), idAtributo);
+				return getAtributoFromClass(context, classe.getClassePai(), idAtributo);
 			}else{
 				throw new Exception("Atribute: <"+idAtributo+"> not found in type <"+classe.getName()+">.");
 			}
@@ -71,7 +80,7 @@ public class ManipuladorXMI {
 		Classe classe = getClasse(idClasse);
 		Classe contexto = getClasse(context);
 		if(classe!=null){
-			Atributo ret = getAtribtuoFromClass(contexto,classe,idAtributo);
+			Atributo ret = getAtributoFromClass(contexto,classe,idAtributo);
 			return ret;
 		}
 		return null;
@@ -133,7 +142,7 @@ public class ManipuladorXMI {
 	public static String getTipoColecao(String context, String classe, String idAtributo) throws Exception{
 		Classe contexto = getClasse(context);
 		Classe c = getClasse(classe);
-		Atributo att = getAtribtuoFromClass(contexto, c, idAtributo);
+		Atributo att = getAtributoFromClass(contexto, c, idAtributo);
 		if(att!=null && att.ehColecao()){
 			if(att.getIdTipo().contains("<")){
 				return getTypeInCol(att.getIdTipo());
