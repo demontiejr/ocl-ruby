@@ -18,21 +18,27 @@ public class Node {
 	private Object value;
 	private String type;
 	private String operation;
-	private List<String> list;
+	private List<Node> list;
 	
+	public static final int VALUE = 0;
+	public static final int VARIABLE = 1;
+	public static final int FUNCTION = 2;
+	
+	private int role;
+
 	public Node(Object value, String type) {
 		this.value = value;
 		this.type = type;
-		this.list = new ArrayList<String>();
+		this.list = new ArrayList<Node>();
 	}
 
 	public Node(Object value) {
 		this.value = value;
-		this.list = new ArrayList<String>();
+		this.list = new ArrayList<Node>();
 	}
 	
 	public Node() {
-		this.list = new ArrayList<String>();
+		this.list = new ArrayList<Node>();
 	}
 	
 	public Object getValue() {
@@ -56,12 +62,28 @@ public class Node {
 		this.operation = operation;
 	}
 	
-	public void addElement(String element){
+	public int getRole() {
+		return role;
+	}
+
+	public void setRole(int role) {
+		this.role = role;
+	}
+	
+	public void addElement(Node element){
 		list.add(0, element);
 	}
 	
-	public Iterator<String> iterator(){
+	public void addAllElements(List<Node> list){
+		this.list.addAll(0, list);
+	}
+	
+	public Iterator<Node> iterator(){
 		return list.iterator();
+	}
+	
+	public List<Node> getElements(){
+		return this.list;
 	}
 	
 	@Override

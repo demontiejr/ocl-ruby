@@ -1,10 +1,14 @@
 package analisadorSemantico;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import xmiParser.ManipuladorXMI;
+import xmiParser.util.Atributo;
 import xmiParser.util.Operacao;
+import xmiParser.util.Parametro;
 import excecoes.RelationalErrorException;
 import excecoes.SemanticErrorException;
 
@@ -219,6 +223,8 @@ public class SemanticAnalyzer {
 	public Boolean calcRelationalValue(Node rule1, Node rule2, String operator, String type) {
 		if (type == null)
 			return false;
+		if (rule1.getValue() == null || rule2.getValue() == null)
+			return true; //TODO: olhar se eh a melhor forma
 		if (type.equals("Boolean") || type.equals("String")){
 			Object v1 = rule1.getValue();
 			Object v2 = rule2.getValue();
@@ -257,6 +263,8 @@ public class SemanticAnalyzer {
 	}
 	
 	public Boolean calcLogicalValue(Boolean value1, Boolean value2, String operator) {
+		if (value1 == null || value2 == null)
+			return true; //TODO: olhar se eh a melhor forma
 		if(operator.equals("and"))
 			return value1 && value2;
 		else if(operator.equals("or"))
@@ -290,6 +298,40 @@ public class SemanticAnalyzer {
 		} catch (Exception e) {
 			throw new SemanticErrorException(e.getMessage());
 		}
+	}
+	
+	public Node checkFeatureCall(String classe, Node elemento, int role, int line){
+		Node node = new Node();
+		try {
+			String type = null;
+			if (role == Node.FUNCTION){
+				Operacao op = ManipuladorXMI.contemFuncao(classe,classe,(String)elemento.getValue());
+				type = op.getReturnType();
+				checkParams(op, elemento.getElements(), line);
+			} else if (role == Node.VARIABLE){
+				Atributo at = ManipuladorXMI.contemAtributo(classe, classe, (String)elemento.getValue());
+				type = at.getIdTipo();
+			}
+			if (type == null)
+				type = "Void";
+			node.setType(type);
+		} catch (Exception e){
+			error(line, e.getMessage());
+		}
+		return node;
+	}
+
+	private void checkParams(Operacao op, List<Node> elements, int line) {
+		ArrayList<Parametro> params = op.getParametros();
+		if (params.size() != elements.size())
+			error(line, "numero errado de parametros na chamada a funcao " + op.getNome() + ".\nDevem ser passados " +
+					params.size() + " parametros, mas foram passados " + elements.size());
+		for (int i=0; i<params.size(); i++){
+			if (!params.get(i).getIdTipo().equals(elements.get(i).getType()))
+				error(line, "tipo de parametro errado na chamada a funcao " + op.getNome() + ".\nO " + (i+1) + "º parametro"
+					+ " deveria ser um " + params.get(i).getIdTipo() + ", mas foi passado um " + elements.get(i).getType());
+		}
+		
 	}
 	
 }
