@@ -35,11 +35,11 @@ public class ManipuladorXMI {
 				try{
 					return (Classe) e;
 				}catch(Exception ex){
-					throw new Exception("Type: <"+idClasse+"> isn't a class.");
+					throw new Exception("O tipo '"+idClasse+"' nao eh uma classe.");
 				}
 			}
 		}
-		throw new Exception("Type: <"+idClasse+"> doesn't exists.");
+		throw new Exception("A classe '"+idClasse+"' nao existe.");
 	}
 	
 	private static Atributo getAtributoFromClass(Classe context, Classe classe,
@@ -47,14 +47,14 @@ public class ManipuladorXMI {
 		Atributo att = findAttFromList(classe.getAtributos(),idAtributo);
 		if(att!=null){
 			if(!context.getName().equals(classe.getName()) && att.getVisibilidade().equalsIgnoreCase("private")){
-				throw new Exception("Atribute: <"+idAtributo+"> doesn't come from inheritance <"+context.getName()+"> => <"+context.getName()+">.");
+				throw new Exception("O atributo '"+idAtributo+"' da classe '"+classe.getName()+"' eh privado e nao pode ser acessado pela classe '"+context.getName()+"'.");
 			}
 			return att;
 		}else{
 			if(classe.temPai()){
 				return getAtributoFromClass(context, classe.getClassePai(), idAtributo);
 			}else{
-				throw new Exception("Atribute: <"+idAtributo+"> not found in type <"+classe.getName()+">.");
+				throw new Exception("Nao existe o atributo '"+idAtributo+"' na classe '"+classe.getName()+"'.");
 			}
 		}
 	}
@@ -108,14 +108,14 @@ public class ManipuladorXMI {
 		Operacao op = findOperationFromList(classe.getOperacoes(),idOperation);
 		if(op!=null){
 			if(!context.getName().equals(classe.getName()) && op.getVisibility().equalsIgnoreCase("private")){
-				throw new Exception("Operation: <"+idOperation+"> doesn't come from inheritance <"+context.getName()+"> => <"+context.getName()+">.");
+				throw new Exception("A operacao '"+idOperation+"' da classe '"+classe.getName()+"' eh privado e nao pode ser acessado pela classe '"+context.getName()+"'.");
 			}
 			return op;
 		}else{
 			if(classe.temPai()){
 				return getOperacaoFromClass(context, classe.getClassePai(), idOperation);
 			}else{
-				throw new Exception("Operation: <"+idOperation+"> not found in type <"+classe.getName()+">.");
+				throw new Exception("Nao existe a operacao '"+idOperation+"' na classe '"+classe.getName()+"'.");
 			}
 		}
 	}
@@ -150,7 +150,7 @@ public class ManipuladorXMI {
 				return getTypeInCol(att.getTipo().getName());
 			}
 		}else{
-			throw new Exception("Atribute: <"+att.getNome()+"> isn't a Collection kind.");
+			throw new Exception("O atributo '"+att.getNome()+"' nao eh uma colecao.");
 		}
 	}
 
@@ -168,7 +168,7 @@ public class ManipuladorXMI {
 	 * @throws Exception
 	 */
 	
-	public String maxType(String type1, String type2, int line) throws Exception{
+	public static String maxType(String type1, String type2) throws Exception{
 		
 		if(type1.equalsIgnoreCase(type2)){
 			return type1;
@@ -188,7 +188,7 @@ public class ManipuladorXMI {
 								hierarquiaNumbers.get( hierarquiaNumbers.indexOf(type2) );
 				}
 			}
-			throw new Exception("Operation not valid between " + type1 + " and " + type2+".\nAt line "+line);
+			throw new Exception("Impossivel realizar operacao entre " + type1 + " e " + type2);
 		}
 	}
 

@@ -58,7 +58,7 @@ public class XMIParser {
 		if(xmi.exists() && (xmi.getAbsolutePath().endsWith("."+XML) || xmi.getAbsolutePath().endsWith("."+XML.toUpperCase()))){
 			this.xmi = xmi;
 		}else
-			throw new Exception("File '"+xmi.getAbsolutePath()+"' doesn't exists");
+			throw new Exception("Arquivo '"+xmi.getAbsolutePath()+"' nao existe.");
 	}
 	
 	public void readXMI() {
