@@ -12,14 +12,10 @@ public class OptionsDialog extends Dialog {
 
 	private static final long serialVersionUID = 1L;
 
-private Button ok;
+	private Button ok;
 
-  private Checkbox lexical;
-  private Checkbox syntactic;
-  private Checkbox semantic;
-  
-  private Checkbox debugOn;
-  private Checkbox debugOff;
+	private Checkbox debugOn;
+	private Checkbox debugOff;
 
   /**
    * Create a new options dialog
@@ -43,11 +39,6 @@ private Button ok;
     // create components
     ok = new Button("Ok");
 
-    CheckboxGroup analysisType = new CheckboxGroup();
-    lexical = new Checkbox(" Lexica",Main.analysisType == Main.LEXICAL, analysisType);
-    syntactic = new Checkbox(" Sintatica",Main.analysisType == Main.SYNTACTIC, analysisType);
-    semantic = new Checkbox(" Semantica",Main.analysisType == Main.SEMANTIC, analysisType);
-    
     CheckboxGroup debug = new CheckboxGroup();
     debugOn = new Checkbox(" ON", Main.debugMode == Main.ON, debug);
     debugOff = new Checkbox(" OFF", Main.debugMode == Main.OFF, debug);
@@ -58,24 +49,6 @@ private Button ok;
         close();
       }
     } );
-
-    lexical.addItemListener( new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        setAnalysisMode();
-      }
-    } );
-
-    syntactic.addItemListener( new ItemListener() {
-        public void itemStateChanged(ItemEvent e) {
-          setAnalysisMode();
-        }
-      } );
-    
-    semantic.addItemListener( new ItemListener() {
-        public void itemStateChanged(ItemEvent e) {
-          setAnalysisMode();
-        }
-      } );
     
     debugOn.addItemListener( new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
@@ -90,42 +63,20 @@ private Button ok;
       } );
    
     // setup layout
-    GridPanel panel = new GridPanel(3,5,10,10);
+    GridPanel panel = new GridPanel(1,5,10,10);
     panel.setInsets( new Insets(10,5,5,10) );
     
-    panel.add(1,4,ok);
-     
-    panel.add(0,0,1,1,Handles.BOTTOM,new Label("Tipo de analise:"));
-    panel.add(0,1,1,1,lexical);
-    panel.add(0,2,1,1,syntactic);
-    panel.add(0,3,1,1,semantic);
+    panel.add(0,3,ok);
 
-    panel.add(2,0,1,1,Handles.BOTTOM,new Label("Debug:"));
-    panel.add(2,1,1,1,debugOn);
-    panel.add(2,2,1,1,debugOff);
+    panel.add(0,0,1,1,Handles.BOTTOM,new Label("Debug:"));
+    panel.add(0,1,1,1,debugOn);
+    panel.add(0,2,1,1,debugOff);
     
     add("Center",panel);
     
     updateState();
   }
-    
-  private void setAnalysisMode() {
-    if ( lexical.getState() ) {
-    	Main.analysisType = Main.LEXICAL;
-      return;
-    }
-    
-    if ( syntactic.getState() ) {
-    	Main.analysisType = Main.SYNTACTIC;
-      return;
-    }
-    
-    if ( semantic.getState() ) {
-    	Main.analysisType = Main.SEMANTIC;
-      return;
-    }
-  }
-  
+ 
   private void setDebugMode() {
 		if (debugOn.getState()) {
 			Main.debugMode = Main.ON;
@@ -137,9 +88,6 @@ private Button ok;
   }
 
   private void updateState() {
-    lexical.setState(Main.analysisType == Main.LEXICAL);
-    syntactic.setState(Main.analysisType == Main.SYNTACTIC);
-    semantic.setState(Main.analysisType == Main.SEMANTIC);
     debugOn.setState(Main.debugMode == Main.ON);
     debugOff.setState(Main.debugMode == Main.OFF);
   }

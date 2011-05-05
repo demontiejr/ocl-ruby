@@ -3,12 +3,16 @@
 
 package compilador.gui;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
+import xmiParser.ManipuladorXMI;
+import xmiParser.XMIParser;
 import JFlex.ErrorMessages;
 import JFlex.Out;
 import analisadorLexico.ScannerOCL;
@@ -17,6 +21,7 @@ import analisadorSintatico.ParserOCL;
 import compilador.Main;
 
 import excecoes.FatalErrorException;
+import excecoes.SemanticErrorException;
 
 public class GeneratorThread extends Thread {
 
@@ -27,7 +32,7 @@ public class GeneratorThread extends Thread {
 	String inputFile;
 
 	/** output directory */
-	String outputDir;
+	String inputXmiFile;
 
 	/** main UI component, likes to be notified when generator finishes */
 	MainFrame parent;
@@ -43,13 +48,13 @@ public class GeneratorThread extends Thread {
 	 *            input file from UI settings
 	 * @param messages
 	 *            where generator messages should appear
-	 * @param outputDir
+	 * @param inputXmiFile
 	 *            output directory from UI settings
 	 */
-	public GeneratorThread(MainFrame parent, String inputFile, String outputDir) {
+	public GeneratorThread(MainFrame parent, String inputFile, String inputXmiFile) {
 		this.parent = parent;
 		this.inputFile = inputFile;
-		this.outputDir = outputDir;
+		this.inputXmiFile = inputXmiFile;
 		this.errors = new ArrayList<String>();
 	}
 
@@ -57,10 +62,7 @@ public class GeneratorThread extends Thread {
 	 * Run the generator thread. Only one instance of it can run at any time.
 	 */
 	public void run() {
-		if (Main.analysisType == Main.LEXICAL)
-			lexicalAnalysis();
-		else if (Main.analysisType == Main.SYNTACTIC)
-			syntacticalAnalysis();
+		analysis();
 	}
 
 	private ScannerOCL createScanner(String fileName) {
@@ -79,7 +81,7 @@ public class GeneratorThread extends Thread {
 	private void lexicalAnalysis(){
 		if (running) {
 			Out.error(ErrorMessages.ALREADY_RUNNING);
-			parent.analysisFinished(false, new ArrayList<String>(),errors);
+			parent.analysisFinished(false, new ArrayList<String>(),errors, new HashSet<String>());
 		} else {
 			ScannerOCL scanner = createScanner(inputFile);
 			if (scanner != null) {
@@ -97,9 +99,9 @@ public class GeneratorThread extends Thread {
 					}
 				}
 				if (Main.debugMode == Main.ON)
-					parent.analysisFinished(true, scanner.foundTokens, errors);
+					parent.analysisFinished(true, scanner.foundTokens, errors, new HashSet<String>());
 				else
-					parent.analysisFinished(true, new ArrayList<String>(), errors);
+					parent.analysisFinished(true, new ArrayList<String>(), errors, new HashSet<String>());
 			}
 		}
 	}
@@ -107,7 +109,7 @@ public class GeneratorThread extends Thread {
 	private void syntacticalAnalysis(){
 		if (running) {
 			Out.error(ErrorMessages.ALREADY_RUNNING);
-			parent.analysisFinished(false, new ArrayList<String>(),errors);
+			parent.analysisFinished(false, new ArrayList<String>(),errors, new HashSet<String>());
 		} else {
 			ScannerOCL scanner = createScanner(inputFile);
 			if (scanner != null) {
@@ -133,7 +135,55 @@ public class GeneratorThread extends Thread {
 				for (String erro : errors)
 					System.out.println(erro);
 				System.out.println();
-				parent.analysisFinished(true, parser.log, errors);
+				parent.analysisFinished(true, parser.log, errors, new HashSet<String>());
+			}
+			
+		}
+	}
+	
+	private void analysis(){
+		if (running) {
+			Out.error(ErrorMessages.ALREADY_RUNNING);
+			parent.analysisFinished(false, new ArrayList<String>(),errors, new HashSet<String>());
+		} else {
+			Out.print("Iniciando analise para o arquivo\n" + inputFile);
+			Out.println("................................................................\n");
+			Out.println("Lendo arquivo XMI...");
+			File xmi = new File(inputXmiFile);
+			try {
+				XMIParser parserxmi = new XMIParser(xmi);
+				parserxmi.readXMI();
+				ManipuladorXMI.setStaticClasses(parserxmi.getArrayClasses());
+			} catch (Exception e1) {
+				Out.println(e1.getMessage());
+				System.exit(0);
+			}
+			ScannerOCL scanner = createScanner(inputFile);
+			if (scanner != null) {
+				Out.println("Realizando anlise...");
+				ParserOCL parser = new ParserOCL(scanner);
+				errors = parser.errorLog;
+				try {
+					if (Main.debugMode == Main.ON)
+						parser.debug_parse();
+					else
+						parser.parse();
+				} catch (RuntimeException e) {
+					errors.add(e.getMessage());
+				} catch (FatalErrorException e){
+					parser.log.add("\n" + e.getMessage() + "\n");
+				} catch (SemanticErrorException e){
+					errors.add(e.getMessage());
+				} catch (Exception e) {
+					parser.log.add("\nErro durante a analise sintatica: " + e.getMessage() + "\n");
+				} finally {
+					running = false;
+				}
+				//System.out.println("\n" + errors.size() + " erro(s)");
+				//for (String erro : errors)
+				//	System.out.println(erro);
+				//System.out.println();
+				parent.analysisFinished(true, parser.log, errors, parser.as.getLogErros());
 			}
 			
 		}
