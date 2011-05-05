@@ -337,8 +337,25 @@ postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1 {: Node n
                                                                           	node = (Node)pe1;
                                                                           }
                                                                           else{
-                                                                          	node = new Node();
-                                                                          	
+                                                                          	Iterator<Node> it = ((Node)pfea1).iterator();
+                                                                          	Node previous = (Node)pe1;
+                                                                          	Node next;
+                                                                          	Node aux = null;
+                                                                          	while (it.hasNext()){
+                                                                          		next = it.next();
+                                                                          		if (next.getOperation().equals("->")){
+                                                                          			if (!previous.isCollection())
+                                                                          				parser.as.error(pe1left, "o identificador " + previous.getValue() + " nao eh uma colecao.");
+                                                                          			aux = parser.as.getReturnType(previous.getType(),(String)next.getValue());
+                                                                          		}
+                                                                          		else if (next.getOperation().equals(".")){
+                                                                          			if (previous.isCollection())
+                                                                          				parser.as.error(pe1left, "o identificador " + previous.getValue() + " eh uma colecao. Utilize '->' para as operacoes sobre colecoes.");
+                                                                          			aux = parser.as.checkFeatureCall(previous.getType(),next, pe1left);
+                                                                          		}
+                                                                          		previous = aux;
+                                                                          	}
+                                                                          	node = aux;
                                                                           }
                                                                           RESULT = node; :}
 				   
@@ -354,9 +371,18 @@ postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1 {: Node n
 				   						       			System.out.println("Tipo do atributo: " + node.getType());
 				   						       			RESULT = node; :};
 
-postfixExpressionAux ::= POINT featureCall:fCall1 postfixExpressionAux:pfea1 {: RESULT = new Node("", ""); :}
-					  | ARROW featureCallCollection:fCol1 postfixExpressionAux:pfea1 {: System.out.println("Entrou na setinha"); RESULT = new Node("", ""); :}
-					  | ;
+postfixExpressionAux ::= POINT featureCall:fCall1 postfixExpressionAux:pfea1 {: Node node = (Node)pfea1;
+																				Node nodeAux = (Node)fCall1;
+																				nodeAux.setOperation(".");
+																				node.addElement(nodeAux);
+																				RESULT = node; :}
+					  | ARROW featureCallCollection:fCol1 postfixExpressionAux:pfea1 {: System.out.println("Entrou na setinha");
+					  																	Node node = (Node)pfea1;
+					  																	Node nodeAux = (Node)fCol1;
+					  																	nodeAux.setOperation("->");
+																						node.addElement(nodeAux);
+																						RESULT = node; :}
+					  | {: RESULT = new Node(); :};
 
 featureAccess ::=  POINT featureCall:fCall1 postfixExpressionAux:pfea1 {: //TODO: fazer a parte para quando postfixExpAux != null
 																		  Node node = new Node();
@@ -369,13 +395,12 @@ featureAccess ::=  POINT featureCall:fCall1 postfixExpressionAux:pfea1 {: //TODO
 
 primaryExpression ::= litteralCollection:lc1
 		           | litteral:l1 {: System.out.println("Entrou primExp como literal: " + ((Node)l1).getValue() + " " + ((Node)l1).getType()); RESULT = l1; :}
-				   | RESULT:r {: System.out.println("Entrou no result. Tipo: " + parser.as.getContextType()); parser.as.checkStereotype("result", rleft); 
+				   | RESULT:r {: parser.as.checkStereotype("result", rleft); 
 				   			     if (parser.as.getContextType().equalsIgnoreCase("void"))
 				   			     	parser.as.error(rleft, "result nao pode ser usado num contexto de metodo com tipo void.");
 				   			     Node node = new Node();
 				   			     node.setValue("result");
 				   			     node.setType(parser.as.getContextType());
-				   			     System.err.println("TIPO DA MIZERA DO RESULT: " + node.getType());
 				   			     node.setRole(Node.VARIABLE);
 				   			     RESULT = node;
 				   			   :} 
@@ -405,7 +430,8 @@ ifExpression ::= IF expression:exp1 THEN expression:exp2 ELSE expression:exp3 EN
 																					       parser.as.error(exp1left, "a expressao dentro do if deve ser booleana.");
 																					   RESULT = new Node(true, "Boolean"); :};
 
-featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft); :} parameters:params1
+featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft); :} parameters:params1 {: //TODO 
+																										 :}
 				| pathName:pn parameters:params1 {:  Node node = new Node(((Node)pn).getValue(), "");
 								 		  			 node.setRole(Node.FUNCTION);
 								 		  			 node.addAllElements(((Node)params1).getElements());
@@ -422,7 +448,7 @@ featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft
 
 featureCallCollection ::= pathName:pn collectionParameters:params {: 
                       parser.as.checkCollectionOperation(((Node)pn).toString(), ((Node)params).getType(), pnleft);
-                      RESULT = new Node("","");
+                      RESULT = new Node(((Node)pn).toString());
                       :};
 
 collectionParameters ::= LPAREN declarator:d1 expression:exp1 RPAREN

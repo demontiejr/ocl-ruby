@@ -124,7 +124,7 @@ public class CompilerOCLtoRuby {
 			parserxmi.readXMI();
 			ManipuladorXMI.setStaticClasses(parserxmi.getArrayClasses());
 		} catch (Exception e1) {
-			System.err.println("Erro durante a leitura do arquivo xmi.");
+			System.err.println(e1.getMessage());
 			System.exit(0);
 		}
 		ScannerOCL scanner = createScanner(fileName);
