@@ -1,2 +1,2 @@
-context Conta::estaVazia(): Boolean
-	post: creditar(2=2,5)
+context Conta::creditar(pts: Integer)
+	post: self@pre.pontos < self.pontos

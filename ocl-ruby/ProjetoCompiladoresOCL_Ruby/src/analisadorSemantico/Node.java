@@ -18,6 +18,7 @@ public class Node {
 	private Object value;
 	private String type;
 	private String operation;
+	private boolean collection;
 	private List<Node> list;
 	
 	public static final int VALUE = 0;
@@ -68,6 +69,14 @@ public class Node {
 
 	public void setRole(int role) {
 		this.role = role;
+	}
+	
+	public boolean isCollection() {
+		return collection;
+	}
+
+	public void setCollection(boolean collection) {
+		this.collection = collection;
 	}
 	
 	public void addElement(Node element){
