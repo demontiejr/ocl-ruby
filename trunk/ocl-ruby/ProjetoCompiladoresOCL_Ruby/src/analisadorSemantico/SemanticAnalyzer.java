@@ -124,6 +124,8 @@ public class SemanticAnalyzer {
 	}
 	
 	public String maxType(String type1, String type2, int line){
+		if (type1.equalsIgnoreCase("void") || type2.equalsIgnoreCase("void"))
+			error(line,"Impossivel realizar operacao com o tipo void");
 		if(type1.equalsIgnoreCase(type2)){
 			return type1;
 		}else{
@@ -143,17 +145,11 @@ public class SemanticAnalyzer {
         if (rule2 == null)
         	node = (Node)rule1;
         else{
-        	Object value;
         	String type = maxType(((Node)rule1).getType(), ((Node)rule2).getType(), line);
         	if (type == null){
         		type = ((Node)rule2).getType();
-        	    value = ((Node)rule2).getValue(); //TODO: testar isso
-        	}else{
-        		value = calcArithmeticValue((Node)rule1, (Node)rule2, rule2.getOperation(), type);
-        		System.err.println("value no aux: " + value + "  " + value.getClass());
         	}
  			node.setType(type);
-    	 	node.setValue(value);
         }
         return node;
 	}
@@ -163,118 +159,44 @@ public class SemanticAnalyzer {
 		String type;
 		if (rule2 == null) {
 			type = ((Node) rule1).getType();
-			if (!(type.equals("Float") || type.equals("Integer"))) {
+			if (!isNumeric(type)) {
 				error(line, "operador ' " + operator
 						+ " ' indefinido para o tipo " + type);
-
 			}
 			node.setType(type);
-			node.setValue(((Node) rule1).getValue());
 		} else {
-			Object value;
 			type = maxType(((Node) rule1).getType(), ((Node) rule2).getType(),
 					line);
-			if (type == null) {
+			if (type == null) 
 				type = ((Node) rule2).getType();
-				value = ((Node) rule2).getValue(); // TODO: testar isso
-			} else {
-				value = calcArithmeticValue((Node) rule1, (Node) rule2,
-						rule2.getOperation(), type);
-			}
 			node.setType(type);
-			node.setValue(value);
 		}
 		node.setOperation(operator);
-		System.err.println(node.getValue().getClass());
 		return node;
 	}
 	
-	/**
-	 * TODO: extender para aceitar double e long
-	 */
-	private Object calcArithmeticValue(Node rule1, Node rule2, String operator, String type) {
-		Float v1 = 0f, v2 = 0f, result = 0f;
-		if (rule1.getType().equals("Float"))
-			v1 = (Float) rule1.getValue();
-		else if (rule1.getType().equals("Integer"))
-			v1 = ((Integer) rule1.getValue()).floatValue();
-
-		if (rule2.getType().equals("Float"))
-			v2 = (Float) rule2.getValue();
-		else if (rule2.getType().equals("Integer"))
-			v2 = ((Integer) rule2.getValue()).floatValue();
-
-		//calculando as expressoes
-		if (operator.equals("+"))
-			result = v1 + v2;
-		else if (operator.equals("-"))
-			result = v1 - v2;
-		else if (operator.equals("/"))
-			result = v1/v2;
-		else if (operator.equals("*"))
-			result = v1 * v2;
-		
-		if (type.equals("Float"))
-			return result;
-		else
-			return (Integer)result.intValue();
-	}
-	
-	public Boolean calcRelationalValue(Node rule1, Node rule2, String operator, String type) {
+	public void checkRelationalOp(String operator, String type) {
 		if (type == null)
-			return false;
-		if (rule1.getValue() == null || rule2.getValue() == null)
-			return true; //TODO: olhar se eh a melhor forma
-		if (type.equals("Boolean") || type.equals("String")){
-			Object v1 = rule1.getValue();
-			Object v2 = rule2.getValue();
-			if (operator.equals("="))
-				return v1.equals(v2);
-			else if (operator.equals("<>"))
-				return !v1.equals(v2);
-			else
+			return;
+		if (!isNumeric(type)){
+			if (!operator.equals("=") && !operator.equals("<>"))
 				throw new RelationalErrorException("o operador " + operator + " nao pode ser usado para comparar valores do tipo " + type);
 		}
-		if (type.equals("Float") || type.equals("Integer")) {
-			Float v1 = 0f, v2 = 0f;
-			if (rule1.getType().equals("Float"))
-				v1 = (Float) rule1.getValue();
-			else if (rule1.getType().equals("Integer"))
-				v1 = ((Integer) rule1.getValue()).floatValue();
-			if (rule2.getType().equals("Float"))
-				v2 = (Float) rule2.getValue();
-			else if (rule2.getType().equals("Integer"))
-				v2 = ((Integer) rule2.getValue()).floatValue();
-			
-			if (operator.equals("="))
-				return v1.equals(v2);
-			else if (operator.equals(">"))
-				return v1 > v2;
-			else if (operator.equals("<"))
-				return v1 < v2;
-			else if (operator.equals(">="))
-				return v1 >= v2;
-			else if (operator.equals("<="))
-				return v1 <= v2;
-			else if (operator.equals("<>"))
-				return !(v1.equals(v2));
-		}
-		return false;
 	}
 	
-	public Boolean calcLogicalValue(Boolean value1, Boolean value2, String operator) {
-		if (value1 == null || value2 == null)
-			return true; //TODO: olhar se eh a melhor forma
-		if(operator.equals("and"))
-			return value1 && value2;
-		else if(operator.equals("or"))
-			return value1 || value2;
-		else if(operator.equals("implies"))
-			return !value1 || value2;
-		else // xor
-			return value1 ^ value2;
-		
-	}
+//	public Boolean calcLogicalValue(Boolean value1, Boolean value2, String operator) {
+//		if (value1 == null || value2 == null)
+//			return true; //TODO: olhar se eh a melhor forma
+//		if(operator.equals("and"))
+//			return value1 && value2;
+//		else if(operator.equals("or"))
+//			return value1 || value2;
+//		else if(operator.equals("implies"))
+//			return !value1 || value2;
+//		else // xor
+//			return value1 ^ value2;
+//		
+//	}
 	
 	public void setContext(String exp) throws SemanticErrorException {
 		String[] separate = exp.split("::");
@@ -300,21 +222,24 @@ public class SemanticAnalyzer {
 		}
 	}
 	
-	public Node checkFeatureCall(String classe, Node elemento, int role, int line){
+	public Node checkFeatureCall(String classe, Node elemento, int line){
 		Node node = new Node();
+		boolean isCollection = false;
 		try {
 			String type = null;
-			if (role == Node.FUNCTION){
+			if (elemento.getRole() == Node.FUNCTION){
 				Operacao op = ManipuladorXMI.contemFuncao(classe,classe,(String)elemento.getValue());
 				type = op.getReturnType();
 				checkParams(op, elemento.getElements(), line);
-			} else if (role == Node.VARIABLE){
+			} else if (elemento.getRole() == Node.VARIABLE){
 				Atributo at = ManipuladorXMI.contemAtributo(classe, classe, (String)elemento.getValue());
 				type = at.getIdTipo();
+				isCollection = at.ehColecao();
 			}
 			if (type == null)
 				type = "Void";
 			node.setType(type);
+			node.setCollection(isCollection);
 		} catch (Exception e){
 			error(line, e.getMessage());
 		}
@@ -332,6 +257,11 @@ public class SemanticAnalyzer {
 					+ " deveria ser um " + params.get(i).getIdTipo() + ", mas foi passado um " + elements.get(i).getType());
 		}
 		
+	}
+	
+	private boolean isNumeric(String type){
+		return (type.equalsIgnoreCase("Float") || type.equalsIgnoreCase("Integer") 
+				|| type.equalsIgnoreCase("Double") || type.equalsIgnoreCase("Long"));
 	}
 	
 }
