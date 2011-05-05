@@ -74,12 +74,28 @@ public class SemanticAnalyzer {
 	
 	public void checkCollectionOperation(String operation, String parameterType, int line) throws SemanticErrorException {
 		if (!checkCollectionOpName(operation))
-			error(line, operation + " nao eh uma operacao de collection " +
-			"definida pela linguagem");
+			throw new SemanticErrorException(operation + " (na linha " + (line+1) + ") nao eh uma operacao de collection " +
+					"definida pela linguagem.");
 		if (!checkCollectionOpParams(operation, parameterType))
 			error(line, "tipo de parametro errado para a operacao " + operation);
 	}
 	
+	public Node getReturnType(String type, String operation) {
+		Node node = new Node();
+		if (operation.equals("size"))
+			node.setType("Integer");
+		else if (operation.equals("empty") || operation.equals("forAll") || operation.equals("exists") 
+				|| operation.equals("includes") || operation.equals("excludes"))
+			node.setType("Boolean");
+		if (operation.equals("select") || operation.equals("first"))
+			node.setType(type);
+		if (operation.equals("including") || operation.equals("excluding")){
+		   node.setType(type);
+		   node.setCollection(true);
+		}
+		return node;
+	}
+
 	private boolean checkCollectionOpName(String operation) {
 		for (String op : collectionOperations)
 			if (op.equals(operation))
@@ -126,18 +142,13 @@ public class SemanticAnalyzer {
 	public String maxType(String type1, String type2, int line){
 		if (type1.equalsIgnoreCase("void") || type2.equalsIgnoreCase("void"))
 			error(line,"Impossivel realizar operacao com o tipo void");
-		if(type1.equalsIgnoreCase(type2)){
-			return type1;
-		}else{
-			if(type1.equalsIgnoreCase("Float") && type2.equalsIgnoreCase("Integer")){
-				return type1;
-			}else if(type2.equalsIgnoreCase("Float") && type1.equalsIgnoreCase("Integer")){
-				return type2;
-			}else{
-				error(line,"Impossivel realizar operacao entre " + type1 + " e " + type2);
-			}
+		String type = null;
+		try{
+			type = ManipuladorXMI.maxType(type1, type2);
+		} catch (Exception e) {
+			error(line,"Impossivel realizar operacao entre " + type1 + " e " + type2);
 		}
-		return null;
+		return type;
 	}
 	
 	public Node checkTypesOpArithmetic(Node rule1, Node rule2, int line ){
@@ -222,26 +233,27 @@ public class SemanticAnalyzer {
 		}
 	}
 	
-	public Node checkFeatureCall(String classe, Node elemento, int line){
+	public Node checkFeatureCall(String classe, Node elemento, int line) throws SemanticErrorException{
 		Node node = new Node();
 		boolean isCollection = false;
 		try {
 			String type = null;
 			if (elemento.getRole() == Node.FUNCTION){
-				Operacao op = ManipuladorXMI.contemFuncao(classe,classe,(String)elemento.getValue());
-				type = op.getReturnType();
+				Operacao op = ManipuladorXMI.contemFuncao(getContextClass(),classe,(String)elemento.getValue());
+				type = op.getReturnClass().getName();
 				checkParams(op, elemento.getElements(), line);
 			} else if (elemento.getRole() == Node.VARIABLE){
-				Atributo at = ManipuladorXMI.contemAtributo(classe, classe, (String)elemento.getValue());
+				Atributo at = ManipuladorXMI.contemAtributo(getContextClass(), classe, (String)elemento.getValue());
 				type = at.getIdTipo();
 				isCollection = at.ehColecao();
 			}
 			if (type == null)
 				type = "Void";
 			node.setType(type);
+			node.setValue(elemento.getValue());
 			node.setCollection(isCollection);
 		} catch (Exception e){
-			error(line, e.getMessage());
+			throw new SemanticErrorException(e.getMessage() + " Linha " + (line+1));
 		}
 		return node;
 	}
@@ -249,11 +261,11 @@ public class SemanticAnalyzer {
 	private void checkParams(Operacao op, List<Node> elements, int line) {
 		ArrayList<Parametro> params = op.getParametros();
 		if (params.size() != elements.size())
-			error(line, "numero errado de parametros na chamada a funcao " + op.getNome() + ".\nDevem ser passados " +
+			error(line, "numero errado de parametros na chamada a funcao " + op.getNome() + ".\n\tDevem ser passados " +
 					params.size() + " parametros, mas foram passados " + elements.size());
 		for (int i=0; i<params.size(); i++){
 			if (!params.get(i).getIdTipo().equals(elements.get(i).getType()))
-				error(line, "tipo de parametro errado na chamada a funcao " + op.getNome() + ".\nO " + (i+1) + "º parametro"
+				error(line, "tipo de parametro errado na chamada a funcao " + op.getNome() + ".\n\tO " + (i+1) + "º parametro"
 					+ " deveria ser um " + params.get(i).getIdTipo() + ", mas foi passado um " + elements.get(i).getType());
 		}
 		
