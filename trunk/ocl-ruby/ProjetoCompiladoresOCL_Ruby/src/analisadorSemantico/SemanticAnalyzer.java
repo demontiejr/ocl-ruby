@@ -217,21 +217,14 @@ public class SemanticAnalyzer {
 		}
 	}
 	
-//	public Boolean calcLogicalValue(Boolean value1, Boolean value2, String operator) {
-//		if (value1 == null || value2 == null)
-//			return true; //TODO: olhar se eh a melhor forma
-//		if(operator.equals("and"))
-//			return value1 && value2;
-//		else if(operator.equals("or"))
-//			return value1 || value2;
-//		else if(operator.equals("implies"))
-//			return !value1 || value2;
-//		else // xor
-//			return value1 ^ value2;
-//		
-//	}
+	public void checkOperationContext(Node rule1, Node params, Node rule2,int line) throws SemanticErrorException{
+		setContext(((Node)rule1).toString(), params, line); 
+		if (!getContextType().equals(((Node)rule2).toString()))
+	 			throw new excecoes.SemanticErrorException("tipo especificado no contexto diferente do tipo da operacao na linha " 
+			 	+ (line+1) + ".\n\t" + ((Node)rule2).toString() + " deve ser substituido por " + getContextType());
+	}
 	
-	public void setContext(String exp) throws SemanticErrorException {
+	public void setContext(String exp, Node params, int line) throws SemanticErrorException {
 		String[] separate = exp.split("::");
 		
 		String classe = separate[separate.length-2];
@@ -245,14 +238,28 @@ public class SemanticAnalyzer {
 		
 		try {
 			Operacao op = ManipuladorXMI.contemFuncao(classe,classe,metodo);
+			checkParamsContext(op, params.getElements(), line);
 			setContextMethod(metodo);
-			String type = op.getReturnType();
+			String type = op.getReturnClass().getName();
 			if (type == null)
 				type = "Void";
 			setContextType(type);
 		} catch (Exception e) {
-			throw new SemanticErrorException(e.getMessage());
+			throw new SemanticErrorException(e.getMessage() + " Linha " + (line+1));
 		}
+	}
+	
+	private void checkParamsContext(Operacao op, List<Node> elements, int line) {
+		ArrayList<Parametro> params = op.getParametros();
+		if (params.size() != elements.size())
+			error(line, "numero errado de parametros para a funcao " + op.getNome() + " na assinatura do contexto.\n\tDeve(m) ser passado(s) " +
+					params.size() + " parametro(s), mas foi(foram) passado(s) " + elements.size());
+		for (int i=0; i<params.size(); i++){
+			if (!params.get(i).getIdTipo().equals(elements.get(i).getType()))
+				error(line, "tipo de parametro errado na chamada a funcao " + op.getNome() + ".\n\tO " + (i+1) + "º parametro"
+					+ " deveria ser um " + params.get(i).getIdTipo() + ", mas foi passado um " + elements.get(i).getType());
+		}
+		
 	}
 	
 	public Node checkFeatureCall(String classe, Node elemento, int line) throws SemanticErrorException{
@@ -289,21 +296,14 @@ public class SemanticAnalyzer {
 	private void checkParams(Operacao op, List<Node> elements, int line) {
 		ArrayList<Parametro> params = op.getParametros();
 		if (params.size() != elements.size())
-			error(line, "numero errado de parametros na chamada a funcao " + op.getNome() + ".\n\tDevem ser passados " +
-					params.size() + " parametros, mas foram passados " + elements.size());
+			error(line, "numero errado de parametros na chamada a funcao " + op.getNome() + ".\n\tDeve(m) ser passado(s) " +
+					params.size() + " parametro(s), mas foi(foram) passado(s) " + elements.size());
 		for (int i=0; i<params.size(); i++){
 			if (!params.get(i).getIdTipo().equals(elements.get(i).getType()))
 				error(line, "tipo de parametro errado na chamada a funcao " + op.getNome() + ".\n\tO " + (i+1) + "º parametro"
 					+ " deveria ser um " + params.get(i).getIdTipo() + ", mas foi passado um " + elements.get(i).getType());
 		}
 		
-	}
-	
-	public void checkOperationContext(Node rule1, Node rule2,int line) throws SemanticErrorException{
-		setContext(((Node)rule1).toString()); 
-		if (!getContextType().equals(((Node)rule2).toString()))
-	 			throw new excecoes.SemanticErrorException("tipo especificado no contexto diferente do tipo da operacao na linha " 
-			 	+ (line+1) + ".\n" + ((Node)rule2).toString() + " deve ser substituido por " + getContextType());
 	}
 	
 	private boolean isNumeric(String type){

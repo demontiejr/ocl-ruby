@@ -190,16 +190,16 @@ stereotype ::= PRE {: parser.as.setStereotype("pre"); :}
 
 classifierType ::= pathName:pn {: RESULT = pn; :};
 
-operationContext ::= classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN POINTS classifierType:ct2 {: parser.as.checkOperationContext((Node)ct1, (Node)ct2,ct2left); :}
+operationContext ::= classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN POINTS classifierType:ct2 {: parser.as.checkOperationContext((Node)ct1, (Node)fpl1, (Node)ct2, ct2left); :}
 					 																 							
-					 | classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN POINTS oclType:ocltype1 {: parser.as.checkOperationContext((Node)ct1, (Node)ocltype1,ocltype1left); :}
+					 | classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN POINTS oclType:ocltype1 {: parser.as.checkOperationContext((Node)ct1, (Node)fpl1, (Node)ocltype1, ocltype1left); :}
 					 
-					 | classifierType:ct1 LPAREN RPAREN POINTS classifierType:ct2 {: parser.as.checkOperationContext((Node)ct1, (Node)ct2,ct2left); :}
+					 | classifierType:ct1 LPAREN RPAREN POINTS classifierType:ct2 {: parser.as.checkOperationContext((Node)ct1, new Node(), (Node)ct2, ct2left); :}
 					 																 	
-					 | classifierType:ct1 LPAREN RPAREN POINTS oclType:ocltype1 {: parser.as.checkOperationContext((Node)ct1, (Node)ocltype1,ocltype1left); :}
+					 | classifierType:ct1 LPAREN RPAREN POINTS oclType:ocltype1 {: parser.as.checkOperationContext((Node)ct1, new Node(), (Node)ocltype1, ocltype1left); :}
 					 																	
-					 | classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN {: parser.as.setContext(((Node)ct1).toString()); :}
-					 | classifierType:ct1 LPAREN RPAREN {: parser.as.setContext(((Node)ct1).toString()); :};
+					 | classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN {: parser.as.setContext(((Node)ct1).toString(), (Node)fpl1, ct1left); :}
+					 | classifierType:ct1 LPAREN RPAREN {: parser.as.setContext(((Node)ct1).toString(), new Node(), ct1left); :};
 
 formalParameterList ::= formalParameter:fp1 formalParameterListAux:fpla1 {: Node node = (Node)fpla1;
 																			node.addElement((Node)fp1);
@@ -210,9 +210,9 @@ formalParameterListAux ::= COMA formalParameter:fp1 formalParameterListAux:fpla1
 																					node.addElement((Node)fp1);
 																					RESULT = node;
 																				 :}
-					    | RESULT = new Node();
+					    | {: RESULT = new Node(); :};
 
-formalParameter ::= ID:id POINTS typeName:tn {: Node node = new Node((String)id, ((Node)tn).getValue());
+formalParameter ::= ID:id POINTS typeName:tn {: Node node = new Node((String)id, ((Node)tn).toString());
 												node.setCollection(((Node)tn).isCollection());
 												RESULT = node; :};
 
@@ -494,7 +494,7 @@ actualParameterListAux ::= COMA expression:exp1 actualParameterListAux:apla1
 						 | {: RESULT = new Node(); :};
 
 typeName ::= pathName:pn {: RESULT = pn; :}
-		  | oclType:ocltype1 {: RESULT = ocltype1 :};
+		  | oclType:ocltype1 {: RESULT = ocltype1; :};
 
 oclType ::= OCL_SUPER_TYPE:super1 {: RESULT = new Node(super1, super1); :}
 		 | OCL_BASIC_TYPE:basic1 {: RESULT = new Node(basic1, basic1); :}
