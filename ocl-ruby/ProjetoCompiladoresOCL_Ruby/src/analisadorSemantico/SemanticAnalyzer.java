@@ -251,9 +251,6 @@ public class SemanticAnalyzer {
 		String classe = separate[separate.length-2];
 
 		String metodo = separate[separate.length-1];
-
-		System.out.println("Classe: "+classe);
-		System.out.println("Método: "+metodo);
 		
 		setContextClass(classe);
 		

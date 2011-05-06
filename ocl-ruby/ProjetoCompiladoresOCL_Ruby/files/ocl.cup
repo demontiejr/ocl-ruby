@@ -217,9 +217,9 @@ formalParameter ::= ID:id POINTS typeName:tn {: Node node = new Node((String)id,
 												parser.as.declareID(node, idleft);
 												RESULT = node; :};
 
-expression ::= logicalExpression:le1 {: System.out.println("Entrou exp"); RESULT = le1; :};
+expression ::= logicalExpression:le1 {: RESULT = le1; :};
 
-logicalExpression ::= relationalExpression:re1 logicalExpressionAux:lea1 {: System.out.println("Entrou logical exp"); Node node = new Node(); 
+logicalExpression ::= relationalExpression:re1 logicalExpressionAux:lea1 {: Node node = new Node(); 
                                                                             if (lea1 == null)
                                                                                 node = (Node)re1;
                                                                             else{
@@ -229,8 +229,7 @@ logicalExpression ::= relationalExpression:re1 logicalExpressionAux:lea1 {: Syst
                                                                                 }
                                                                                 node.setType(type);
                                                                           	}
-                                                                          	RESULT = node;
-                                                                          	System.out.println("Tipo logicalExp: " + node.getType()); :};
+                                                                          	RESULT = node; :};
 
 logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExpressionAux:lea1 {: Node node = new Node(); 
                                                                                      		 	   String type;
@@ -256,8 +255,7 @@ logicalOperator ::= AND {: RESULT = "and"; :}
 				 | XOR {: RESULT = "xor"; :}
 				 | IMPLIES {: RESULT = "implies"; :};
 
-relationalExpression ::= additiveExpression:ae1 relationalExpressionAux:rea {: System.out.println("Entrou relational exp");
-																			   Node node = new Node();
+relationalExpression ::= additiveExpression:ae1 relationalExpressionAux:rea {: Node node = new Node();
 																			   if (rea == null)
 																			      node = (Node)ae1;
 																			   else{
@@ -269,7 +267,7 @@ relationalExpression ::= additiveExpression:ae1 relationalExpressionAux:rea {: S
                                                                           	   }
                                                                           	   RESULT = node;
 																			:}
-						 | additiveExpression:ae1 {: System.out.println("Entrou relational exp"); RESULT = ae1; :};
+						 | additiveExpression:ae1 {: RESULT = ae1; :};
 
 relationalExpressionAux ::= relationalOperator:ro1 additiveExpression:ae2 relationalExpressionAux:rea {: Node node = new Node(); 
                                                                                      		 	   		 String type;
@@ -289,10 +287,8 @@ relationalOperator ::= EQ {: RESULT = "="; :}
 					| LE {: RESULT = "<="; :}
 					| NE {: RESULT = "<>"; :};
 
-additiveExpression ::= multiplicativeExpression:me1 additiveExpressionAux:aea1 {: System.out.println("Entrou additive exp"); 
-																				  Node node = parser.as.checkTypesOpArithmetic((Node)me1, (Node)aea1, me1left);
-                                                                          		  RESULT = node; 
-                                                                          		  System.out.println("Tipo additiveExp: " + node.getType()); :};
+additiveExpression ::= multiplicativeExpression:me1 additiveExpressionAux:aea1 {: Node node = parser.as.checkTypesOpArithmetic((Node)me1, (Node)aea1, me1left);
+                                                                          		  RESULT = node; :};
 
 additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAux:aea1 {: Node node = parser.as.checkTypesOpArithmeticAux((Node)me1, (Node)aea1, "+", me1left);
                                                                           			 	 RESULT = node; :}
@@ -300,11 +296,8 @@ additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAu
                                                                           			 		       RESULT = node; :}
 								| ;
 
-multiplicativeExpression ::= unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: System.out.println("Entrou mult exp");
-																					 System.err.println("TIPO: " + ((Node)ue1).getType());
-																					 Node node = parser.as.checkTypesOpArithmetic((Node)ue1, (Node)mea1, ue1left);
-                                                                          			 RESULT = node;
-                                                                          			 System.out.println("Tipo multExp: " + node.getType()); :};
+multiplicativeExpression ::= unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: Node node = parser.as.checkTypesOpArithmetic((Node)ue1, (Node)mea1, ue1left);
+                                                                          			 RESULT = node; :};
 
 multiplicativeExpressionAux ::= STAR unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: Node node = parser.as.checkTypesOpArithmeticAux((Node)ue1, (Node)mea1, "*", ue1left);
                                                                           			 		 RESULT = node; :}
@@ -323,13 +316,12 @@ unaryExpression ::= unaryOperator:uo1 postfixExpression:pfe1 {: Node node = (Nod
 																}
 																RESULT = node;
 															 :}
-			     | postfixExpression:pfe1 {: System.out.println("Entrou unary exp. Tipe: " + ((Node)pfe1).getType()); RESULT = pfe1; :};
+			     | postfixExpression:pfe1 {: RESULT = pfe1; :};
 
 unaryOperator ::= NOT {: RESULT = "not"; :}
 			   | MINUS {: RESULT = "-"; :};
 
 postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1 {: Node node;
-                                                                          System.err.println("Entrou em postfix. Tipo: " + ((Node)pe1).getType());
                                                                           if (((Node)pfea1).getElements().size() == 0){
                                                                           	node = (Node)pe1;
                                                                           }
@@ -358,14 +350,12 @@ postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1 {: Node n
 				   
 				   | SELF featureAccess:fa1 {: Node fCall = (Node)fa1;
 				   						       Node node = parser.as.checkFeatureCall(parser.as.getContextClass(),fCall, fa1left);
-				   						       System.out.println("Tipo do atributo: " + node.getType());
 				   						       RESULT = node;
 				   						    :}
 				   
 				   | SELF AROBAPRE featureAccess:fa1 {: parser.as.checkStereotype("@pre", fa1left);
 				   										Node fCall = (Node)fa1;
 				   						       			Node node = parser.as.checkFeatureCall(parser.as.getContextClass(),fCall, fa1left);
-				   						       			System.out.println("Tipo do atributo: " + node.getType());
 				   						       			RESULT = node; :};
 
 postfixExpressionAux ::= POINT featureCall:fCall1 postfixExpressionAux:pfea1 {: Node node = (Node)pfea1;
@@ -373,8 +363,7 @@ postfixExpressionAux ::= POINT featureCall:fCall1 postfixExpressionAux:pfea1 {: 
 																				nodeAux.setOperation(".");
 																				node.addElement(nodeAux);
 																				RESULT = node; :}
-					  | ARROW featureCallCollection:fCol1 postfixExpressionAux:pfea1 {: System.out.println("Entrou na setinha");
-					  																	Node node = (Node)pfea1;
+					  | ARROW featureCallCollection:fCol1 postfixExpressionAux:pfea1 {: Node node = (Node)pfea1;
 					  																	Node nodeAux = (Node)fCol1;
 					  																	nodeAux.setOperation("->");
 																						node.addElement(nodeAux);
@@ -391,7 +380,7 @@ featureAccess ::=  POINT featureCall:fCall1 postfixExpressionAux:pfea1 {: //TODO
 			   | ;
 
 primaryExpression ::= litteralCollection:lc1
-		           | litteral:l1 {: System.out.println("Entrou primExp como literal: " + ((Node)l1).getValue() + " " + ((Node)l1).getType()); RESULT = l1; :}
+		           | litteral:l1 {: RESULT = l1; :}
 				   | RESULT:r {: parser.as.checkStereotype("result", rleft); 
 				   			     if (parser.as.getContextType().equalsIgnoreCase("void"))
 				   			     	parser.as.error(rleft, "result nao pode ser usado num contexto de metodo com tipo void.");
@@ -401,21 +390,15 @@ primaryExpression ::= litteralCollection:lc1
 				   			     node.setRole(Node.VARIABLE);
 				   			     RESULT = node;
 				   			   :} 
-				   | featureCall:fCall1 {: System.out.println("Entrou primExp como featureCall");
-				   						   System.out.println("DECLARATOR? " + parser.as.getDeclarator());
-				   						   Node fCall = (Node)fCall1;
+				   | featureCall:fCall1 {: Node fCall = (Node)fCall1;
 				   						   Node node = parser.as.checkFeatureCall(parser.as.getContextClass(),fCall, fCall1left);
-				   						   System.out.println("Tipo do atributo: " + node.getType());
 				   						   RESULT = node;
 				   						   parser.as.tipoPrimary = node.getType();
 				   						    :}
-				   | LPAREN expression:exp1 RPAREN {: System.out.println("Entrou primExp");
-				   									  RESULT = exp1; 
-				                                      :}
+				   | LPAREN expression:exp1 RPAREN {: RESULT = exp1; :}
 				   | ifExpression:ifexp1 {: Node node = new Node(); 
 				                            node.setType("Boolean");
-				                            RESULT = node; 
-				                            System.out.println("Tipo primExp: " + node.getType());:};
+				                            RESULT = node; :};
 
 litteralCollection ::= OCL_COLLECTION:collection1 LCURLY expressionListOrRange:elor1 RCURLY
 						| OCL_COLLECTION:collection1 LCURLY RCURLY;
@@ -440,8 +423,7 @@ featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft
 										  Node node = new Node(((Node)pn).getValue(), "");
 								 		  node.setRole(Node.VARIABLE);
 								 		  RESULT = node; :}
-				| pathName:pn {: System.out.println("Entrou no canto certo");
-								 Node node = new Node(((Node)pn).getValue(), "");
+				| pathName:pn {: Node node = new Node(((Node)pn).getValue(), "");
 								 node.setRole(Node.VARIABLE);
 								 RESULT = node; :};
 
@@ -450,21 +432,16 @@ featureCallCollection ::= pathName:pn collectionParameters:params {:
                       RESULT = new Node(((Node)pn).toString());
                       :};
 
-collectionParameters ::= LPAREN declarator:d1 expression:exp1 RPAREN {: System.out.println("Entrou nos parametros com expression");
-				 								   Node node = new Node();
-				                   				   node.setType(((Node)exp1).getType());
-				                   				   RESULT = node;
-				                   				   parser.as.setDeclarator(false);
-				                   				   System.out.println("Tipo collPar: " + node.getType()); :}
+collectionParameters ::= LPAREN declarator:d1 expression:exp1 RPAREN {: Node node = new Node();
+				                   				   						node.setType(((Node)exp1).getType());
+				                   				   						RESULT = node;
+				                   				   						parser.as.setDeclarator(false); :}
 				| LPAREN declarator:d1 RPAREN {: RESULT = new Node(null, "void");
 											  :}
-				| LPAREN expression:exp1 RPAREN {: System.out.println("Entrou nos parametros com expression");
-				 								   Node node = new Node();
+				| LPAREN expression:exp1 RPAREN {: Node node = new Node();
 				                   				   node.setType(((Node)exp1).getType());
-				                   				   RESULT = node;
-				                   				   System.out.println("Tipo collPar: " + node.getType()); :}
-				| LPAREN RPAREN {: System.out.println("Entrou nos parametros vazios");
-				                   Node node = new Node();
+				                   				   RESULT = node; :}
+				| LPAREN RPAREN {: Node node = new Node();
 				                   node.setType("void");
 				                   RESULT = node; :};
 
@@ -477,11 +454,7 @@ declarator ::= ID:id declaratorAux:da1 POINTS typeName:tn PIPE {: Node node = (N
 												  node.addElement(new Node((String)id));
 												  RESULT = node;
 												  parser.as.setDeclaratorAux(node.getElements());
-												  parser.as.setDeclarator(true);
-				                                  Iterator<Node> it = ((Node)RESULT).iterator();
-				                                  while(it.hasNext()){
-				                                     System.out.println(it.next().getValue());
-				                                  }; :};
+												  parser.as.setDeclarator(true); :};
 
 declaratorAux ::= COMA ID:id declaratorAux:da1 {: Node node = (Node)da1;
 												  node.addElement(new Node((String)id));
