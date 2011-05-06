@@ -214,6 +214,7 @@ formalParameterListAux ::= COMA formalParameter:fp1 formalParameterListAux:fpla1
 
 formalParameter ::= ID:id POINTS typeName:tn {: Node node = new Node((String)id, ((Node)tn).toString());
 												node.setCollection(((Node)tn).isCollection());
+												parser.as.declareID(node, idleft);
 												RESULT = node; :};
 
 expression ::= logicalExpression:le1 {: System.out.println("Entrou exp"); RESULT = le1; :};
@@ -300,7 +301,7 @@ additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAu
 								| ;
 
 multiplicativeExpression ::= unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: System.out.println("Entrou mult exp");
-																					 System.err.println("TIPO DESSE CARAI: " + ((Node)ue1).getType());
+																					 System.err.println("TIPO: " + ((Node)ue1).getType());
 																					 Node node = parser.as.checkTypesOpArithmetic((Node)ue1, (Node)mea1, ue1left);
                                                                           			 RESULT = node;
                                                                           			 System.out.println("Tipo multExp: " + node.getType()); :};
@@ -329,7 +330,7 @@ unaryOperator ::= NOT {: RESULT = "not"; :}
 
 postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1 {: Node node;
                                                                           System.err.println("Entrou em postfix. Tipo: " + ((Node)pe1).getType());
-                                                                          if (pfea1 == null){
+                                                                          if (((Node)pfea1).getElements().size() == 0){
                                                                           	node = (Node)pe1;
                                                                           }
                                                                           else{
