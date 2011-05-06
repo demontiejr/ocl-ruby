@@ -32,8 +32,12 @@ public class SemanticAnalyzer {
 	private String opID;
 	private Set<String> logErros = new HashSet<String>();
 	
-	private boolean declarator = false;
 	private List<Node> declaratedIDs = new ArrayList<Node>();
+	
+	private boolean declarator = false;
+	private List<Node> declaratorAux = new ArrayList<Node>();
+	
+	public String tipoPrimary;
 	
 	public Set<String> getLogErros() {
 		return logErros;
@@ -169,6 +173,14 @@ public class SemanticAnalyzer {
 	public void setDeclarator(boolean declarator) {
 		this.declarator = declarator;
 	}
+	
+	public void setDeclaratorAux(List<Node> declaratorAux) {
+		this.declaratorAux = declaratorAux;
+	}
+
+	public List<Node> getDeclaratorAux() {
+		return declaratorAux;
+	}
 
 	public String maxType(String type1, String type2, int line){
 		if (type1.equalsIgnoreCase("void") || type2.equalsIgnoreCase("void"))
@@ -258,7 +270,6 @@ public class SemanticAnalyzer {
 				type = "Void";
 			setContextType(type);
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new SemanticErrorException(e.getMessage() + " Linha " + (line+1));
 		}
 	}
@@ -313,7 +324,17 @@ public class SemanticAnalyzer {
 						return n;
 					}
 				}
+				if (getDeclarator()) {
+					for (Node n : getDeclaratorAux()) {
+						if (((String) n.getValue()).equals((String) elemento
+								.getValue())) {
+							n.setType(tipoPrimary);
+							return n;
+						}
+					}
+				}
 			}
+			e.printStackTrace();
 			throw new SemanticErrorException(e.getMessage() + " Linha " + (line+1));
 		}
 		return node;
@@ -330,11 +351,23 @@ public class SemanticAnalyzer {
 				type = params.get(i).getTipo().getName();
 			else
 				type = params.get(i).getIdTipo();
-			if (!type.equals(elements.get(i).getType()))
+//			if (type.equals(elements.get(i).getType()))
+//				continue;
+			if (!ehSubtipo(elements.get(i).getType(), type))
 				error(line, "tipo de parametro errado na chamada a funcao " + op.getNome() + ".\n\tO " + (i+1) + "º parametro"
-					+ " deveria ser um " + params.get(i).getTipo().getName() + ", mas foi passado um " + elements.get(i).getType());
+					+ " deveria ser um " + type + ", mas foi passado um " + elements.get(i).getType());
 		}
 		
+	}
+	
+	public boolean ehSubtipo(String sub, String sup){
+		boolean ret = false;
+		try{
+			String type = ManipuladorXMI.maxType(sub, sup);
+			ret = type.equals(sup);;
+		} catch (Exception e) {
+		}
+		return ret;
 	}
 	
 	private boolean isNumeric(String type){
