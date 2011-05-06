@@ -240,11 +240,16 @@ public class SemanticAnalyzer {
 			Operacao op = ManipuladorXMI.contemFuncao(classe,classe,metodo);
 			checkParamsContext(op, params.getElements(), line);
 			setContextMethod(metodo);
-			String type = op.getReturnClass().getName();
+			String type;
+			if (op.getReturnClass() != null)
+				type = op.getReturnClass().getName();
+			else
+				type = op.getReturnType();
 			if (type == null)
 				type = "Void";
 			setContextType(type);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new SemanticErrorException(e.getMessage() + " Linha " + (line+1));
 		}
 	}
@@ -255,9 +260,14 @@ public class SemanticAnalyzer {
 			error(line, "numero errado de parametros para a funcao " + op.getNome() + " na assinatura do contexto.\n\tDeve(m) ser passado(s) " +
 					params.size() + " parametro(s), mas foi(foram) passado(s) " + elements.size());
 		for (int i=0; i<params.size(); i++){
-			if (!params.get(i).getIdTipo().equals(elements.get(i).getType()))
+			String type = null;
+			if (params.get(i).getTipo() != null)
+				type = params.get(i).getTipo().getName();
+			else
+				type = params.get(i).getIdTipo();
+			if (!type.equals(elements.get(i).getType()))
 				error(line, "tipo de parametro errado na chamada a funcao " + op.getNome() + ".\n\tO " + (i+1) + "º parametro"
-					+ " deveria ser um " + params.get(i).getIdTipo() + ", mas foi passado um " + elements.get(i).getType());
+					+ " deveria ser um " + type + ", mas foi passado um " + elements.get(i).getType());
 		}
 		
 	}
@@ -269,11 +279,17 @@ public class SemanticAnalyzer {
 			String type = null;
 			if (elemento.getRole() == Node.FUNCTION){
 				Operacao op = ManipuladorXMI.contemFuncao(getContextClass(),classe,(String)elemento.getValue());
-				type = op.getReturnClass().getName();
+				if (op.getReturnClass() != null)
+					type = op.getReturnClass().getName();
+				else
+					type = op.getReturnType();
 				checkParams(op, elemento.getElements(), line);
 			} else if (elemento.getRole() == Node.VARIABLE){
 				Atributo at = ManipuladorXMI.contemAtributo(getContextClass(), classe, (String)elemento.getValue());
-				type = at.getIdTipo();
+				if (at.getTipo() != null)
+					type = at.getTipo().getName();
+				else
+					type = at.getIdTipo();
 				isCollection = at.ehColecao();
 			}
 			if (type == null)
@@ -282,10 +298,11 @@ public class SemanticAnalyzer {
 			node.setValue(elemento.getValue());
 			node.setCollection(isCollection);
 		} catch (Exception e){
-			if ((elemento.getRole() == Node.VALUE) && classe.equals(getContextClass())){
+			if ((elemento.getRole() == Node.VARIABLE) && classe.equals(getContextClass())){
 				for (Node n : getDeclaratedIDs()){
-					if (((String)n.getValue()).equals((String)elemento.getValue()))
+					if (((String)n.getValue()).equals((String)elemento.getValue())){
 						return n;
+					}
 				}
 			}
 			throw new SemanticErrorException(e.getMessage() + " Linha " + (line+1));
@@ -299,9 +316,14 @@ public class SemanticAnalyzer {
 			error(line, "numero errado de parametros na chamada a funcao " + op.getNome() + ".\n\tDeve(m) ser passado(s) " +
 					params.size() + " parametro(s), mas foi(foram) passado(s) " + elements.size());
 		for (int i=0; i<params.size(); i++){
-			if (!params.get(i).getIdTipo().equals(elements.get(i).getType()))
+			String type = null;
+			if (params.get(i).getTipo() != null)
+				type = params.get(i).getTipo().getName();
+			else
+				type = params.get(i).getIdTipo();
+			if (!type.equals(elements.get(i).getType()))
 				error(line, "tipo de parametro errado na chamada a funcao " + op.getNome() + ".\n\tO " + (i+1) + "º parametro"
-					+ " deveria ser um " + params.get(i).getIdTipo() + ", mas foi passado um " + elements.get(i).getType());
+					+ " deveria ser um " + params.get(i).getTipo().getName() + ", mas foi passado um " + elements.get(i).getType());
 		}
 		
 	}
