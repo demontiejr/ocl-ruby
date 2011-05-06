@@ -402,11 +402,12 @@ primaryExpression ::= litteralCollection:lc1
 				   			     RESULT = node;
 				   			   :} 
 				   | featureCall:fCall1 {: System.out.println("Entrou primExp como featureCall");
+				   						   System.out.println("DECLARATOR? " + parser.as.getDeclarator());
 				   						   Node fCall = (Node)fCall1;
 				   						   Node node = parser.as.checkFeatureCall(parser.as.getContextClass(),fCall, fCall1left);
 				   						   System.out.println("Tipo do atributo: " + node.getType());
-				   						   System.out.println("DECLARATOR? " + parser.as.getDeclarator());
 				   						   RESULT = node;
+				   						   parser.as.tipoPrimary = node.getType();
 				   						    :}
 				   | LPAREN expression:exp1 RPAREN {: System.out.println("Entrou primExp");
 				   									  RESULT = exp1; 
@@ -449,10 +450,11 @@ featureCallCollection ::= pathName:pn collectionParameters:params {:
                       RESULT = new Node(((Node)pn).toString());
                       :};
 
-collectionParameters ::= LPAREN declarator:d1 {: parser.as.setDeclarator(true); :} expression:exp1 RPAREN {: System.out.println("Entrou nos parametros com expression");
+collectionParameters ::= LPAREN declarator:d1 expression:exp1 RPAREN {: System.out.println("Entrou nos parametros com expression");
 				 								   Node node = new Node();
 				                   				   node.setType(((Node)exp1).getType());
 				                   				   RESULT = node;
+				                   				   parser.as.setDeclarator(false);
 				                   				   System.out.println("Tipo collPar: " + node.getType()); :}
 				| LPAREN declarator:d1 RPAREN {: RESULT = new Node(null, "void");
 											  :}
@@ -474,6 +476,8 @@ declarator ::= ID:id declaratorAux:da1 POINTS typeName:tn PIPE {: Node node = (N
 				| ID:id declaratorAux:da1 PIPE {: Node node = (Node)da1;
 												  node.addElement(new Node((String)id));
 												  RESULT = node;
+												  parser.as.setDeclaratorAux(node.getElements());
+												  parser.as.setDeclarator(true);
 				                                  Iterator<Node> it = ((Node)RESULT).iterator();
 				                                  while(it.hasNext()){
 				                                     System.out.println(it.next().getValue());
