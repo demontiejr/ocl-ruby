@@ -201,12 +201,20 @@ operationContext ::= classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN P
 					 | classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN {: parser.as.setContext(((Node)ct1).toString()); :}
 					 | classifierType:ct1 LPAREN RPAREN {: parser.as.setContext(((Node)ct1).toString()); :};
 
-formalParameterList ::= formalParameter:fp1 formalParameterListAux:fpla1;
+formalParameterList ::= formalParameter:fp1 formalParameterListAux:fpla1 {: Node node = (Node)fpla1;
+																			node.addElement((Node)fp1);
+																			RESULT = node;
+																		 :} ;
 
-formalParameterListAux ::= COMA formalParameter:fp1 formalParameterListAux:fpla1 
-					    | ;
+formalParameterListAux ::= COMA formalParameter:fp1 formalParameterListAux:fpla1 {: Node node = (Node)fpla1;
+																					node.addElement((Node)fp1);
+																					RESULT = node;
+																				 :}
+					    | RESULT = new Node();
 
-formalParameter ::= ID:id POINTS typeName:tn;
+formalParameter ::= ID:id POINTS typeName:tn {: Node node = new Node((String)id, ((Node)tn).getValue());
+												node.setCollection(((Node)tn).isCollection());
+												RESULT = node; :};
 
 expression ::= logicalExpression:le1 {: System.out.println("Entrou exp"); RESULT = le1; :};
 
@@ -485,8 +493,8 @@ actualParameterListAux ::= COMA expression:exp1 actualParameterListAux:apla1
 						:}
 						 | {: RESULT = new Node(); :};
 
-typeName ::= pathName:pn
-		  | oclType:ocltype1;
+typeName ::= pathName:pn {: RESULT = pn; :}
+		  | oclType:ocltype1 {: RESULT = ocltype1 :};
 
 oclType ::= OCL_SUPER_TYPE:super1 {: RESULT = new Node(super1, super1); :}
 		 | OCL_BASIC_TYPE:basic1 {: RESULT = new Node(basic1, basic1); :}
