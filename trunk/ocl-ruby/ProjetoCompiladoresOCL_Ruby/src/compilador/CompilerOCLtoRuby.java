@@ -130,7 +130,7 @@ public class CompilerOCLtoRuby {
 		ScannerOCL scanner = createScanner(fileName);
 		List<String> fatalErrors = new ArrayList<String>();
 		if (scanner != null) {
-			System.out.println("Realizando anlise...");
+			System.out.println("Realizando analise...");
 			ParserOCL parser = new ParserOCL(scanner);
 			errors = parser.errorLog;
 			try {
