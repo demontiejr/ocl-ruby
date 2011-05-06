@@ -375,4 +375,17 @@ public class SemanticAnalyzer {
 				|| type.equalsIgnoreCase("Double") || type.equalsIgnoreCase("Long"));
 	}
 	
+	private String isCollection(String entrada){
+		if(entrada != null){
+			String[] lista = entrada.split("<");
+			if(lista.length > 1){
+				String[] listaAux = (lista[lista.length-1]).split(">");
+				if(listaAux.length == 1){
+					return listaAux[0];
+				}
+			}
+		}		
+		return null;
+	}
+	
 }
