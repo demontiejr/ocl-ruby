@@ -32,6 +32,8 @@ public class SemanticAnalyzer {
 	private String opID;
 	private Set<String> logErros = new HashSet<String>();
 	
+	private List<Node> declaratedIDs = new ArrayList<Node>();
+	
 	public Set<String> getLogErros() {
 		return logErros;
 	}
@@ -70,6 +72,26 @@ public class SemanticAnalyzer {
 
 	private void setContextType(String contextType) {
 		this.contextType = contextType;
+	}
+	
+	public void declareID(Node node, int line) {
+		try {
+			Atributo at = ManipuladorXMI.contemAtributo(getContextClass(), getContextClass(), (String)node.getValue());
+			if (at != null)
+				error(line, "O identificador " + node.getValue() + " ja foi declarado no XMI.");
+		} catch (Exception e) {
+			for (Node n : declaratedIDs){
+				if (((String)n.getValue()).equals((String)node.getValue())){
+					error(line, "O identificador " + n.getValue() + " ja foi declarado anteriormente.");
+					break;
+				}
+			}
+		}
+		declaratedIDs.add(node);
+	}
+	
+	public List<Node> getDeclaratedIDs() {
+		return this.declaratedIDs;
 	}
 	
 	public void checkCollectionOperation(String operation, String parameterType, int line) throws SemanticErrorException {
@@ -253,6 +275,12 @@ public class SemanticAnalyzer {
 			node.setValue(elemento.getValue());
 			node.setCollection(isCollection);
 		} catch (Exception e){
+			if ((elemento.getRole() == Node.VALUE) && classe.equals(getContextClass())){
+				for (Node n : getDeclaratedIDs()){
+					if (((String)n.getValue()).equals((String)elemento.getValue()))
+						return n;
+				}
+			}
 			throw new SemanticErrorException(e.getMessage() + " Linha " + (line+1));
 		}
 		return node;
