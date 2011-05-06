@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import xmiParser.ManipuladorXMI;
+import xmiParser.XMIManager;
 import xmiParser.util.Atributo;
 import xmiParser.util.Operacao;
 import xmiParser.util.Parametro;
@@ -81,7 +81,7 @@ public class SemanticAnalyzer {
 	
 	public void declareID(Node node, int line) {
 		try {
-			Atributo at = ManipuladorXMI.contemAtributo(getContextClass(), getContextClass(), (String)node.getValue());
+			Atributo at = XMIManager.containsAttribute(getContextClass(), getContextClass(), (String)node.getValue());
 			if (at != null)
 				error(line, "O identificador " + node.getValue() + " ja foi declarado no XMI.");
 		} catch (Exception e) {
@@ -187,7 +187,7 @@ public class SemanticAnalyzer {
 			error(line,"Impossivel realizar operacao com o tipo void");
 		String type = null;
 		try{
-			type = ManipuladorXMI.maxType(type1, type2);
+			type = XMIManager.maxType(type1, type2);
 		} catch (Exception e) {
 			error(line,"Impossivel realizar operacao entre " + type1 + " e " + type2);
 		}
@@ -258,7 +258,7 @@ public class SemanticAnalyzer {
 		setContextClass(classe);
 		
 		try {
-			Operacao op = ManipuladorXMI.contemFuncao(classe,classe,metodo);
+			Operacao op = XMIManager.containsFunction(classe,classe,metodo);
 			checkParamsContext(op, params.getElements(), line);
 			setContextMethod(metodo);
 			String type;
@@ -298,14 +298,14 @@ public class SemanticAnalyzer {
 		try {
 			String type = null;
 			if (elemento.getRole() == Node.FUNCTION){
-				Operacao op = ManipuladorXMI.contemFuncao(getContextClass(),classe,(String)elemento.getValue());
+				Operacao op = XMIManager.containsFunction(getContextClass(),classe,(String)elemento.getValue());
 				if (op.getReturnClass() != null)
 					type = op.getReturnClass().getName();
 				else
 					type = op.getReturnType();
 				checkParams(op, elemento.getElements(), line);
 			} else if (elemento.getRole() == Node.VARIABLE){
-				Atributo at = ManipuladorXMI.contemAtributo(getContextClass(), classe, (String)elemento.getValue());
+				Atributo at = XMIManager.containsAttribute(getContextClass(), classe, (String)elemento.getValue());
 				if (at.getTipo() != null)
 					type = at.getTipo().getName();
 				else
@@ -363,7 +363,7 @@ public class SemanticAnalyzer {
 	public boolean ehSubtipo(String sub, String sup){
 		boolean ret = false;
 		try{
-			String type = ManipuladorXMI.maxType(sub, sup);
+			String type = XMIManager.maxType(sub, sup);
 			ret = type.equals(sup);;
 		} catch (Exception e) {
 		}

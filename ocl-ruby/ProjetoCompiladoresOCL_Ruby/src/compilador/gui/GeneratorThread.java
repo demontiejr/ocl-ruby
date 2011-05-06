@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import xmiParser.ManipuladorXMI;
+import xmiParser.XMIManager;
 import xmiParser.XMIParser;
 import JFlex.ErrorMessages;
 import JFlex.Out;
@@ -153,7 +153,7 @@ public class GeneratorThread extends Thread {
 			try {
 				XMIParser parserxmi = new XMIParser(xmi);
 				parserxmi.readXMI();
-				ManipuladorXMI.setStaticClasses(parserxmi.getArrayClasses());
+				XMIManager.setStaticClasses(parserxmi.getArrayClasses());
 			} catch (Exception e1) {
 				Out.println(e1.getMessage());
 				System.exit(0);

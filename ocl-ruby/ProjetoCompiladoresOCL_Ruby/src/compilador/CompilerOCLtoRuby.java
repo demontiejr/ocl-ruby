@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import xmiParser.ManipuladorXMI;
+import xmiParser.XMIManager;
 import xmiParser.XMIParser;
 
 import excecoes.FatalErrorException;
@@ -122,7 +122,7 @@ public class CompilerOCLtoRuby {
 		try {
 			XMIParser parserxmi = new XMIParser(xmi);
 			parserxmi.readXMI();
-			ManipuladorXMI.setStaticClasses(parserxmi.getArrayClasses());
+			XMIManager.setStaticClasses(parserxmi.getArrayClasses());
 		} catch (Exception e1) {
 			System.err.println(e1.getMessage());
 			System.exit(0);

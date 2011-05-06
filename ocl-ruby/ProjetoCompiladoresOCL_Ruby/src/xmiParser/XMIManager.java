@@ -9,12 +9,12 @@ import xmiParser.util.Entidade;
 import xmiParser.util.Operacao;
 
 //Classe que vai ter os métodos estáticos
-public class ManipuladorXMI {
+public class XMIManager {
 	
 	private static ArrayList<Entidade> classes;
 	private static ArrayList<String> hierarquiaNumbers;
 	
-	private ManipuladorXMI() {
+	private XMIManager() {
 	}
 	
 	public static void setStaticClasses(Collection<Entidade> cls){
@@ -42,7 +42,7 @@ public class ManipuladorXMI {
 		throw new Exception("A classe '"+idClasse+"' nao existe.");
 	}
 	
-	private static Atributo getAtributoFromClass(Classe context, Classe classe,
+	private static Atributo getAtributeFromClass(Classe context, Classe classe,
 			String idAtributo) throws Exception {
 		Atributo att = findAttFromList(classe.getAtributos(),idAtributo);
 		if(att!=null){
@@ -52,7 +52,7 @@ public class ManipuladorXMI {
 			return att;
 		}else{
 			if(classe.temPai()){
-				return getAtributoFromClass(context, classe.getClassePai(), idAtributo);
+				return getAtributeFromClass(context, classe.getClassePai(), idAtributo);
 			}else{
 				throw new Exception("Nao existe o atributo '"+idAtributo+"' na classe '"+classe.getName()+"'.");
 			}
@@ -76,11 +76,11 @@ public class ManipuladorXMI {
 	 * @throws Exception 
 	 */
 	
-	public static Atributo contemAtributo(String context, String idClasse, String idAtributo) throws Exception{
+	public static Atributo containsAttribute(String context, String idClasse, String idAtributo) throws Exception{
 		Classe classe = getClasse(idClasse);
 		Classe contexto = getClasse(context);
 		if(classe!=null){
-			Atributo ret = getAtributoFromClass(contexto,classe,idAtributo);
+			Atributo ret = getAtributeFromClass(contexto,classe,idAtributo);
 			return ret;
 		}
 		return null;
@@ -93,17 +93,17 @@ public class ManipuladorXMI {
 	 * 	não pertence à classe (pode ser retornando null).
 	 */
 	 
-	public static Operacao contemFuncao(String context, String idClasse, String idAtributo) throws Exception{
+	public static Operacao containsFunction(String context, String idClasse, String idAtributo) throws Exception{
 		Classe classe = getClasse(idClasse);
 		Classe contexto = getClasse(context);
 		if(classe!=null){
-			Operacao ret = getOperacaoFromClass(contexto,classe,idAtributo);
+			Operacao ret = getOperationFromClass(contexto,classe,idAtributo);
 			return ret;
 		}
 		return null;
 	}
 
-	private static Operacao getOperacaoFromClass(Classe context,
+	private static Operacao getOperationFromClass(Classe context,
 			Classe classe, String idOperation) throws Exception {
 		Operacao op = findOperationFromList(classe.getOperacoes(),idOperation);
 		if(op!=null){
@@ -113,7 +113,7 @@ public class ManipuladorXMI {
 			return op;
 		}else{
 			if(classe.temPai()){
-				return getOperacaoFromClass(context, classe.getClassePai(), idOperation);
+				return getOperationFromClass(context, classe.getClassePai(), idOperation);
 			}else{
 				throw new Exception("Nao existe a operacao '"+idOperation+"' na classe '"+classe.getName()+"'.");
 			}
@@ -139,10 +139,10 @@ public class ManipuladorXMI {
 	 * @throws Exception 
 	 */
 	
-	public static String getTipoColecao(String context, String classe, String idAtributo) throws Exception{
+	public static String getTipeColection(String context, String classe, String idAtributo) throws Exception{
 		Classe contexto = getClasse(context);
 		Classe c = getClasse(classe);
-		Atributo att = getAtributoFromClass(contexto, c, idAtributo);
+		Atributo att = getAtributeFromClass(contexto, c, idAtributo);
 		if(att!=null && att.ehColecao()){
 			if(att.getIdTipo().contains("<")){
 				return getTypeInCol(att.getIdTipo());
