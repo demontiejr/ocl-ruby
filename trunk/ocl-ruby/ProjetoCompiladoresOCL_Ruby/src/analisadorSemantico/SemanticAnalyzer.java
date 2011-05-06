@@ -32,6 +32,7 @@ public class SemanticAnalyzer {
 	private String opID;
 	private Set<String> logErros = new HashSet<String>();
 	
+	private boolean declarator = false;
 	private List<Node> declaratedIDs = new ArrayList<Node>();
 	
 	public Set<String> getLogErros() {
@@ -161,6 +162,14 @@ public class SemanticAnalyzer {
 		this.stereotype = stereotype;
 	}
 	
+	public boolean getDeclarator() {
+		return declarator;
+	}
+
+	public void setDeclarator(boolean declarator) {
+		this.declarator = declarator;
+	}
+
 	public String maxType(String type1, String type2, int line){
 		if (type1.equalsIgnoreCase("void") || type2.equalsIgnoreCase("void"))
 			error(line,"Impossivel realizar operacao com o tipo void");

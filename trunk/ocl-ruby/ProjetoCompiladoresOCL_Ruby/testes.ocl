@@ -1,2 +1,2 @@
-context ProgramaFidelidade::cadastrar(c: Cliente)
-	post: cadastrar(c)
+context Cliente::idade()
+	post: cartoes->forAll(t1,t2|t1=t2)

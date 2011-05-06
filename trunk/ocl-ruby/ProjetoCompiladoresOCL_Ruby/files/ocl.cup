@@ -405,6 +405,7 @@ primaryExpression ::= litteralCollection:lc1
 				   						   Node fCall = (Node)fCall1;
 				   						   Node node = parser.as.checkFeatureCall(parser.as.getContextClass(),fCall, fCall1left);
 				   						   System.out.println("Tipo do atributo: " + node.getType());
+				   						   System.out.println("DECLARATOR? " + parser.as.getDeclarator());
 				   						   RESULT = node;
 				   						    :}
 				   | LPAREN expression:exp1 RPAREN {: System.out.println("Entrou primExp");
@@ -448,8 +449,13 @@ featureCallCollection ::= pathName:pn collectionParameters:params {:
                       RESULT = new Node(((Node)pn).toString());
                       :};
 
-collectionParameters ::= LPAREN declarator:d1 expression:exp1 RPAREN
-				| LPAREN declarator:d1 RPAREN
+collectionParameters ::= LPAREN declarator:d1 {: parser.as.setDeclarator(true); :} expression:exp1 RPAREN {: System.out.println("Entrou nos parametros com expression");
+				 								   Node node = new Node();
+				                   				   node.setType(((Node)exp1).getType());
+				                   				   RESULT = node;
+				                   				   System.out.println("Tipo collPar: " + node.getType()); :}
+				| LPAREN declarator:d1 RPAREN {: RESULT = new Node(null, "void");
+											  :}
 				| LPAREN expression:exp1 RPAREN {: System.out.println("Entrou nos parametros com expression");
 				 								   Node node = new Node();
 				                   				   node.setType(((Node)exp1).getType());

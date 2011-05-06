@@ -143,6 +143,7 @@ public class CompilerOCLtoRuby {
 			} catch (SemanticErrorException e){
 				errors.add(e.getMessage());
 			}catch (Exception e) {
+				e.printStackTrace();
 				parser.log.add("\nErro durante a analise: " + e.getMessage() + "\n");
 			}
 			System.out.println("\n" + (errors.size() + parser.as.getLogErros().size()) + " erro(s)\n");
