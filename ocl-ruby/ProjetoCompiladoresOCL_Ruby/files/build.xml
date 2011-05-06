@@ -1,0 +1,88 @@
+<project name="Blogao" default="build.all" basedir=".">
+
+        <property name="src" value="${basedir}/src/" />
+        <property name="build" value="${basedir}/build" />
+        <property name="dist" value="${basedir}/dist" />
+        <property name="doc" value="${basedir}/doc" />
+        <property name="jar_name" value="compiladorOCLtexto" />
+        <property name="doc_zip" value="projeto3-doc"/>
+        <property name="src_zip" value="projeto3-src"/>
+        <property name="dist.lib" value="dist/lib" />
+        
+        <!-- creates the folders bin, doc and dist -->
+        <target name="limpa">
+                <echo>Cleaning the destination folder.</echo>
+                <delete dir="${build}" />
+                <delete dir="${dist}" />
+                <delete dir="${doc}" />
+        </target>
+
+        <!-- compiles the project to the folder bin -->
+
+        <target name="compila">
+                <delete dir="${build}"/>
+                <mkdir dir="${build}"/>
+                <echo>Compiling the project.</echo>
+                <javac srcdir="${src}" destdir="${build}">
+                        <classpath>
+                                <fileset dir="${basedir}/lib" includes="**/*.jar" />
+                <!--            <fileset dir="${basedir}/lib/ws" includes="*.jar" />
+                                <fileset dir="${basedir}/lib/qtjambi-win32-lgpl-4.5.2_01" includes="*.jar" />
+                                <fileset dir="${basedir}/lib/WTK2.5.1" includes="**/*.jar" /> -->
+                        </classpath>
+                </javac>
+                <echo>Compiled suceful.</echo>
+        </target>
+        
+        <path id="dist.classpath">
+                <fileset dir="${dist.lib}" includes="**/*.jar" />
+    </path>
+
+    <manifestclasspath property="dist.manifest.classpath" jarfile="dist/${jar_name}.jar">
+        <classpath refid="dist.classpath" />
+    </manifestclasspath>
+
+        <target name="testa" depends="compila">
+                <echo>Testing easyaccept acceptance tests.</echo>
+                <exec executable="cmd.exe">
+                        <arg value="/c" />
+                        <arg value="testa.bat" />
+                </exec>
+        </target>
+
+        <!-- creates the executable .jar of the project to the folder dir -->
+
+        <target name="cria_jar" depends="compila">
+                <echo>Copying required libraries to distribuition</echo>
+                <mkdir dir="${dist}/lib" />
+                <echo>This may take several minutes. Please wait...</echo>
+                <copy todir="${dist}/lib">
+                        <fileset dir="${basedir}/lib/" />
+                </copy>
+                <echo> Creating the .jar.</echo>
+                <jar jarfile="${dist}/${jar_name}.jar" compress="true">
+                        <fileset dir="${build}" includes="**/*.*" />
+                        <manifest>
+                                <attribute name="Main-Class" value="compilador.CompilerOCLtoRuby" />
+                                <attribute name="Class-Path" value="${dist.manifest.classpath}"/>
+                        </manifest>
+                </jar>
+                <echo>Binary distribuition complete.</echo>
+        </target>
+
+        <target name="doc">
+                <delete dir="${doc}" />
+                <mkdir dir="${doc}"/>
+                <echo>Generating javadoc to doc dir.</echo>
+                <javadoc sourcepath="${src}" destdir="${doc}" />
+        </target>
+
+        <target name="zip_doc" depends="doc">
+                <echo>Ziping the project documentation.</echo>
+                <zip destfile="${dist}/${doc_zip}.zip" basedir="${doc}" update="true" />
+                <echo>Doc distribuition complete.</echo>
+        </target>
+        
+        <target name="build.all" depends="cria_jar,zip_doc"/>
+
+</project>
