@@ -271,6 +271,13 @@ public class SemanticAnalyzer {
 		
 	}
 	
+	public void checkOperationContext(Node rule1, Node rule2,int line) throws SemanticErrorException{
+		setContext(((Node)rule1).toString()); 
+		if (!getContextType().equals(((Node)rule2).toString()))
+	 			throw new excecoes.SemanticErrorException("tipo especificado no contexto diferente do tipo da operacao na linha " 
+			 	+ (line+1) + ".\n" + ((Node)rule2).toString() + " deve ser substituido por " + getContextType());
+	}
+	
 	private boolean isNumeric(String type){
 		return (type.equalsIgnoreCase("Float") || type.equalsIgnoreCase("Integer") 
 				|| type.equalsIgnoreCase("Double") || type.equalsIgnoreCase("Long"));
