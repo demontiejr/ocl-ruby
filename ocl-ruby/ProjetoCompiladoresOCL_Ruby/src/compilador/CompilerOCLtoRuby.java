@@ -118,7 +118,7 @@ public class CompilerOCLtoRuby {
 		System.out.println("Iniciando analise...");
 		System.out.println("============================================");
 		System.out.println("Lendo arquivo XMI...");
-		File xmi = new File("./files/Profe.xml");
+		File xmi = new File("Profe.xml");
 		try {
 			XMIParser parserxmi = new XMIParser(xmi);
 			parserxmi.readXMI();
@@ -137,13 +137,11 @@ public class CompilerOCLtoRuby {
 				parser.parse();
 			} catch (RuntimeException e) {
 				errors.add(e.getMessage());
-				e.printStackTrace();
 			} catch (FatalErrorException e) {
 				fatalErrors.add(e.getMessage());
 			} catch (SemanticErrorException e){
 				errors.add(e.getMessage());
 			}catch (Exception e) {
-				e.printStackTrace();
 				parser.log.add("\nErro durante a analise: " + e.getMessage() + "\n");
 			}
 			System.out.println("\n" + (errors.size() + parser.as.getLogErros().size()) + " erro(s)\n");
