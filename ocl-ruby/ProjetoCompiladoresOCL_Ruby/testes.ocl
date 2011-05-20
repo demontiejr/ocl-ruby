@@ -1,2 +1,3 @@
-context Conta::creditar(pts: Integer)
-	post: creditar(2.0)
+context Transacao::programa()
+    -- comentario funcionando
+	post: programa().obtemServicos()->select(true)->size() + 2
