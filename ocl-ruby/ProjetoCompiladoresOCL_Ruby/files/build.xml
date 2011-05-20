@@ -1,10 +1,10 @@
-<project name="Blogao" default="build.all" basedir=".">
+<project name="Blogao" default="build.all" basedir="..">
 
         <property name="src" value="${basedir}/src/" />
         <property name="build" value="${basedir}/build" />
         <property name="dist" value="${basedir}/dist" />
         <property name="doc" value="${basedir}/doc" />
-        <property name="jar_name" value="compiladorOCLtexto" />
+        <property name="jar_name" value="compiladorOCLgui" />
         <property name="doc_zip" value="projeto3-doc"/>
         <property name="src_zip" value="projeto3-src"/>
         <property name="dist.lib" value="dist/lib" />
@@ -63,7 +63,7 @@
                 <jar jarfile="${dist}/${jar_name}.jar" compress="true">
                         <fileset dir="${build}" includes="**/*.*" />
                         <manifest>
-                                <attribute name="Main-Class" value="compilador.CompilerOCLtoRuby" />
+                                <attribute name="Main-Class" value="compilador.Main" />
                                 <attribute name="Class-Path" value="${dist.manifest.classpath}"/>
                         </manifest>
                 </jar>
