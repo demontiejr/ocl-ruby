@@ -160,7 +160,7 @@ public class GeneratorThread extends Thread {
 			}
 			ScannerOCL scanner = createScanner(inputFile);
 			if (scanner != null) {
-				Out.println("Realizando anlise...");
+				Out.println("Realizando analise...");
 				ParserOCL parser = new ParserOCL(scanner);
 				errors = parser.errorLog;
 				try {

@@ -7,7 +7,7 @@ import java.util.Set;
 
 import xmiParser.XMIManager;
 import xmiParser.util.Atributo;
-import xmiParser.util.Operacao;
+import xmiParser.util.OperacaoMaior;
 import xmiParser.util.Parametro;
 import excecoes.RelationalErrorException;
 import excecoes.SemanticErrorException;
@@ -22,9 +22,11 @@ import excecoes.SemanticErrorException;
  */
 public class SemanticAnalyzer {
 
-	private String contextClass;
+	private String actualContextClass;
 	private String contextMethod;
 	private String contextType;
+	
+	private String declaratedContextClass;
 
 	private String stereotype;
 	private String[] collectionOperations = {"forAll", "exists", "includes", "excludes",
@@ -36,6 +38,9 @@ public class SemanticAnalyzer {
 	
 	private boolean declarator = false;
 	private List<Node> declaratorAux = new ArrayList<Node>();
+	
+	public List<Node> auxList;
+	public boolean estaEmOpCollection = false;
 	
 	public String tipoPrimary;
 	
@@ -56,11 +61,11 @@ public class SemanticAnalyzer {
 	}
 
 	public String getContextClass() {
-		return contextClass;
+		return actualContextClass;
 	}
 
-	private void setContextClass(String contextClass) {
-		this.contextClass = contextClass;
+	public void setContextClass(String contextClass) {
+		this.actualContextClass = contextClass;
 	}
 
 	public String getContextMethod() {
@@ -77,6 +82,14 @@ public class SemanticAnalyzer {
 
 	private void setContextType(String contextType) {
 		this.contextType = contextType;
+	}
+	
+	public String getDeclaratedContextClass() {
+		return declaratedContextClass;
+	}
+
+	private void setDeclaratedContextClass(String declaratedContextClass) {
+		this.declaratedContextClass = declaratedContextClass;
 	}
 	
 	public void declareID(Node node, int line) {
@@ -114,9 +127,9 @@ public class SemanticAnalyzer {
 		else if (operation.equals("empty") || operation.equals("forAll") || operation.equals("exists") 
 				|| operation.equals("includes") || operation.equals("excludes"))
 			node.setType("Boolean");
-		if (operation.equals("select") || operation.equals("first"))
+		if (operation.equals("first"))
 			node.setType(type);
-		if (operation.equals("including") || operation.equals("excluding")){
+		if (operation.equals("select") || operation.equals("including") || operation.equals("excluding")){
 		   node.setType(type);
 		   node.setCollection(true);
 		}
@@ -145,10 +158,12 @@ public class SemanticAnalyzer {
 		   //TODO	
 		   //Collection::includes(object : T) : Boolean 
 		   //Collection::excludes(object : T) : Boolean
+			return parameterType.equals(tipoPrimary);
 		}else if (operation.equals("including") || operation.equals("excluding")){
 		   //TODO
 		   //including(object : T) -> retorna o mesmo tipo da colecao
 		   //excluding(object : T) -> retorna o mesmo tipo da colecao
+			return parameterType.equals(tipoPrimary);
 		}
 		return false;
 	}
@@ -253,9 +268,10 @@ public class SemanticAnalyzer {
 		String metodo = separate[separate.length-1];
 		
 		setContextClass(classe);
+		setDeclaratedContextClass(classe);
 		
 		try {
-			Operacao op = XMIManager.containsFunction(classe,classe,metodo);
+			OperacaoMaior op = XMIManager.containsFunction(classe,classe,metodo);
 			checkParamsContext(op, params.getElements(), line);
 			setContextMethod(metodo);
 			String type;
@@ -271,22 +287,26 @@ public class SemanticAnalyzer {
 		}
 	}
 	
-	private void checkParamsContext(Operacao op, List<Node> elements, int line) {
-		ArrayList<Parametro> params = op.getParametros();
-		if (params.size() != elements.size())
-			error(line, "numero errado de parametros para a funcao " + op.getNome() + " na assinatura do contexto.\n\tDeve(m) ser passado(s) " +
-					params.size() + " parametro(s), mas foi(foram) passado(s) " + elements.size());
-		for (int i=0; i<params.size(); i++){
-			String type = null;
-			if (params.get(i).getTipo() != null)
-				type = params.get(i).getTipo().getName();
-			else
-				type = params.get(i).getIdTipo();
-			if (!type.equals(elements.get(i).getType()))
-				error(line, "tipo de parametro errado na chamada a funcao " + op.getNome() + ".\n\tO " + (i+1) + "º parametro"
-					+ " deveria ser um " + type + ", mas foi passado um " + elements.get(i).getType());
+	private void checkParamsContext(OperacaoMaior op, List<Node> elements, int line) {
+		boolean found = false;
+		outer:for (ArrayList<Parametro> params : op.getListaParametros()) {
+			if (params.size() != elements.size()) {
+				continue;
+			}
+			for (int i = 0; i < params.size(); i++) {
+				String type = null;
+				if (params.get(i).getTipo() != null)
+					type = params.get(i).getTipo().getName();
+				else
+					type = params.get(i).getIdTipo();
+				if (!type.equals(elements.get(i).getType()))
+					continue outer;
+			}
+			found = true;
+			break;
 		}
-		
+		if (!found)
+			error(line, "lista de parametros errada para o metodo " + op.getNome());
 	}
 	
 	public Node checkFeatureCall(String classe, Node elemento, int line) throws SemanticErrorException{
@@ -295,12 +315,17 @@ public class SemanticAnalyzer {
 		try {
 			String type = null;
 			if (elemento.getRole() == Node.FUNCTION){
-				Operacao op = XMIManager.containsFunction(getContextClass(),classe,(String)elemento.getValue());
+				OperacaoMaior op = XMIManager.containsFunction(getContextClass(),classe,(String)elemento.getValue());
 				if (op.getReturnClass() != null)
 					type = op.getReturnClass().getName();
 				else
 					type = op.getReturnType();
 				checkParams(op, elemento.getElements(), line);
+				String aux = isCollection(type);
+				if (aux != null) {
+					type = aux;
+					isCollection = true;
+				}
 			} else if (elemento.getRole() == Node.VARIABLE){
 				Atributo at = XMIManager.containsAttribute(getContextClass(), classe, (String)elemento.getValue());
 				if (at.getTipo() != null)
@@ -308,6 +333,13 @@ public class SemanticAnalyzer {
 				else
 					type = at.getIdTipo();
 				isCollection = at.ehColecao();
+				if (!at.ehColecao()){
+					String aux = isCollection(type);
+					if (aux != null){
+						type = aux;
+						isCollection = true;
+					}
+				}
 			}
 			if (type == null)
 				type = "Void";
@@ -331,30 +363,31 @@ public class SemanticAnalyzer {
 					}
 				}
 			}
-			e.printStackTrace();
 			throw new SemanticErrorException(e.getMessage() + " Linha " + (line+1));
 		}
 		return node;
 	}
 
-	private void checkParams(Operacao op, List<Node> elements, int line) {
-		ArrayList<Parametro> params = op.getParametros();
-		if (params.size() != elements.size())
-			error(line, "numero errado de parametros na chamada a funcao " + op.getNome() + ".\n\tDeve(m) ser passado(s) " +
-					params.size() + " parametro(s), mas foi(foram) passado(s) " + elements.size());
-		for (int i=0; i<params.size(); i++){
-			String type = null;
-			if (params.get(i).getTipo() != null)
-				type = params.get(i).getTipo().getName();
-			else
-				type = params.get(i).getIdTipo();
-//			if (type.equals(elements.get(i).getType()))
-//				continue;
-			if (!ehSubtipo(elements.get(i).getType(), type))
-				error(line, "tipo de parametro errado na chamada a funcao " + op.getNome() + ".\n\tO " + (i+1) + "º parametro"
-					+ " deveria ser um " + type + ", mas foi passado um " + elements.get(i).getType());
+	private void checkParams(OperacaoMaior op, List<Node> elements, int line) {
+		boolean found = false;
+		outer:for (ArrayList<Parametro> params : op.getListaParametros()) {
+			if (params.size() != elements.size()) {
+				continue;
+			}
+			for (int i = 0; i < params.size(); i++) {
+				String type = null;
+				if (params.get(i).getTipo() != null)
+					type = params.get(i).getTipo().getName();
+				else
+					type = params.get(i).getIdTipo();
+				if (!ehSubtipo(elements.get(i).getType(), type))
+					continue outer;
+			}
+			found = true;
+			break;
 		}
-		
+		if (!found)
+			error(line, "lista de parametros errada para o metodo " + op.getNome());
 	}
 	
 	public boolean ehSubtipo(String sub, String sup){
