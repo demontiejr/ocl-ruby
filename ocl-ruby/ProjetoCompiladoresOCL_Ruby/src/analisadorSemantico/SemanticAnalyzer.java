@@ -36,6 +36,7 @@ public class SemanticAnalyzer {
 	
 	private List<Node> declaratedIDs = new ArrayList<Node>();
 	
+	public boolean opCollection = false;
 	private boolean declarator = false;
 	private List<Node> declaratorAux = new ArrayList<Node>();
 	
@@ -309,9 +310,15 @@ public class SemanticAnalyzer {
 			error(line, "lista de parametros errada para o metodo " + op.getNome());
 	}
 	
-	public Node checkFeatureCall(String classe, Node elemento, int line) throws SemanticErrorException{
+	public Node checkFeatureCall(String c, Node elemento, int line) throws SemanticErrorException{
 		Node node = new Node();
 		boolean isCollection = false;
+		String classe = c;
+		System.err.println(opCollection);
+		System.err.println("  " + tipoPrimary);
+		System.err.println("  " + (String)elemento.getValue());
+		if (opCollection)
+			classe = tipoPrimary;
 		try {
 			String type = null;
 			if (elemento.getRole() == Node.FUNCTION){
@@ -363,6 +370,7 @@ public class SemanticAnalyzer {
 					}
 				}
 			}
+			System.err.println("classe: " + classe);
 			throw new SemanticErrorException(e.getMessage() + " Linha " + (line+1));
 		}
 		return node;
