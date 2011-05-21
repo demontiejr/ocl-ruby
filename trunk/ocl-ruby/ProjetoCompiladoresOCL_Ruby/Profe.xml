@@ -84,7 +84,7 @@
 				</ownedParameter>
 			</ownedOperation>
 		</ownedMember>
-		<ownedMember xmi:type='uml:Class' xmi:id='_12_0_2c760592_1274330853031_608220_278' name='Set&lt;Servicos&gt;' visibility='public'/>
+		<ownedMember xmi:type='uml:Class' xmi:id='_12_0_2c760592_1274330853031_608220_278' name='Set&lt;Servico&gt;' visibility='public'/>
 		<ownedMember xmi:type='uml:Class' xmi:id='_12_0_2c760592_1274330889765_401175_284' name='ParceiroPrograma' visibility='public'>
 			<ownedAttribute xmi:type='uml:Property' xmi:id='_12_0_2c760592_1274330916015_678343_303' name='quantidadeDeClientes' visibility='private'>
 				<type xmi:type='uml:PrimitiveType' href='http://schema.omg.org/spec/UML/2.0/uml.xml#Integer'>
