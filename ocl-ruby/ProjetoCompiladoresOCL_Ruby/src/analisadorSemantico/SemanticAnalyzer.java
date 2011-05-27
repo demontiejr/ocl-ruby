@@ -11,6 +11,7 @@ import xmiParser.util.OperacaoMaior;
 import xmiParser.util.Parametro;
 import excecoes.RelationalErrorException;
 import excecoes.SemanticErrorException;
+import geradorDeCodigo.CodeGenerator;
 
 /**
  * Classe com funcoes uteis para a analise semantica.
@@ -314,9 +315,6 @@ public class SemanticAnalyzer {
 		Node node = new Node();
 		boolean isCollection = false;
 		String classe = c;
-		System.err.println(opCollection);
-		System.err.println("  " + tipoPrimary);
-		System.err.println("  " + (String)elemento.getValue());
 		if (opCollection)
 			classe = tipoPrimary;
 		try {
@@ -335,6 +333,8 @@ public class SemanticAnalyzer {
 				}
 			} else if (elemento.getRole() == Node.VARIABLE){
 				Atributo at = XMIManager.containsAttribute(getContextClass(), classe, (String)elemento.getValue());
+				if (!opCollection && c.equals(getContextClass()))
+					CodeGenerator.getInstance().addIdUtilizado(elemento.toString());
 				if (at.getTipo() != null)
 					type = at.getTipo().getName();
 				else
@@ -370,7 +370,6 @@ public class SemanticAnalyzer {
 					}
 				}
 			}
-			System.err.println("classe: " + classe);
 			throw new SemanticErrorException(e.getMessage() + " Linha " + (line+1));
 		}
 		return node;

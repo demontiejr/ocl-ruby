@@ -78,6 +78,7 @@ public class GeneratorThread extends Thread {
 		return scanner;
 	}
 	
+	@SuppressWarnings("unused")
 	private void lexicalAnalysis(){
 		if (running) {
 			Out.error(ErrorMessages.ALREADY_RUNNING);
@@ -106,6 +107,7 @@ public class GeneratorThread extends Thread {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void syntacticalAnalysis(){
 		if (running) {
 			Out.error(ErrorMessages.ALREADY_RUNNING);

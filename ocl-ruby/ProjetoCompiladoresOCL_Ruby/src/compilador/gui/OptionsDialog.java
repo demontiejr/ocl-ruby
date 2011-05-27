@@ -93,7 +93,8 @@ public class OptionsDialog extends Dialog {
   }
 
 
-  public void close() {
+  @SuppressWarnings("deprecation")
+public void close() {
     hide();
   }
 

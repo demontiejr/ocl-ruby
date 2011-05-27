@@ -2,30 +2,17 @@ package compilador.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
-import java.awt.Checkbox;
-import java.awt.CheckboxGroup;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.Insets;
-import java.awt.Label;
 import java.awt.Panel;
 import java.awt.TextArea;
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import JFlex.Options;
-
-import compilador.Main;
-
+@SuppressWarnings("serial")
 public class AboutDialog extends Dialog{
-	  private Frame owner;
-	  
 	  private String infString = "Universidade Federal de Campina Grande - UFCG\n" +
 		"Centro de Engenharia Eletrica e Informatica - CEEI\n" +
   		"Departamento de Sistemas e Computacao - DSC\n\n" +
@@ -48,8 +35,6 @@ public class AboutDialog extends Dialog{
 	  public AboutDialog(Frame owner) {
 	    super(owner, "Sobre");
 
-	    this.owner = owner;
-	    
 	    setup();
 	    pack();
 	    
@@ -83,7 +68,8 @@ public class AboutDialog extends Dialog{
 	    add("Center",panel);
 	  }
 	  
-	  public void close() {
+	  @SuppressWarnings("deprecation")
+	public void close() {
 	    hide();
 	  }
 }
