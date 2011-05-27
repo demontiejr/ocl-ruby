@@ -39,6 +39,7 @@ import JFlex.Out;
 *        Savyo Igor da Nobrega Santos - 20811034         *
 *********************************************************/
 
+@SuppressWarnings("serial")
 final public class MainFrame extends Frame implements Handles {
 
   private volatile boolean choosing;

@@ -27,6 +27,9 @@ public class Node {
 	
 	private int role;
 
+	//gerador de codigo
+	private String code = "";
+	
 	public Node(Object value, String type) {
 		this.value = value;
 		this.type = type;
@@ -79,6 +82,14 @@ public class Node {
 		this.collection = collection;
 	}
 	
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	public void addElement(Node element){
 		list.add(0, element);
 	}

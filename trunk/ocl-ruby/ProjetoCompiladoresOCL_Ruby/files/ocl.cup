@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import analisadorSemantico.SemanticAnalyzer;
 import analisadorSemantico.Node;
+import geradorDeCodigo.CodeGenerator;
 
 parser code {:
 	
@@ -175,20 +176,34 @@ initialRule ::= constraint:c1 initialRuleAux:ira1;
 initialRuleAux ::= constraint:c1 initialRuleAux:ira1 
 				| ;
 
-constraint ::= contextDeclaration:cd1 constraintBody:cb1 constraintAux:ca1;
+constraint ::= contextDeclaration:cd1 constraintBody:cb1 constraintAux:ca1 {: 
+								String code = ((Node)cd1).getCode() + CodeGenerator.getInstance().getInitializeCode() +
+									((Node)cb1).getCode() + ((Node)ca1).getCode() + "\nend";
+								CodeGenerator.getInstance().writeToFile(code);
+								 :};
 
-constraintAux ::= constraintBody:cb1 constraintAux:ca1 
-			   | ;
+constraintAux ::= constraintBody:cb1 constraintAux:ca1 {: Node node = new Node();
+														  node.setCode(((Node)cb1).getCode() + ((Node)ca1).getCode()); :}
+			   | {: RESULT = new Node(); :};
 
-contextDeclaration ::= CONTEXT operationContext:oc1;
+contextDeclaration ::= CONTEXT operationContext:oc1 {: Node node = new Node();
+													   node.setCode("class " + ((Node)oc1).getCode() + "\n");
+													   RESULT = node; :};
 
-constraintBody ::= stereotype:s1 ID:id POINTS expression:exp1
-					| stereotype:s1 POINTS expression:exp1;
+constraintBody ::= stereotype:s1 ID:id POINTS expression:exp1 {: Node node = new Node();
+																 RESULT = node; :}
+					| stereotype:s1 POINTS expression:exp1 {: Node node = new Node();
+															  RESULT = node; :};
 
 stereotype ::= PRE {: parser.as.setStereotype("pre"); :}
 			| POST {: parser.as.setStereotype("post"); :};
 
-classifierType ::= pathName:pn {: RESULT = pn; :};
+classifierType ::= pathName:pn {: Node node = (Node)pn;
+								  String[] separate = node.toString().split("::");
+								  String classe = separate[separate.length-2];
+								  node.setCode(classe);
+								  CodeGenerator.getInstance().setFileName(classe);
+								  RESULT = node; :};
 
 operationContext ::= classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN POINTS classifierType:ct2 {: parser.as.checkOperationContext((Node)ct1, (Node)fpl1, (Node)ct2, ct2left); :}
 					 																 							
@@ -199,7 +214,8 @@ operationContext ::= classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN P
 					 | classifierType:ct1 LPAREN RPAREN POINTS oclType:ocltype1 {: parser.as.checkOperationContext((Node)ct1, new Node(), (Node)ocltype1, ocltype1left); :}
 					 																	
 					 | classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN {: parser.as.setContext(((Node)ct1).toString(), (Node)fpl1, ct1left); :}
-					 | classifierType:ct1 LPAREN RPAREN {: parser.as.setContext(((Node)ct1).toString(), new Node(), ct1left); :};
+					 | classifierType:ct1 LPAREN RPAREN {: parser.as.setContext(((Node)ct1).toString(), new Node(), ct1left);
+					 									   RESULT = ct1; :};
 
 formalParameterList ::= formalParameter:fp1 formalParameterListAux:fpla1 {: Node node = (Node)fpla1;
 																			node.addElement((Node)fp1);

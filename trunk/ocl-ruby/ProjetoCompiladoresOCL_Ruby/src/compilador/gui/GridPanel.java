@@ -13,6 +13,7 @@ import java.util.*;
  * @author Gerwin Klein
  * @version JFlex 1.4.3, $Revision: 433 $, $Date: 2009-01-31 19:52:34 +1100 (Sat, 31 Jan 2009) $
  */
+@SuppressWarnings("serial")
 public class GridPanel extends Panel implements Handles {
 
   private int cols;
