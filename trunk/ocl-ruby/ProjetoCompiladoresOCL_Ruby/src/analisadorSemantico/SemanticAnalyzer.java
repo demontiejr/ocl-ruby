@@ -333,8 +333,6 @@ public class SemanticAnalyzer {
 				}
 			} else if (elemento.getRole() == Node.VARIABLE){
 				Atributo at = XMIManager.containsAttribute(getContextClass(), classe, (String)elemento.getValue());
-				if (!opCollection && c.equals(getContextClass()))
-					CodeGenerator.getInstance().addIdUtilizado(elemento.toString());
 				if (at.getTipo() != null)
 					type = at.getTipo().getName();
 				else

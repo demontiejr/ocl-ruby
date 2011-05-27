@@ -177,8 +177,7 @@ initialRuleAux ::= constraint:c1 initialRuleAux:ira1
 				| ;
 
 constraint ::= contextDeclaration:cd1 constraintBody:cb1 constraintAux:ca1 {: 
-								String code = ((Node)cd1).getCode() + CodeGenerator.getInstance().getInitializeCode() +
-									((Node)cb1).getCode() + ((Node)ca1).getCode() + "\nend";
+								String code = ((Node)cd1).getCode() + ((Node)cb1).getCode() + ((Node)ca1).getCode() + "\nend";
 								CodeGenerator.getInstance().writeToFile(code);
 								 :};
 
@@ -186,9 +185,7 @@ constraintAux ::= constraintBody:cb1 constraintAux:ca1 {: Node node = new Node()
 														  node.setCode(((Node)cb1).getCode() + ((Node)ca1).getCode()); :}
 			   | {: RESULT = new Node(); :};
 
-contextDeclaration ::= CONTEXT operationContext:oc1 {: Node node = new Node();
-													   node.setCode("class " + ((Node)oc1).getCode() + "\n");
-													   RESULT = node; :};
+contextDeclaration ::= CONTEXT operationContext:oc1 {: RESULT = oc1; :};
 
 constraintBody ::= stereotype:s1 ID:id POINTS expression:exp1 {: Node node = new Node();
 																 RESULT = node; :}
@@ -201,7 +198,7 @@ stereotype ::= PRE {: parser.as.setStereotype("pre"); :}
 classifierType ::= pathName:pn {: Node node = (Node)pn;
 								  String[] separate = node.toString().split("::");
 								  String classe = separate[separate.length-2];
-								  node.setCode(classe);
+								  node.setCode(CodeGenerator.getInstance().getClassCode(classe));
 								  CodeGenerator.getInstance().setFileName(classe);
 								  RESULT = node; :};
 
