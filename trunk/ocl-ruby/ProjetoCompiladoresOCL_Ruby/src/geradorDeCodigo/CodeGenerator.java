@@ -19,6 +19,8 @@ public class CodeGenerator {
 	private String fileName;
 	private static CodeGenerator codeGen;
 	private Map<String, String> classesCode;
+	private Map<String, List<String>> checkPre;
+	private Map<String, List<String>> checkPost;
 	
 	private CodeGenerator(){
 		directory = "";
@@ -67,6 +69,8 @@ public class CodeGenerator {
 	private void generateAllClasses(){
 		String code;
 		for (Classe c : XMIManager.getAllClasses()){
+			if (isCollection(c.getName()))
+				continue;
 			Classe sup = c.getClassePai();
 			String s = "";
 			if (sup != null){
@@ -118,8 +122,22 @@ public class CodeGenerator {
 			file.write(code);
 			file.close();
 		} catch (IOException e) {
+			System.out.println(fName);
 			System.out.println("Problemas na escrita do arquivo");;
 		}	
 	}	
+	
+	private boolean isCollection(String entrada){
+		if(entrada != null){
+			String[] lista = entrada.split("<");
+			if(lista.length > 1){
+				String[] listaAux = (lista[lista.length-1]).split(">");
+				if(listaAux.length == 1){
+					return true;
+				}
+			}
+		}		
+		return false;
+	}
 	
 }
