@@ -13,4 +13,19 @@ class Transacao
 	def programa() end
 
 
+	def checkAllPrePrograma()
+		return true
+	end
+
+	def checkAllPostPrograma()
+		if !(checkPost2Programa())
+			programaPostViolated()
+		end
+		return true
+	end
+
+	def programaPost IsViolated()
+		raise Exception, "Post condition of the method programa was violated"
+	end
+
 end
