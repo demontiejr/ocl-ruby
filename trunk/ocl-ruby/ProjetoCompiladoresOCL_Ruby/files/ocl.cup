@@ -414,9 +414,7 @@ primaryExpression ::= litteralCollection:lc1
 				   						   parser.as.tipoPrimary = node.getType();
 				   						    :}
 				   | LPAREN expression:exp1 RPAREN {: RESULT = exp1; :}
-				   | ifExpression:ifexp1 {: Node node = new Node(); 
-				                            node.setType("Boolean");
-				                            RESULT = node; :};
+				   | ifExpression:ifexp1 {: RESULT = ifexp1; :};
 
 litteralCollection ::= OCL_COLLECTION:collection1 LCURLY expressionListOrRange:elor1 RCURLY
 						| OCL_COLLECTION:collection1 LCURLY RCURLY;
@@ -428,7 +426,12 @@ expressionListOrRangeAux ::= COMA expression:exp1 expressionListOrRangeAux:elora
 
 ifExpression ::= IF expression:exp1 THEN expression:exp2 ELSE expression:exp3 ENDIF {: if (!((Node)exp1).getType().equalsIgnoreCase("Boolean"))
 																					       parser.as.error(exp1left, "a expressao dentro do if deve ser booleana.");
-																					   RESULT = new Node(true, "Boolean"); :};
+																					   String type = parser.as.maxType(((Node)exp2).getType(),((Node)exp3).getType(),exp1left);
+																					   if (type == null)
+																					       type = ((Node)exp2).getType();
+																					   Node node = new Node();
+																					   node.setType(type);
+																					   RESULT = node; :};
 
 featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft); :} parameters:params1 {: //TODO 
 																										 :}

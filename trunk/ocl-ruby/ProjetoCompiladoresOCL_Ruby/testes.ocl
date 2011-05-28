@@ -1,2 +1,5 @@
 context Transacao::programa()
 	post: programa().obtemServicos()->select(condicao=true)->size() + 2
+	
+context Cliente::idade()
+    post: idade() = if masculino then 18 else 15 endif
