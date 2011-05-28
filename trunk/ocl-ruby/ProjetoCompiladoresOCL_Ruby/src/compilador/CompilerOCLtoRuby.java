@@ -136,6 +136,7 @@ public class CompilerOCLtoRuby {
 			try {
 				parser.parse();
 			} catch (RuntimeException e) {
+				e.printStackTrace();
 				errors.add(e.getMessage());
 			} catch (FatalErrorException e) {
 				fatalErrors.add(e.getMessage());

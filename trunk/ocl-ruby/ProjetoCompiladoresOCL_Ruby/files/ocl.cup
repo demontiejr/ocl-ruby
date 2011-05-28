@@ -188,6 +188,7 @@ constraintAux ::= constraintBody:cb1 constraintAux:ca1 {: Node node = new Node()
 contextDeclaration ::= CONTEXT operationContext:oc1 {: RESULT = oc1; :};
 
 constraintBody ::= stereotype:s1 ID:id POINTS expression:exp1 {: Node node = new Node();
+
 																 RESULT = node; :}
 					| stereotype:s1 POINTS expression:exp1 {: Node node = new Node();
 															  RESULT = node; :};
@@ -230,7 +231,9 @@ formalParameter ::= ID:id POINTS typeName:tn {: Node node = new Node((String)id,
 												parser.as.declareID(node, idleft);
 												RESULT = node; :};
 
-expression ::= logicalExpression:le1 {: RESULT = le1; :};
+expression ::= logicalExpression:le1 {: Node node = (Node)le1; node.setCode(((Node)le1).getCode()); 
+System.out.println("expressao: " + node.getCode());
+RESULT = node;:};
 
 logicalExpression ::= relationalExpression:re1 logicalExpressionAux:lea1 {: Node node = new Node(); 
                                                                             if (lea1 == null)
@@ -241,6 +244,8 @@ logicalExpression ::= relationalExpression:re1 logicalExpressionAux:lea1 {: Node
                                                                                 	type = "Boolean";
                                                                                 }
                                                                                 node.setType(type);
+                                                                          	node.setCode(((Node)re1).getCode() + ((Node)lea1).getCode());
+                                                                          	
                                                                           	}
                                                                           	RESULT = node; :};
 
@@ -260,6 +265,7 @@ logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExp
                                                                               				 		  node.setType(type);
                                                                           			 		 	   }
                                                                           			 		 	   node.setOperation((String)lo1);
+                                                                          			 		 	   node.setCode(" " + lo1 + " " + ((Node)re1).getCode() + ((Node)lea1).getCode() );
                                                                           			 		 	   RESULT = node; :}
 					  | ;
 
@@ -278,6 +284,7 @@ relationalExpression ::= additiveExpression:ae1 relationalExpressionAux:rea {: N
                                                                                   parser.as.checkRelationalOp((String)((Node)rea).getOperation(), type);
                                                                                   node.setType("Boolean");
                                                                           	   }
+                                                                          	   node.setCode(((Node)ae1).getCode() + ((Node)rea).getCode());
                                                                           	   RESULT = node;
 																			:}
 						 | additiveExpression:ae1 {: RESULT = ae1; :};
@@ -288,10 +295,21 @@ relationalExpressionAux ::= relationalOperator:ro1 additiveExpression:ae2 relati
                                                                                      		 	      	 parser.as.checkRelationalOp((String)((Node)rea).getOperation(), type);
                                                                                      		 	      	 node.setType("Boolean");
                                                                                      		 	      	 node.setOperation((String)ro1);
+                                                                                     		 	      	 if(ro1.equals("=")){
+                                                                                     		 	      	 	node.setCode(" == " + ((Node)ae2).getCode() + ((Node)rea).getCode());
+                                                                                     		 	      	 }else{
+                                                                                     		 	      	 	node.setCode(" " + ro1 + " " + ((Node)ae2).getCode() + ((Node)rea).getCode());
+                                                                                     		 	      	 }
+                                                                                     		 	      	 
                                                                           			 		 	   		 RESULT = node; :}
 						| relationalOperator:ro1 additiveExpression:ae2 {: Node node = (Node)ae2;
 																		   node.setOperation((String)ro1);
-																		   RESULT = node; :};
+																		   if(ro1.equals("=")){
+                                                                           	node.setCode(" == " + ((Node)ae2).getCode());
+                                                                           }else{
+																			node.setCode(" " + ro1 + " " + ((Node)ae2).getCode());
+                                                                           }
+																		  RESULT = node; :};
 
 relationalOperator ::= EQ {: RESULT = "="; :}
 					| GT {: RESULT = ">"; :}
@@ -300,23 +318,64 @@ relationalOperator ::= EQ {: RESULT = "="; :}
 					| LE {: RESULT = "<="; :}
 					| NE {: RESULT = "<>"; :};
 
-additiveExpression ::= multiplicativeExpression:me1 additiveExpressionAux:aea1 {: Node node = parser.as.checkTypesOpArithmetic((Node)me1, (Node)aea1, me1left);
+additiveExpression ::= multiplicativeExpression:me1 additiveExpressionAux:aea1 
+					{: Node node = parser.as.checkTypesOpArithmetic((Node)me1, (Node)aea1, me1left);
+					if(aea1 == null){
+						node.setCode(((Node)me1).getCode());
+                    
+					}else{
+						node.setCode(((Node)me1).getCode() + ((Node)aea1).getCode());
+                    
+					}
                                                                           		  RESULT = node; :};
 
-additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAux:aea1 {: Node node = parser.as.checkTypesOpArithmeticAux((Node)me1, (Node)aea1, "+", me1left);
-                                                                          			 	 RESULT = node; :}
-								| MINUS multiplicativeExpression:me1 additiveExpressionAux:aea1 {: Node node = parser.as.checkTypesOpArithmeticAux((Node)me1, (Node)aea1, "-", me1left);
-                                                                          			 		       RESULT = node; :}
+additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAux:aea1 
+						{: Node node = parser.as.checkTypesOpArithmeticAux((Node)me1, (Node)aea1, "+", me1left);
+                           if(aea1 == null){
+                              node.setCode(" + " + ((Node)me1).getCode());
+                           }else{
+                           	  node.setCode(" + " + ((Node)me1).getCode() + ((Node)aea1).getCode());
+                          }
+                           RESULT = node; :}
+							
+								| MINUS multiplicativeExpression:me1 additiveExpressionAux:aea1 
+								{: Node node = parser.as.checkTypesOpArithmeticAux((Node)me1, (Node)aea1, "-", me1left);
+                                   if(aea1 == null){
+                                   	node.setCode(" - " + ((Node)me1).getCode());
+                                   }else{
+                                   	node.setCode(" - " + ((Node)me1).getCode() + ((Node)aea1).getCode());
+                                   }
+                                   RESULT = node; :}
 								| ;
 
-multiplicativeExpression ::= unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: Node node = parser.as.checkTypesOpArithmetic((Node)ue1, (Node)mea1, ue1left);
-                                                                          			 RESULT = node; :};
+multiplicativeExpression ::= unaryExpression:ue1 multiplicativeExpressionAux:mea1 
+						{: Node node = parser.as.checkTypesOpArithmetic((Node)ue1, (Node)mea1, ue1left);
+						if(mea1 == null){
+							node.setCode(((Node)ue1).getCode());
+                        
+						}else{
+							node.setCode(((Node)ue1).getCode() + ((Node)mea1).getCode());
+                        
+						}
+                        RESULT = node; :};
 
-multiplicativeExpressionAux ::= STAR unaryExpression:ue1 multiplicativeExpressionAux:mea1 {: Node node = parser.as.checkTypesOpArithmeticAux((Node)ue1, (Node)mea1, "*", ue1left);
-                                                                          			 		 RESULT = node; :}
+multiplicativeExpressionAux ::= STAR unaryExpression:ue1 multiplicativeExpressionAux:mea1 
+							{: Node node = parser.as.checkTypesOpArithmeticAux((Node)ue1, (Node)mea1, "*", ue1left);
+                            if(mea1 == null){
+                            	node.setCode(" * " + ((Node)ue1).getCode());
+                            }else{
+                            	node.setCode(" * " + ((Node)ue1).getCode() + ((Node)mea1).getCode());
+                            }
+                            RESULT = node; :}
 							    
-							    | DIV unaryExpression:ue1 multiplicativeExpressionAux:mea1{: Node node = parser.as.checkTypesOpArithmeticAux((Node)ue1, (Node)mea1, "/", ue1left);
-                                                                                        	 RESULT = node; :}
+							    | DIV unaryExpression:ue1 multiplicativeExpressionAux:mea1
+							    {: Node node = parser.as.checkTypesOpArithmeticAux((Node)ue1, (Node)mea1, "/", ue1left);
+                                if(mea1 == null){
+                            		node.setCode(" / " + ((Node)ue1).getCode());
+                            	}else{
+                            		node.setCode(" / " + ((Node)ue1).getCode() + ((Node)mea1).getCode());
+                            	}
+                                RESULT = node; :}
 								| ;
 
 unaryExpression ::= unaryOperator:uo1 postfixExpression:pfe1 {: Node node = (Node)pfe1;
@@ -327,6 +386,7 @@ unaryExpression ::= unaryOperator:uo1 postfixExpression:pfe1 {: Node node = (Nod
 																	if (node.getType().equals("String") || node.getType().equals("Boolean"))
 																		parser.as.error(pfe1left, "operador ' - ' nao eh definido para o tipo " + node.getType());
 																}
+																node.setCode(" " + uo1 + " " + ((Node)pfe1).getCode());
 																RESULT = node;
 															 :}
 			     | postfixExpression:pfe1 {: RESULT = pfe1; :};
@@ -359,17 +419,18 @@ postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1 {: Node n
                                                                           	}
                                                                           	node = aux;
                                                                           }
+                                                                          node.setCode(((Node)pe1).getCode() + ((Node)pfea1).getCode());
                                                                           RESULT = node; :}
 				   
 				   | SELF featureAccess:fa1 {: Node fCall = (Node)fa1;
 				   						       Node node = parser.as.checkFeatureCall(parser.as.getContextClass(),fCall, fa1left);
-				   						       RESULT = node;
+				   						       RESULT = node;//TODO
 				   						    :}
 				   
 				   | SELF AROBAPRE featureAccess:fa1 {: parser.as.checkStereotype("@pre", fa1left);
 				   										Node fCall = (Node)fa1;
 				   						       			Node node = parser.as.checkFeatureCall(parser.as.getContextClass(),fCall, fa1left);
-				   						       			RESULT = node; :};
+				   						       			RESULT = node;//TODO :};
 
 postfixExpressionAux ::= POINT featureCall:fCall1 {: Node fCall = (Node)fCall1;
 													 Node node = parser.as.checkFeatureCall(parser.as.tipoPrimary,fCall, fCall1left);
@@ -380,6 +441,7 @@ postfixExpressionAux ::= POINT featureCall:fCall1 {: Node fCall = (Node)fCall1;
 																				Node nodeAux = (Node)fCall1;
 																				nodeAux.setOperation(".");
 																				node.addElement(nodeAux);
+																				node.setCode("." + ((Node)fCall1).getCode() + ((Node)pfea1).getCode());
 																				RESULT = node; :}
 					  | ARROW featureCallCollection:fCol1 postfixExpressionAux:pfea1 {: Node node = (Node)pfea1;
 					  																	Node nodeAux = (Node)fCol1;
@@ -398,7 +460,7 @@ featureAccess ::=  POINT featureCall:fCall1 postfixExpressionAux:pfea1 {: //TODO
 			   | ;
 
 primaryExpression ::= litteralCollection:lc1
-		           | litteral:l1 {: RESULT = l1; :}
+		           | litteral:l1 {: Node node = (Node)l1; node.setCode(((Node)l1).getCode());RESULT = node;:}
 				   | RESULT:r {: parser.as.checkStereotype("result", rleft); 
 				   			     if (parser.as.getContextType().equalsIgnoreCase("void"))
 				   			     	parser.as.error(rleft, "result nao pode ser usado num contexto de metodo com tipo void.");
@@ -406,15 +468,16 @@ primaryExpression ::= litteralCollection:lc1
 				   			     node.setValue("result");
 				   			     node.setType(parser.as.getContextType());
 				   			     node.setRole(Node.VARIABLE);
-				   			     RESULT = node;
+				   			     RESULT = node; //TODO
 				   			   :} 
 				   | featureCall:fCall1 {: Node fCall = (Node)fCall1;
 				   						   Node node = parser.as.checkFeatureCall(parser.as.getContextClass(),fCall, fCall1left);
+				   						   node.setCode(((Node)fCall1).getCode());
 				   						   RESULT = node;
 				   						   parser.as.tipoPrimary = node.getType();
 				   						    :}
-				   | LPAREN expression:exp1 RPAREN {: RESULT = exp1; :}
-				   | ifExpression:ifexp1 {: RESULT = ifexp1; :};
+				   | LPAREN expression:exp1 RPAREN {: Node node = (Node)exp1; node.setCode("(" + ((Node)exp1).getCode() + ")"); RESULT = node; :}
+				   | ifExpression:ifexp1 {: RESULT = ifexp1; //TODO:};
 
 litteralCollection ::= OCL_COLLECTION:collection1 LCURLY expressionListOrRange:elor1 RCURLY
 						| OCL_COLLECTION:collection1 LCURLY RCURLY;
@@ -438,13 +501,15 @@ featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft
 				| pathName:pn parameters:params1 {:  Node node = new Node(((Node)pn).getValue(), "");
 								 		  			 node.setRole(Node.FUNCTION);
 								 		  			 node.addAllElements(((Node)params1).getElements());
+								 		  			 node.setCode(((Node)pn).getValue() + ((Node)params1).getCode());
 								 		  			 RESULT = node;
 								 		  			  :}
 				| pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft);
 										  Node node = new Node(((Node)pn).getValue(), "");
 								 		  node.setRole(Node.VARIABLE);
-								 		  RESULT = node; :}
+								 		  RESULT = node; //TODO soma, mult, div em ruby com arobapre:}
 				| pathName:pn {: Node node = new Node(((Node)pn).getValue(), "");
+								 node.setCode("" + ((Node)pn).getValue());
 								 node.setRole(Node.VARIABLE);
 								 RESULT = node; :};
 
@@ -467,7 +532,7 @@ collectionParameters ::= LPAREN declarator:d1 expression:exp1 RPAREN {: Node nod
 				                   node.setType("void");
 				                   RESULT = node; :};
 
-parameters ::= LPAREN actualParameterList:apl1 RPAREN {: RESULT = apl1; :};
+parameters ::= LPAREN actualParameterList:apl1 RPAREN {: Node node = (Node)apl1; node.setCode("(" + ((Node)apl1).getCode() + ")"); RESULT = node; :};
 
 declarator ::= ID:id declaratorAux:da1 POINTS typeName:tn PIPE {: Node node = (Node)da1;
 												  				  node.addElement(new Node((String)id));
@@ -487,6 +552,7 @@ actualParameterList ::= expression:exp1 actualParameterListAux:apla1
 						{: Node node = new Node();
 						   node.addAllElements(((Node)apla1).getElements());
 						   node.addElement((Node)exp1);
+						   node.setCode(((Node)exp1).getCode() + ((Node)apla1).getCode());
 						   RESULT = node;
 						:}
 						| {: RESULT = new Node(); :};
@@ -495,6 +561,7 @@ actualParameterListAux ::= COMA expression:exp1 actualParameterListAux:apla1
 						{: Node node = new Node();
 						   node.addAllElements(((Node)apla1).getElements());
 						   node.addElement((Node)exp1);
+						   node.setCode(", " + ((Node)exp1).getCode() + ((Node)apla1).getCode());
 						   RESULT = node;
 						:}
 						 | {: RESULT = new Node(); :};
@@ -514,7 +581,7 @@ pathName ::= ID:id pathNameAux:pna {: RESULT = new Node((String)id + ((Node)pna)
 pathNameAux ::= FOUR_POINTS ID:id pathNameAux:pna {: RESULT = new Node("::" + (String)id + ((Node)pna).toString()); :} 
 				| {: RESULT = new Node("") ; :};
 
-litteral ::= INT:int1 {: RESULT = new Node(int1, "Integer"); :}
-		| FLOAT:float1 {: RESULT = new Node(float1, "Float"); :}
-		| STRING:string1 {: RESULT = new Node(string1, "String"); :} 
-		| BOOL:bool1 {: RESULT = new Node(bool1, "Boolean"); :};
+litteral ::= INT:int1 {: Node node = new Node(int1, "Integer"); node.setCode("" + int1); RESULT = node; :}
+		| FLOAT:float1 {: Node node = new Node(float1, "Float"); node.setCode("" + float1); RESULT = node; :}
+		| STRING:string1 {: Node node = new Node(string1, "String"); node.setCode("" + string1); RESULT = node; :} 
+		| BOOL:bool1 {: Node node = new Node(bool1, "Boolean");  node.setCode("" + bool1); RESULT = node;:};
