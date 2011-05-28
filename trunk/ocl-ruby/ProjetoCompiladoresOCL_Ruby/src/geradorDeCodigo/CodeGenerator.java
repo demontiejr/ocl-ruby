@@ -31,7 +31,7 @@ public class CodeGenerator {
 		checkPre = new HashMap<String,List<String>>();
 		checkPost = new HashMap<String,List<String>>();
 		preNumber = 1;
-		postNumber = 2;
+		postNumber = 1;
 		generateAllClasses();
 	}
 	
@@ -39,6 +39,13 @@ public class CodeGenerator {
 		if (codeGen == null)
 			codeGen = new CodeGenerator();
 		return codeGen;
+	}
+	
+	public void reset(){
+		checkPre = new HashMap<String,List<String>>();
+		checkPost = new HashMap<String,List<String>>();
+		preNumber = 1;
+		postNumber = 1;
 	}
 	
 	public String getDirectory() {

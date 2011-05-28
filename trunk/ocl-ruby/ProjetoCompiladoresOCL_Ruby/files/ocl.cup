@@ -180,6 +180,7 @@ constraint ::= contextDeclaration:cd1 constraintBody:cb1 constraintAux:ca1 {:
 								String code = ((Node)cd1).getCode() + ((Node)cb1).getCode() + CodeGenerator.getInstance().getAllPre()
 								 + CodeGenerator.getInstance().getAllPost() + ((Node)ca1).getCode() + "\nend";
 								CodeGenerator.getInstance().writeToFile(code);
+								CodeGenerator.getInstance().reset();
 								 :};
 
 constraintAux ::= constraintBody:cb1 constraintAux:ca1 {: Node node = new Node();
