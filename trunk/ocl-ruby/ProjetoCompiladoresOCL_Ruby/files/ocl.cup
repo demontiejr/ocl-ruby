@@ -246,8 +246,8 @@ formalParameter ::= ID:id POINTS typeName:tn {: Node node = new Node((String)id,
 												RESULT = node; :};
 
 expression ::= logicalExpression:le1 {: Node node = (Node)le1; node.setCode(((Node)le1).getCode()); 
-System.out.println("expressao: " + node.getCode());
-RESULT = node;:};
+										System.out.println("expressao: " + node.getCode());
+										RESULT = node;:};
 
 logicalExpression ::= relationalExpression:re1 logicalExpressionAux:lea1 {: Node node = new Node(); 
                                                                             if (lea1 == null)
@@ -271,15 +271,17 @@ logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExp
                                                                                      		 	         parser.as.error(re1left, "operador " + (String)lo1 + " so eh definido para valores booleanos");
                                                                                         	 	      }
                                                                                         	 	      node.setType(type);
+                                                                                        	 	      node.setCode(" " + lo1 + " " + ((Node)re1).getCode());
                                                                                         	       } else{
                                                                                      		 	      type = parser.as.maxType(((Node)re1).getType(), ((Node)lea1).getType(), re1left);
                                                                                      		 	      if ((type == null) || !type.equals("Boolean")){
                                                                                      		 		     type = "Boolean";
                                                                                      		 		  }
                                                                               				 		  node.setType(type);
+                                                                              				 		  node.setCode(" " + lo1 + " " + ((Node)re1).getCode() + ((Node)lea1).getCode() );
                                                                           			 		 	   }
                                                                           			 		 	   node.setOperation((String)lo1);
-                                                                          			 		 	   node.setCode(" " + lo1 + " " + ((Node)re1).getCode() + ((Node)lea1).getCode() );
+                                                                          			 		 	   
                                                                           			 		 	   RESULT = node; :}
 					  | ;
 
