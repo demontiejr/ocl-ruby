@@ -3,6 +3,7 @@ package geradorDeCodigo;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,10 +22,16 @@ public class CodeGenerator {
 	private Map<String, String> classesCode;
 	private Map<String, List<String>> checkPre;
 	private Map<String, List<String>> checkPost;
+	private int preNumber;
+	private int postNumber;
 	
 	private CodeGenerator(){
 		directory = "";
 		classesCode = new HashMap<String, String>();
+		checkPre = new HashMap<String,List<String>>();
+		checkPost = new HashMap<String,List<String>>();
+		preNumber = 1;
+		postNumber = 2;
 		generateAllClasses();
 	}
 	
@@ -138,6 +145,91 @@ public class CodeGenerator {
 			}
 		}		
 		return false;
+	}
+	
+	public int getPreNumber(){
+		return preNumber++;
+	}
+	
+	public int getPostNumber(){
+		return postNumber++;
+	}
+	
+	public void addContextMethod(String method){
+		if (!checkPre.containsKey(method)){
+			checkPre.put(method, new ArrayList<String>());
+		}
+		if (!checkPost.containsKey(method)){
+			checkPost.put(method, new ArrayList<String>());
+		}
+	}
+	
+	public void addPre(String method, String name){
+		checkPre.get(method).add(name);
+	}
+	
+	public void addPost(String method, String name){
+		checkPost.get(method).add(name);
+	}
+	
+	public void addPre(String method){
+		String name = "checkPre" + getPreNumber() + method.substring(0, 1).toUpperCase() + method.substring(1);
+		checkPre.get(method).add(name);
+	}
+	
+	public void addPost(String method){
+		String name = "checkPost" + getPostNumber() + method.substring(0, 1).toUpperCase() + method.substring(1);
+		checkPost.get(method).add(name);
+	}
+	
+	public String getAllPre(){
+		String code = "";
+		for (String m : checkPre.keySet()){
+			code += "\n\tdef checkAllPre" + m.substring(0, 1).toUpperCase() + m.substring(1)
+			+ "()\n";
+			if (checkPre.get(m).isEmpty()){
+				code += "\t\treturn true\n\tend\n";
+				continue;
+			}
+			code += "\t\treturn (";
+			for (String c : checkPre.get(m)){
+				code += c + "() and ";
+			}
+			code = code.substring(0,code.length()-5);
+			code += ")";
+			code += "\n\tend";
+			code += "\n\n" + generateMethodViolate(m, "Pre");
+		}
+		return code;
+	}
+	
+	public String getAllPost(){
+		String code = "";
+		for (String m : checkPost.keySet()){
+			code += "\n\tdef checkAllPost" + m.substring(0, 1).toUpperCase() + m.substring(1)
+			+ "()\n";
+			if (checkPost.get(m).isEmpty()){
+				code += "\t\treturn true\n\tend\n";
+				continue;
+			}
+			code += "\t\tif !(";
+			for (String c : checkPost.get(m)){
+				code += c + "() and ";
+			}
+			code = code.substring(0,code.length()-5);
+			code += ")\n";
+			code += "\t\t\t" + m + "PostViolated()\n\t\tend";
+			code += "\n\t\treturn true\n\tend";
+			code += "\n\n" + generateMethodViolate(m, "Post ");
+		}
+		return code;
+	}
+	
+	private String generateMethodViolate(String method, String stereotype){
+		String code = "\tdef " + method + stereotype + "IsViolated()\n";
+		code += "\t\traise Exception, \"" + stereotype + "condition of the method " + method  + " was violated\"";
+		code += "\n\tend\n";
+		return code;
 	}
 	
 }
