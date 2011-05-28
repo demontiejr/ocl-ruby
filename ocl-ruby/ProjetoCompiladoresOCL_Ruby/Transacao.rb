@@ -18,7 +18,7 @@ class Transacao
 	end
 
 	def checkAllPostPrograma()
-		if !(checkPost2Programa())
+		if !(checkPost1Programa())
 			programaPostViolated()
 		end
 		return true
