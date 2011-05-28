@@ -31,7 +31,7 @@ public class SemanticAnalyzer {
 
 	private String stereotype;
 	private String[] collectionOperations = {"forAll", "exists", "includes", "excludes",
-			"including", "size", "excluding", "select", "empty", "first"};
+			"including", "size", "excluding", "select", "isEmpty", "first"};
 	private String opID;
 	private Set<String> logErros = new HashSet<String>();
 	
