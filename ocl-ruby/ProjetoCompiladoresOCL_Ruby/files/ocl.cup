@@ -403,7 +403,10 @@ unaryExpression ::= unaryOperator:uo1 postfixExpression:pfe1 {: Node node = (Nod
 																	if (node.getType().equals("String") || node.getType().equals("Boolean"))
 																		parser.as.error(pfe1left, "operador ' - ' nao eh definido para o tipo " + node.getType());
 																}
-																node.setCode(" " + uo1 + " " + ((Node)pfe1).getCode());
+																node.setCode(" " + uo1 + " (" + ((Node)pfe1).getCode() + ") ");
+																if(((Node)pfe1).isIfExpression){
+																	node.isIfExpression = true;
+																}
 																RESULT = node;
 															 :}
 			     | postfixExpression:pfe1 {: RESULT = pfe1; :};
@@ -435,8 +438,8 @@ postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1 {: Node n
                                                                           		previous = aux;
                                                                           	}
                                                                           	node = aux;
+                                                                          	node.setCode(((Node)pe1).getCode() + ((Node)pfea1).getCode());
                                                                           }
-                                                                          node.setCode(((Node)pe1).getCode() + ((Node)pfea1).getCode());
                                                                           RESULT = node; :}
 				   
 				   | SELF featureAccess:fa1 {: Node fCall = (Node)fa1;
@@ -494,7 +497,7 @@ primaryExpression ::= litteralCollection:lc1
 				   						   parser.as.tipoPrimary = node.getType();
 				   						    :}
 				   | LPAREN expression:exp1 RPAREN {: Node node = (Node)exp1; node.setCode("(" + ((Node)exp1).getCode() + ")"); RESULT = node; :}
-				   | ifExpression:ifexp1 {: RESULT = ifexp1; //TODO:};
+				   | ifExpression:ifexp1 {: RESULT = ifexp1; :};
 
 litteralCollection ::= OCL_COLLECTION:collection1 LCURLY expressionListOrRange:elor1 RCURLY
 						| OCL_COLLECTION:collection1 LCURLY RCURLY;
@@ -511,6 +514,8 @@ ifExpression ::= IF expression:exp1 THEN expression:exp2 ELSE expression:exp3 EN
 																					       type = ((Node)exp2).getType();
 																					   Node node = new Node();
 																					   node.setType(type);
+																					   node.isIfExpression = true;
+																					   node.setCode(((Node)exp2).getCode() + " if " +((Node)exp1).getCode() + "|" +((Node)exp3).getCode() + " unless " +((Node)exp1).getCode());
 																					   RESULT = node; :};
 
 featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft); :} parameters:params1 {: //TODO 
