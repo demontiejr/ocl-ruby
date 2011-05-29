@@ -262,8 +262,12 @@ logicalExpression ::= relationalExpression:re1 logicalExpressionAux:lea1 {: Node
                                                                                 	type = "Boolean";
                                                                                 }
                                                                                 node.setType(type);
-                                                                          	node.setCode(((Node)re1).getCode() + ((Node)lea1).getCode());
-                                                                          	
+                                                                          		if(((Node)lea1).isImplies){
+                                                                          			node.setCode(" not " + "(" +((Node)re1).getCode()+ ")" + ((Node)lea1).getCode());
+                                                                          		}else{
+                                                                          		
+                                                                          			node.setCode(((Node)re1).getCode() + ((Node)lea1).getCode());
+                                                                          		}
                                                                           	}
                                                                           	if(((Node)re1).isIfExpression){
                                                                            		node.isIfExpression = true;
@@ -272,6 +276,9 @@ logicalExpression ::= relationalExpression:re1 logicalExpressionAux:lea1 {: Node
 
 logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExpressionAux:lea1 {: Node node = new Node(); 
                                                                                      		 	   String type;
+                                                                                     		 	   if(((String)lo1).equals("implies")){
+                                                                                     		 	   	node.isImplies = true;
+                                                                                     		 	   }
                                                                                      		 	   if (lea1 == null){
                                                                                      		 	      type = ((Node)re1).getType();
                                                                                      		 	      if (!type.equals("Boolean")){
@@ -281,6 +288,8 @@ logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExp
                                                                                         	 	      if(((String)lo1).equals("xor")){
                                                                                         	 	      	node.setCode(" ^ " + ((Node)re1).getCode());
                                                                                         	       	  
+                                                                                        	 	      }else if(((String)lo1).equals("implies")){
+                                                                                        	 	      	node.setCode(" or " + ((Node)re1).getCode());
                                                                                         	 	      }else{
                                                                                         	 	      	node.setCode(" " + lo1 + " " + ((Node)re1).getCode());
                                                                                         	       	  }
@@ -289,10 +298,11 @@ logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExp
                                                                                      		 	      if ((type == null) || !type.equals("Boolean")){
                                                                                      		 		     type = "Boolean";
                                                                                      		 		  }
-                                                                              				 		  node.setType(type);
+                                                                              				 		   
                                                                               				 		  if(((String)lo1).equals("xor")){
-                                                                                        	 	      	node.setCode(" ^ " + ((Node)re1).getCode());
-                                                                                        	       	  
+                                                                                        	 	      	node.setCode(" ^ " + "(" +((Node)re1).getCode() + ((Node)lea1).getCode()+")" );
+                                                                                        	 	      }else if(((String)lo1).equals("implies")){
+                                                                                        	 	      	node.setCode(" or " + "(" +((Node)re1).getCode() + ((Node)lea1).getCode() + ")");
                                                                                         	 	      }else{
                                                                               				 		  	node.setCode(" " + lo1 + " " + ((Node)re1).getCode() + ((Node)lea1).getCode() );
                                                                           			 		 	   	  }

@@ -32,6 +32,9 @@ public class Node {
 	//para saber se eh ifExpression
 	public boolean isIfExpression = false;
 	
+	//para implies
+	public boolean isImplies = false;
+	
 	public Node(Object value, String type) {
 		this.value = value;
 		this.type = type;
