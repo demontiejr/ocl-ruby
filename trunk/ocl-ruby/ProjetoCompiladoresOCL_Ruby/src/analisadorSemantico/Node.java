@@ -29,6 +29,8 @@ public class Node {
 
 	//gerador de codigo
 	private String code = "";
+	//para saber se eh ifExpression
+	public boolean isIfExpression = false;
 	
 	public Node(Object value, String type) {
 		this.value = value;
