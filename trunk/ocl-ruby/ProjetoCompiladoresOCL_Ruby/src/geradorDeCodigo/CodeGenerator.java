@@ -239,4 +239,17 @@ public class CodeGenerator {
 		return code;
 	}
 	
+	public String getMain(){
+		String code = "\n\tdef main()\n";
+		for (String m : checkPre.keySet()){
+			code += "\n\t\tif checkAllPre" + m.substring(0, 1).toUpperCase() + m.substring(1) + "()\n";
+			code += "\t\t\t" + m + "()\n";    //TODO: tem que ajeitar os parametros
+			code += "\t\t\tcheckAllPost" + m.substring(0, 1).toUpperCase() + m.substring(1) + "()\n";
+			code += "\t\telse\n\t\t\t" + m + "PostIsViolated()\n";
+			code += "\t\tend\n";
+		}
+		code += "\n\tend";
+		return code;
+	}
+	
 }

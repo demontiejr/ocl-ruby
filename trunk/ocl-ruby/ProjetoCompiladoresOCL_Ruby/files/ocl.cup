@@ -177,8 +177,8 @@ initialRuleAux ::= constraint:c1 initialRuleAux:ira1
 				| ;
 
 constraint ::= contextDeclaration:cd1 constraintBody:cb1 constraintAux:ca1 {: 
-								String code = ((Node)cd1).getCode() + ((Node)cb1).getCode() + CodeGenerator.getInstance().getAllPre()
-								 + CodeGenerator.getInstance().getAllPost() + ((Node)ca1).getCode() + "\nend";
+								String code = ((Node)cd1).getCode() + ((Node)cb1).getCode() + ((Node)ca1).getCode() + CodeGenerator.getInstance().getAllPre()
+								 + CodeGenerator.getInstance().getAllPost() + CodeGenerator.getInstance().getMain() + "\nend";
 								CodeGenerator.getInstance().writeToFile(code);
 								CodeGenerator.getInstance().reset();
 								 :};
