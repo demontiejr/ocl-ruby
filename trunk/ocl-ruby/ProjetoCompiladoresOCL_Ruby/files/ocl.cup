@@ -248,6 +248,9 @@ formalParameter ::= ID:id POINTS typeName:tn {: Node node = new Node((String)id,
 
 expression ::= logicalExpression:le1 {: Node node = (Node)le1; node.setCode(((Node)le1).getCode()); 
 										System.out.println("expressao: " + node.getCode());
+										if(((Node)le1).isIfExpression){
+                                            node.isIfExpression = true;
+                                        }
 										RESULT = node;:};
 
 logicalExpression ::= relationalExpression:re1 logicalExpressionAux:lea1 {: Node node = new Node(); 
@@ -262,6 +265,9 @@ logicalExpression ::= relationalExpression:re1 logicalExpressionAux:lea1 {: Node
                                                                           	node.setCode(((Node)re1).getCode() + ((Node)lea1).getCode());
                                                                           	
                                                                           	}
+                                                                          	if(((Node)re1).isIfExpression){
+                                                                           		node.isIfExpression = true;
+                                                                           	}
                                                                           	RESULT = node; :};
 
 logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExpressionAux:lea1 {: Node node = new Node(); 
@@ -272,16 +278,29 @@ logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExp
                                                                                      		 	         parser.as.error(re1left, "operador " + (String)lo1 + " so eh definido para valores booleanos");
                                                                                         	 	      }
                                                                                         	 	      node.setType(type);
-                                                                                        	 	      node.setCode(" " + lo1 + " " + ((Node)re1).getCode());
+                                                                                        	 	      if(((String)lo1).equals("xor")){
+                                                                                        	 	      	node.setCode(" ^ " + ((Node)re1).getCode());
+                                                                                        	       	  
+                                                                                        	 	      }else{
+                                                                                        	 	      	node.setCode(" " + lo1 + " " + ((Node)re1).getCode());
+                                                                                        	       	  }
                                                                                         	       } else{
                                                                                      		 	      type = parser.as.maxType(((Node)re1).getType(), ((Node)lea1).getType(), re1left);
                                                                                      		 	      if ((type == null) || !type.equals("Boolean")){
                                                                                      		 		     type = "Boolean";
                                                                                      		 		  }
                                                                               				 		  node.setType(type);
-                                                                              				 		  node.setCode(" " + lo1 + " " + ((Node)re1).getCode() + ((Node)lea1).getCode() );
+                                                                              				 		  if(((String)lo1).equals("xor")){
+                                                                                        	 	      	node.setCode(" ^ " + ((Node)re1).getCode());
+                                                                                        	       	  
+                                                                                        	 	      }else{
+                                                                              				 		  	node.setCode(" " + lo1 + " " + ((Node)re1).getCode() + ((Node)lea1).getCode() );
+                                                                          			 		 	   	  }
                                                                           			 		 	   }
                                                                           			 		 	   node.setOperation((String)lo1);
+                                                                          			 		 	   if(((Node)re1).isIfExpression){
+                                                                           							node.isIfExpression = true;
+                                                                           							}
                                                                           			 		 	   
                                                                           			 		 	   RESULT = node; :}
 					  | ;
@@ -289,7 +308,7 @@ logicalExpressionAux ::= logicalOperator:lo1 relationalExpression:re1 logicalExp
 logicalOperator ::= AND {: RESULT = "and"; :}
 			     | OR {: RESULT = "or"; :}
 				 | XOR {: RESULT = "xor"; :}
-				 | IMPLIES {: RESULT = "implies"; :};
+				 | IMPLIES {: RESULT = "implies"; //TODO:};
 
 relationalExpression ::= additiveExpression:ae1 relationalExpressionAux:rea {: Node node = new Node();
 																			   if (rea == null)
@@ -300,8 +319,21 @@ relationalExpression ::= additiveExpression:ae1 relationalExpressionAux:rea {: N
                                                                                      type = ((Node)rea).getType();
                                                                                   parser.as.checkRelationalOp((String)((Node)rea).getOperation(), type);
                                                                                   node.setType("Boolean");
+                                                                                  node.setCode(((Node)ae1).getCode() + ((Node)rea).getCode());
+                                                                                  if(((Node)rea).isIfExpression){
+                                                                           			node.isIfExpression = true;
+                                                                           			String[] lista = ((Node)rea).getCode().split(" & ");
+                                                                           			
+                                                                           			String operator = ((Node)rea).getOperation();
+                                                                           			lista[0] = lista[0].replace("==", "");
+                                                                           			if(operator.equals("=")){
+                                                                           				operator = " == ";
+                                                                           			}
+                                                                           			node.setCode(((Node)ae1).getCode() + operator + " " + lista[0] + "\n" + ((Node)ae1).getCode() + operator + " " + lista[1]);
+                                                                           		  	
+                                                                           			}
                                                                           	   }
-                                                                          	   node.setCode(((Node)ae1).getCode() + ((Node)rea).getCode());
+                                                                          	   
                                                                           	   RESULT = node;
 																			:}
 						 | additiveExpression:ae1 {: RESULT = ae1; :};
@@ -316,7 +348,21 @@ relationalExpressionAux ::= relationalOperator:ro1 additiveExpression:ae2 relati
                                                                                      		 	      	 	node.setCode(" == " + ((Node)ae2).getCode() + ((Node)rea).getCode());
                                                                                      		 	      	 }else{
                                                                                      		 	      	 	node.setCode(" " + ro1 + " " + ((Node)ae2).getCode() + ((Node)rea).getCode());
+                                                                                     		 	      	 	
                                                                                      		 	      	 }
+                                                                                     		 	      	 if(((Node)rea).isIfExpression){
+                                                                           									node.isIfExpression = true;
+                                                                           									String[] lista = ((Node)rea).getCode().split(" & ");
+                                                                           									lista[0] = lista[0].replace("==", "");
+                                                                           									if(ro1.equals("=")){
+                                                                                     		 	      	 		node.setCode(((Node)ae2).getCode() + " == " + lista[0] + "\n" + ((Node)ae2).getCode() + " == " + " " + lista[1]);
+                                                                           		  							
+                                                                                     		 	      	 	}else{
+                                                                                     		 	      	 		node.setCode(((Node)ae2).getCode() + (String) ro1 + " " + lista[0] + "\n" + ((Node)ae2).getCode() + (String) ro1 + " " + lista[1]);
+                                                                           		  							
+                                                                                     		 	      	 	}
+                                                                           		  						}
+                                                                                     		 	      	 
                                                                                      		 	      	 
                                                                           			 		 	   		 RESULT = node; :}
 						| relationalOperator:ro1 additiveExpression:ae2 {: Node node = (Node)ae2;
@@ -325,6 +371,9 @@ relationalExpressionAux ::= relationalOperator:ro1 additiveExpression:ae2 relati
                                                                            	node.setCode(" == " + ((Node)ae2).getCode());
                                                                            }else{
 																			node.setCode(" " + ro1 + " " + ((Node)ae2).getCode());
+                                                                           }
+                                                                           if(((Node)ae2).isIfExpression){
+                                                                           	node.isIfExpression = true;
                                                                            }
 																		  RESULT = node; :};
 
@@ -339,12 +388,15 @@ additiveExpression ::= multiplicativeExpression:me1 additiveExpressionAux:aea1
 					{: Node node = parser.as.checkTypesOpArithmetic((Node)me1, (Node)aea1, me1left);
 					if(aea1 == null){
 						node.setCode(((Node)me1).getCode());
+						if(((Node)me1).isIfExpression){
+							node.isIfExpression = true;
+						}
                     
 					}else{
 						node.setCode(((Node)me1).getCode() + ((Node)aea1).getCode());
                     
 					}
-                                                                          		  RESULT = node; :};
+                    RESULT = node; :};
 
 additiveExpressionAux ::= PLUS multiplicativeExpression:me1 additiveExpressionAux:aea1 
 						{: Node node = parser.as.checkTypesOpArithmeticAux((Node)me1, (Node)aea1, "+", me1left);
@@ -369,11 +421,14 @@ multiplicativeExpression ::= unaryExpression:ue1 multiplicativeExpressionAux:mea
 						{: Node node = parser.as.checkTypesOpArithmetic((Node)ue1, (Node)mea1, ue1left);
 						if(mea1 == null){
 							node.setCode(((Node)ue1).getCode());
-                        
+							if(((Node)ue1).isIfExpression){
+								node.isIfExpression = true;
+							}
 						}else{
 							node.setCode(((Node)ue1).getCode() + ((Node)mea1).getCode());
                         
 						}
+						
                         RESULT = node; :};
 
 multiplicativeExpressionAux ::= STAR unaryExpression:ue1 multiplicativeExpressionAux:mea1 
@@ -496,7 +551,12 @@ primaryExpression ::= litteralCollection:lc1
 				   						   RESULT = node;
 				   						   parser.as.tipoPrimary = node.getType();
 				   						    :}
-				   | LPAREN expression:exp1 RPAREN {: Node node = (Node)exp1; node.setCode("(" + ((Node)exp1).getCode() + ")"); RESULT = node; :}
+				   | LPAREN expression:exp1 RPAREN {: Node node = (Node)exp1; 
+				   			node.setCode("(" + ((Node)exp1).getCode() + ")"); 
+				   			if(((Node)exp1).isIfExpression){
+                                 node.isIfExpression = true;
+                            }
+				   			RESULT = node; :}
 				   | ifExpression:ifexp1 {: RESULT = ifexp1; :};
 
 litteralCollection ::= OCL_COLLECTION:collection1 LCURLY expressionListOrRange:elor1 RCURLY
@@ -515,7 +575,7 @@ ifExpression ::= IF expression:exp1 THEN expression:exp2 ELSE expression:exp3 EN
 																					   Node node = new Node();
 																					   node.setType(type);
 																					   node.isIfExpression = true;
-																					   node.setCode(((Node)exp2).getCode() + " if " +((Node)exp1).getCode() + "|" +((Node)exp3).getCode() + " unless " +((Node)exp1).getCode());
+																					   node.setCode(((Node)exp2).getCode() + " if " +((Node)exp1).getCode() + " & " +((Node)exp3).getCode() + " unless " +((Node)exp1).getCode());
 																					   RESULT = node; :};
 
 featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft); :} parameters:params1 {: //TODO 
