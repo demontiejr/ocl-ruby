@@ -22,6 +22,7 @@ public class CodeGenerator {
 	private Map<String, String> classesCode;
 	private Map<String, List<String>> checkPre;
 	private Map<String, List<String>> checkPost;
+	private Map<String, String> mainCode;
 	private int preNumber;
 	private int postNumber;
 	
@@ -30,6 +31,7 @@ public class CodeGenerator {
 		classesCode = new HashMap<String, String>();
 		checkPre = new HashMap<String,List<String>>();
 		checkPost = new HashMap<String,List<String>>();
+		mainCode = new HashMap<String, String>();
 		preNumber = 1;
 		postNumber = 1;
 		generateAllClasses();
@@ -241,7 +243,14 @@ public class CodeGenerator {
 	}
 	
 	public String getMain(){
-		String code = "\n\tdef main()\n";
+		if (!mainCode.containsKey(fileName)){
+			String code = createMain();
+			mainCode.put(fileName, code);
+			code = "\n\tdef main()\n" + code;
+			code += "\n\tend";
+			return code;
+		}
+		String code = mainCode.get(fileName);
 		for (String m : checkPre.keySet()){
 			code += "\n\t\tif checkAllPre" + m.substring(0, 1).toUpperCase() + m.substring(1) + "()\n";
 			code += "\t\t\t" + m + "()\n";    //TODO: tem que ajeitar os parametros
@@ -249,7 +258,21 @@ public class CodeGenerator {
 			code += "\t\telse\n\t\t\t" + m + "PreIsViolated()\n";
 			code += "\t\tend\n";
 		}
+		mainCode.put(fileName, code);
+		code = "\n\tdef main()\n" + code;
 		code += "\n\tend";
+		return code;
+	}
+	
+	private String createMain(){
+		String code = "";
+		for (String m : checkPre.keySet()){
+			code += "\n\t\tif checkAllPre" + m.substring(0, 1).toUpperCase() + m.substring(1) + "()\n";
+			code += "\t\t\t" + m + "()\n";    //TODO: tem que ajeitar os parametros
+			code += "\t\t\tcheckAllPost" + m.substring(0, 1).toUpperCase() + m.substring(1) + "()\n";
+			code += "\t\telse\n\t\t\t" + m + "PreIsViolated()\n";
+			code += "\t\tend\n";
+		}
 		return code;
 	}
 	

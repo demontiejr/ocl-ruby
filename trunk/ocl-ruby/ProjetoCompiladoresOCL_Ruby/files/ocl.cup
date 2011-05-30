@@ -178,8 +178,8 @@ initialRuleAux ::= constraint:c1 initialRuleAux:ira1
 
 constraint ::= contextDeclaration:cd1 constraintBody:cb1 constraintAux:ca1 {: 
 								String code = ((Node)cd1).getCode() + ((Node)cb1).getCode() + ((Node)ca1).getCode() + CodeGenerator.getInstance().getAllPre()
-								 + CodeGenerator.getInstance().getAllPost() + CodeGenerator.getInstance().getMain() + "\nend";
-								CodeGenerator.getInstance().writeToFile(code);
+								 + CodeGenerator.getInstance().getAllPost();
+								CodeGenerator.getInstance().writeToFile(code + CodeGenerator.getInstance().getMain() + "\nend");
 								CodeGenerator.getInstance().setClassCode(parser.as.getContextClass(),code);
 								CodeGenerator.getInstance().reset();
 								parser.as.reset();
@@ -575,7 +575,8 @@ primaryExpression ::= litteralCollection:lc1
 				   			     node.setValue("result");
 				   			     node.setType(parser.as.getContextType());
 				   			     node.setRole(Node.VARIABLE);
-				   			     RESULT = node; //TODO
+				   			     node.setCode("result");
+				   			     RESULT = node;
 				   			   :}
 				   | featureCall:fCall1 {: Node fCall = (Node)fCall1;
 				   						   Node node = parser.as.checkFeatureCall(parser.as.getContextClass(),fCall, fCall1left);

@@ -33,7 +33,7 @@ programa().obtemServicos().select {|i|i.condicao == true}.size() + 2
 			programa()
 			checkAllPostPrograma()
 		else
-			programaPostIsViolated()
+			programaPreIsViolated()
 		end
 
 	end
