@@ -53,6 +53,11 @@ public class SemanticAnalyzer {
 		logErros.add("Erro semantico na linha " + (line+1) + ": " + message);
 	}
 	
+	public void reset(){
+		declaratedIDs = new ArrayList<Node>();
+		tipoPrimary = null;
+	}
+	
 	public String getOpID() {
 		return opID;
 	}
@@ -357,6 +362,7 @@ public class SemanticAnalyzer {
 					for (Node n : getDeclaratorAux()) {
 						if (((String) n.getValue()).equals((String) elemento
 								.getValue())) {
+							n.setCode((String)n.getValue());
 							n.setType(tipoPrimary);
 							return n;
 						}
