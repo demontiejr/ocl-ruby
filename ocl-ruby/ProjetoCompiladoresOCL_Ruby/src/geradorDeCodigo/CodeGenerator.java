@@ -64,6 +64,10 @@ public class CodeGenerator {
 		this.fileName = fileName;
 	}
 	
+	public void setClassCode(String className, String code){
+		classesCode.put(className, code);
+	}
+	
 	public String getClassCode(String className){
 		String code = classesCode.get(className);
 		return code.substring(0,code.length()-3);
@@ -101,17 +105,12 @@ public class CodeGenerator {
 	}
 	
 	private String getInitCode(List<Atributo> atributos){
-		String declaration = "\n\tdef initialize(";
-		String code = "\n";
+		String code = "";
 		for (Atributo a : atributos){
 			String id = a.getNome();
-			declaration += id + ", ";
-			code += "\t\t@" + id + " = " + id + "\n";
+			code += "\tattr \"" + id + "\"\n";
 		}
-		if (atributos.size() != 0)
-			declaration = declaration.substring(0,declaration.length()-2);
-		declaration += ")\n";
-		return declaration + code + "\n\tend\n";
+		return code;
 	}
 	
 	private String getMethodsCode(List<OperacaoMaior> methods){
@@ -179,14 +178,16 @@ public class CodeGenerator {
 		checkPost.get(method).add(name);
 	}
 	
-	public void addPre(String method){
+	public String addPre(String method){
 		String name = "checkPre" + getPreNumber() + method.substring(0, 1).toUpperCase() + method.substring(1);
 		checkPre.get(method).add(name);
+		return name;
 	}
 	
-	public void addPost(String method){
+	public String addPost(String method){
 		String name = "checkPost" + getPostNumber() + method.substring(0, 1).toUpperCase() + method.substring(1);
 		checkPost.get(method).add(name);
+		return name;
 	}
 	
 	public String getAllPre(){
@@ -227,7 +228,7 @@ public class CodeGenerator {
 			code += ")\n";
 			code += "\t\t\t" + m + "PostViolated()\n\t\tend";
 			code += "\n\t\treturn true\n\tend";
-			code += "\n\n" + generateMethodViolate(m, "Post ");
+			code += "\n\n" + generateMethodViolate(m, "Post");
 		}
 		return code;
 	}

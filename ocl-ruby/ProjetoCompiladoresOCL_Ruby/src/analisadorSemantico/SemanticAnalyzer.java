@@ -11,7 +11,6 @@ import xmiParser.util.OperacaoMaior;
 import xmiParser.util.Parametro;
 import excecoes.RelationalErrorException;
 import excecoes.SemanticErrorException;
-import geradorDeCodigo.CodeGenerator;
 
 /**
  * Classe com funcoes uteis para a analise semantica.
@@ -151,20 +150,11 @@ public class SemanticAnalyzer {
 		}
 		else if (operation.equals("forAll") || operation.equals("exists")){
 			return parameterType.equals("Boolean");
-			//BOOLEAN
-			//Collection -> forAll (v: Type | expressão booleana com v)
 		}else if (operation.equals("select")){
 			return parameterType.equals("Boolean");
-		    //collection -> select (expressão booleana)
 		}else if (operation.equals("includes") || operation.equals("excludes")){
-		   //TODO	
-		   //Collection::includes(object : T) : Boolean 
-		   //Collection::excludes(object : T) : Boolean
 			return parameterType.equals(tipoPrimary);
 		}else if (operation.equals("including") || operation.equals("excluding")){
-		   //TODO
-		   //including(object : T) -> retorna o mesmo tipo da colecao
-		   //excluding(object : T) -> retorna o mesmo tipo da colecao
 			return parameterType.equals(tipoPrimary);
 		}
 		return false;
@@ -313,6 +303,7 @@ public class SemanticAnalyzer {
 	
 	public Node checkFeatureCall(String c, Node elemento, int line) throws SemanticErrorException{
 		Node node = new Node();
+		node.setCode(elemento.getCode());
 		boolean isCollection = false;
 		String classe = c;
 		if (opCollection)
@@ -345,9 +336,13 @@ public class SemanticAnalyzer {
 						isCollection = true;
 					}
 				}
+				if (classe.equals(getContextClass()) && !opCollection && !getDeclarator())
+					node.setCode("@" + node.getCode());
 			}
 			if (type == null)
 				type = "Void";
+			if (opCollection && !getDeclarator())
+				node.setCode("i." + node.getCode());
 			node.setType(type);
 			node.setValue(elemento.getValue());
 			node.setCollection(isCollection);

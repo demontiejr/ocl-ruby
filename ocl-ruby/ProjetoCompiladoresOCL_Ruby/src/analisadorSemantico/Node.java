@@ -31,6 +31,8 @@ public class Node {
 	private String code = "";
 	//para saber se eh ifExpression
 	public boolean isIfExpression = false;
+	//para saber se eh atributo de classe
+	public boolean isClassAtribute = false;
 	
 	//para implies
 	public boolean isImplies = false;
