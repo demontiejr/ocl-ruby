@@ -246,7 +246,7 @@ public class CodeGenerator {
 			code += "\n\t\tif checkAllPre" + m.substring(0, 1).toUpperCase() + m.substring(1) + "()\n";
 			code += "\t\t\t" + m + "()\n";    //TODO: tem que ajeitar os parametros
 			code += "\t\t\tcheckAllPost" + m.substring(0, 1).toUpperCase() + m.substring(1) + "()\n";
-			code += "\t\telse\n\t\t\t" + m + "PostIsViolated()\n";
+			code += "\t\telse\n\t\t\t" + m + "PreIsViolated()\n";
 			code += "\t\tend\n";
 		}
 		code += "\n\tend";
