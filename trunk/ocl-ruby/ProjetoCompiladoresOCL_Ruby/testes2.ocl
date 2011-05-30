@@ -1,5 +1,5 @@
-context Conta::debitar(pts: Integer)
+context Conta::creditar(pts: Integer)
 	post: pontos < 0
 	
-context Conta::estaVazia()
-	pre: pontos = 0
+context Conta::debitar(pts: Integer)
+	pre: pontos >= pts

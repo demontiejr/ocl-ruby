@@ -182,10 +182,12 @@ constraint ::= contextDeclaration:cd1 constraintBody:cb1 constraintAux:ca1 {:
 								CodeGenerator.getInstance().writeToFile(code);
 								CodeGenerator.getInstance().setClassCode(parser.as.getContextClass(),code);
 								CodeGenerator.getInstance().reset();
+								parser.as.reset();
 								 :};
 
 constraintAux ::= constraintBody:cb1 constraintAux:ca1 {: Node node = new Node();
-														  node.setCode(((Node)cb1).getCode() + ((Node)ca1).getCode()); :}
+														  node.setCode(((Node)cb1).getCode() + ((Node)ca1).getCode());
+														  RESULT = node; :}
 			   | {: RESULT = new Node(); :};
 
 contextDeclaration ::= CONTEXT operationContext:oc1 {: RESULT = oc1; :};
@@ -259,6 +261,7 @@ formalParameterListAux ::= COMA formalParameter:fp1 formalParameterListAux:fpla1
 
 formalParameter ::= ID:id POINTS typeName:tn {: Node node = new Node((String)id, ((Node)tn).toString());
 												node.setCollection(((Node)tn).isCollection());
+												node.setCode((String)id);
 												parser.as.declareID(node, idleft);
 												RESULT = node; :};
 

@@ -3,3 +3,4 @@ context Transacao::programa()
 	
 context Cliente::idade()
     post: nome = if masculino then 'jose' else 'maria' endif
+    post: cartoes->forAll(valido) = true

@@ -37,6 +37,13 @@ public class CollectionOpGenerator {
 	
 	private static String retornaParametros(String c){
 		String params = c.substring(c.indexOf("(")+1,c.indexOf(")"));
+		if (params.substring(0,3).equals("#N#") || params.substring(0,3).equals("#D#"))
+			params = params.substring(3,params.length());
+		return params;
+	}
+	
+	private static String retornaParametrosSelect(String c){
+		String params = c.substring(c.indexOf("(")+1,c.indexOf(")"));
 		if (params.substring(0,3).equals("#N#"))
 			params = "|i|" + params.substring(3,params.length());
 		else if (params.substring(0,3).equals("#D#"))
@@ -113,14 +120,14 @@ public class CollectionOpGenerator {
 	}
 	
 	public static String createSelect(String c, String params){
-		return c + ".select {"+ retornaParametros(params) + "}";
+		return c + ".select {"+ retornaParametrosSelect(params) + "}";
 	}
 
 	public static String createForAll(String c, String params){
-		return "for ( i in "+ c +" )\n\tif !( "+ c + ".fetch(i)." + retornaParametros(params) + ") return false end\nend\nreturn true"; 
+		return "for i in "+ c +"\n\tif !(" +  retornaParametros(params) + ")\n\t\treturn false\n\tend\nend\nreturn true"; 
 	}
 	
 	public static String createExists(String c, String params){
-		return "for ( i in "+ c +" )\n\tif ( "+ c + ".fetch(i)." + retornaParametros(params) + ") return true end\nend\nreturn false"; 
+		return "for i in "+ c +"\n\tif (" + retornaParametros(params) + ")\n\t\treturn true\n\tend\nend\nreturn false"; 
 	}
 }
