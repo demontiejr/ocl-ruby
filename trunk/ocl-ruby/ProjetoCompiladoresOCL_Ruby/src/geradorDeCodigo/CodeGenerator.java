@@ -25,6 +25,7 @@ public class CodeGenerator {
 	private Map<String, String> mainCode;
 	private int preNumber;
 	private int postNumber;
+	private Map<String, String> cMethods;
 	
 	private CodeGenerator(){
 		directory = "";
@@ -34,6 +35,7 @@ public class CodeGenerator {
 		mainCode = new HashMap<String, String>();
 		preNumber = 1;
 		postNumber = 1;
+		cMethods = new HashMap<String, String>();
 		generateAllClasses();
 	}
 	
@@ -48,6 +50,7 @@ public class CodeGenerator {
 		checkPost = new HashMap<String,List<String>>();
 		preNumber = 1;
 		postNumber = 1;
+		cMethods = new HashMap<String, String>();
 	}
 	
 	public String getDirectory() {
@@ -72,7 +75,7 @@ public class CodeGenerator {
 	
 	public String getClassCode(String className){
 		String code = classesCode.get(className);
-		return code.substring(0,code.length()-3);
+		return code;
 	}
 
 	public void writeToFile(String code){
@@ -172,6 +175,10 @@ public class CodeGenerator {
 		}
 	}
 	
+	public void addContextMethodCall(String method, String code){
+		cMethods.put(method, code);
+	}
+	
 	public void addPre(String method, String name){
 		checkPre.get(method).add(name);
 	}
@@ -251,13 +258,7 @@ public class CodeGenerator {
 			return code;
 		}
 		String code = mainCode.get(fileName);
-		for (String m : checkPre.keySet()){
-			code += "\n\t\tif checkAllPre" + m.substring(0, 1).toUpperCase() + m.substring(1) + "()\n";
-			code += "\t\t\t" + m + "()\n";    //TODO: tem que ajeitar os parametros
-			code += "\t\t\tcheckAllPost" + m.substring(0, 1).toUpperCase() + m.substring(1) + "()\n";
-			code += "\t\telse\n\t\t\t" + m + "PreIsViolated()\n";
-			code += "\t\tend\n";
-		}
+		code += createMain();
 		mainCode.put(fileName, code);
 		code = "\n\tdef main()\n" + code;
 		code += "\n\tend";
@@ -268,7 +269,7 @@ public class CodeGenerator {
 		String code = "";
 		for (String m : checkPre.keySet()){
 			code += "\n\t\tif checkAllPre" + m.substring(0, 1).toUpperCase() + m.substring(1) + "()\n";
-			code += "\t\t\t" + m + "()\n";    //TODO: tem que ajeitar os parametros
+			code += "\t\t\t" + cMethods.get(m) + "\n";    //TODO: tem que ajeitar os parametros
 			code += "\t\t\tcheckAllPost" + m.substring(0, 1).toUpperCase() + m.substring(1) + "()\n";
 			code += "\t\telse\n\t\t\t" + m + "PreIsViolated()\n";
 			code += "\t\tend\n";
