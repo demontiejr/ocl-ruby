@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import analisadorSemantico.SemanticAnalyzer;
 import analisadorSemantico.Node;
-import geradorDeCodigo.CodeGenerator;
+import geradorDeCodigo.*;
 
 parser code {:
 	
@@ -180,6 +180,7 @@ constraint ::= contextDeclaration:cd1 constraintBody:cb1 constraintAux:ca1 {:
 								String code = ((Node)cd1).getCode() + ((Node)cb1).getCode() + ((Node)ca1).getCode() + CodeGenerator.getInstance().getAllPre()
 								 + CodeGenerator.getInstance().getAllPost() + CodeGenerator.getInstance().getMain() + "\nend";
 								CodeGenerator.getInstance().writeToFile(code);
+								CodeGenerator.getInstance().setClassCode(parser.as.getContextClass(),code);
 								CodeGenerator.getInstance().reset();
 								 :};
 
@@ -189,21 +190,31 @@ constraintAux ::= constraintBody:cb1 constraintAux:ca1 {: Node node = new Node()
 
 contextDeclaration ::= CONTEXT operationContext:oc1 {: RESULT = oc1; :};
 
-constraintBody ::= stereotype:s1 ID:id POINTS expression:exp1 {: if (((String)s1).equals("Pre"))
-																	CodeGenerator.getInstance().addPre(parser.as.getContextMethod(),
-																	  "checkPre" + ((String)id) + parser.as.getContextMethod().substring(0, 1).toUpperCase() 
-																	  + parser.as.getContextMethod().substring(1));
-																 else
-																 	CodeGenerator.getInstance().addPost(parser.as.getContextMethod(),
-																 	  "checkPost" + ((String)id) + parser.as.getContextMethod().substring(0, 1).toUpperCase() 
-																	  + parser.as.getContextMethod().substring(1));
-																 Node node = new Node();
+constraintBody ::= stereotype:s1 ID:id POINTS expression:exp1 {: Node node = new Node();
+																 if (((String)s1).equals("Pre")){
+																 	String name = "checkPre" + ((String)id) + parser.as.getContextMethod().substring(0, 1).toUpperCase() 
+																	  + parser.as.getContextMethod().substring(1);
+																	CodeGenerator.getInstance().addPre(parser.as.getContextMethod(), name);
+																	node.setCode("\n\tdef " + name + "()\n" + ((Node)exp1).getCode() + "\n\tend\n");
+																 }
+																 else{
+																 	String name = "checkPost" + ((String)id) + parser.as.getContextMethod().substring(0, 1).toUpperCase() 
+																	  + parser.as.getContextMethod().substring(1);
+																 	CodeGenerator.getInstance().addPost(parser.as.getContextMethod(), name);
+																 	node.setCode("\n\tdef " + name + "()\n" + ((Node)exp1).getCode() + "\n\tend\n");
+															     }
+																 
 																 RESULT = node; :}
-					| stereotype:s1 POINTS expression:exp1 {: if (((String)s1).equals("Pre"))
-																CodeGenerator.getInstance().addPre(parser.as.getContextMethod());
-															  else
-															    CodeGenerator.getInstance().addPost(parser.as.getContextMethod());
-															  Node node = new Node();
+					| stereotype:s1 POINTS expression:exp1 {: Node node = new Node();
+															  if (((String)s1).equals("Pre")){
+																String name = CodeGenerator.getInstance().addPre(parser.as.getContextMethod());
+																node.setCode("\n\tdef " + name + "()\n" + ((Node)exp1).getCode() + "\n\tend\n");
+															  }
+															  else{
+															    String name = CodeGenerator.getInstance().addPost(parser.as.getContextMethod());
+															    node.setCode("\n\tdef " + name + "()\n" + ((Node)exp1).getCode() + "\n\tend\n");
+															  }
+															  
 															  RESULT = node; :};
 
 stereotype ::= PRE {: parser.as.setStereotype("pre"); RESULT = "Pre"; :}
@@ -218,15 +229,20 @@ classifierType ::= pathName:pn {: Node node = (Node)pn;
 								  CodeGenerator.getInstance().addContextMethod(metodo);
 								  RESULT = node; :};
 
-operationContext ::= classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN POINTS classifierType:ct2 {: parser.as.checkOperationContext((Node)ct1, (Node)fpl1, (Node)ct2, ct2left); :}
+operationContext ::= classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN POINTS classifierType:ct2 {: parser.as.checkOperationContext((Node)ct1, (Node)fpl1, (Node)ct2, ct2left);
+																											RESULT = ct1; :}
 					 																 							
-					 | classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN POINTS oclType:ocltype1 {: parser.as.checkOperationContext((Node)ct1, (Node)fpl1, (Node)ocltype1, ocltype1left); :}
+					 | classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN POINTS oclType:ocltype1 {: parser.as.checkOperationContext((Node)ct1, (Node)fpl1, (Node)ocltype1, ocltype1left);
+					 																						RESULT = ct1; :}
 					 
-					 | classifierType:ct1 LPAREN RPAREN POINTS classifierType:ct2 {: parser.as.checkOperationContext((Node)ct1, new Node(), (Node)ct2, ct2left); :}
+					 | classifierType:ct1 LPAREN RPAREN POINTS classifierType:ct2 {: parser.as.checkOperationContext((Node)ct1, new Node(), (Node)ct2, ct2left);
+					 																 RESULT = ct1; :}
 					 																 	
-					 | classifierType:ct1 LPAREN RPAREN POINTS oclType:ocltype1 {: parser.as.checkOperationContext((Node)ct1, new Node(), (Node)ocltype1, ocltype1left); :}
+					 | classifierType:ct1 LPAREN RPAREN POINTS oclType:ocltype1 {: parser.as.checkOperationContext((Node)ct1, new Node(), (Node)ocltype1, ocltype1left);
+					 															   RESULT = ct1; :}
 					 																	
-					 | classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN {: parser.as.setContext(((Node)ct1).toString(), (Node)fpl1, ct1left); :}
+					 | classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN {: parser.as.setContext(((Node)ct1).toString(), (Node)fpl1, ct1left);
+					 																RESULT = ct1; :}
 					 | classifierType:ct1 LPAREN RPAREN {: parser.as.setContext(((Node)ct1).toString(), new Node(), ct1left);
 					 									   RESULT = ct1; :};
 
@@ -503,7 +519,7 @@ postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1 {: Node n
                                                                           		previous = aux;
                                                                           	}
                                                                           	node = aux;
-                                                                          	node.setCode(((Node)pe1).getCode() + ((Node)pfea1).getCode());
+                                                                          	node.setCode(CollectionOpGenerator.getCode(((Node)pe1).getCode() + ((Node)pfea1).getCode()));
                                                                           }
                                                                           RESULT = node; :}
 				   
@@ -532,6 +548,7 @@ postfixExpressionAux ::= POINT featureCall:fCall1 {: Node fCall = (Node)fCall1;
 					  																	Node nodeAux = (Node)fCol1;
 					  																	nodeAux.setOperation("->");
 																						node.addElement(nodeAux);
+																						node.setCode("->" + ((Node)fCol1).getCode() + ((Node)pfea1).getCode());
 																						RESULT = node; :}
 					  | {: RESULT = new Node(); :};
 
@@ -540,6 +557,8 @@ featureAccess ::=  POINT featureCall:fCall1 postfixExpressionAux:pfea1 {: //TODO
 																		  if (pfea1 == null){
 																		  	node = (Node)fCall1;
 																		  }
+																		  else
+																		      node.setCode("." + ((Node)fCall1).getCode() + ((Node)pfea1).getCode());
 																		  RESULT = node;
 																	    :}
 			   | ;
@@ -554,10 +573,9 @@ primaryExpression ::= litteralCollection:lc1
 				   			     node.setType(parser.as.getContextType());
 				   			     node.setRole(Node.VARIABLE);
 				   			     RESULT = node; //TODO
-				   			   :} 
+				   			   :}
 				   | featureCall:fCall1 {: Node fCall = (Node)fCall1;
 				   						   Node node = parser.as.checkFeatureCall(parser.as.getContextClass(),fCall, fCall1left);
-				   						   node.setCode(((Node)fCall1).getCode());
 				   						   RESULT = node;
 				   						   parser.as.tipoPrimary = node.getType();
 				   						    :}
@@ -593,7 +611,8 @@ featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft
 				| pathName:pn parameters:params1 {:  Node node = new Node(((Node)pn).getValue(), "");
 								 		  			 node.setRole(Node.FUNCTION);
 								 		  			 node.addAllElements(((Node)params1).getElements());
-								 		  			 node.setCode(((Node)pn).getValue() + ((Node)params1).getCode());
+								 		  			 String code = ((Node)pn).getValue() + ((Node)params1).getCode();
+								 					 node.setCode(code);
 								 		  			 RESULT = node;
 								 		  			  :}
 				| pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft);
@@ -601,31 +620,38 @@ featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft
 								 		  node.setRole(Node.VARIABLE);
 								 		  RESULT = node; //TODO soma, mult, div em ruby com arobapre:}
 				| pathName:pn {: Node node = new Node(((Node)pn).getValue(), "");
-								 node.setCode("" + ((Node)pn).getValue());
+								 String code = (String)((Node)pn).getValue();
+								 node.setCode(code);
 								 node.setRole(Node.VARIABLE);
 								 RESULT = node; :};
 
 featureCallCollection ::= pathName:pn {: parser.as.opCollection = true; :} collectionParameters:params {: 
                       parser.as.checkCollectionOperation(((Node)pn).toString(), ((Node)params).getType(), pnleft);
-                      RESULT = new Node(((Node)pn).toString());
+                      Node node = new Node(((Node)pn).toString());
+                      node.setCode(((Node)pn).toString() + ((Node)params).getCode());
+                      RESULT = node;
                       parser.as.opCollection = false;
                       :};
 
 collectionParameters ::= LPAREN declarator:d1 expression:exp1 RPAREN {: Node node = new Node();
 				                   				   						node.setType(((Node)exp1).getType());
+				                   				   						node.setCode("(#D#" + ((Node)d1).getCode() + ((Node)exp1).getCode() + ")");
 				                   				   						RESULT = node;
 				                   				   						parser.as.setDeclarator(false); :}
 				| LPAREN declarator:d1 RPAREN {: RESULT = new Node(null, "void");
 											  :}
 				| LPAREN expression:exp1 RPAREN {: Node node = new Node();
 				                   				   node.setType(((Node)exp1).getType());
+				                   				   node.setCode("(#N#" + ((Node)exp1).getCode() + ")");
 				                   				   RESULT = node; :}
 				| LPAREN RPAREN {: Node node = new Node();
 				                   node.setType("void");
+				                   node.setCode("()");
 				                   RESULT = node; :};
 
 parameters ::= LPAREN actualParameterList:apl1 RPAREN {: Node node = (Node)apl1; node.setCode("(" + ((Node)apl1).getCode() + ")"); RESULT = node; :};
 
+//TODO: fazer code para o declarator
 declarator ::= ID:id declaratorAux:da1 POINTS typeName:tn PIPE {: Node node = (Node)da1;
 												  				  node.addElement(new Node((String)id));
 												  				  RESULT = node; :}
@@ -675,5 +701,5 @@ pathNameAux ::= FOUR_POINTS ID:id pathNameAux:pna {: RESULT = new Node("::" + (S
 
 litteral ::= INT:int1 {: Node node = new Node(int1, "Integer"); node.setCode("" + int1); RESULT = node; :}
 		| FLOAT:float1 {: Node node = new Node(float1, "Float"); node.setCode("" + float1); RESULT = node; :}
-		| STRING:string1 {: Node node = new Node(string1, "String"); node.setCode("" + string1); RESULT = node; :} 
+		| STRING:string1 {: Node node = new Node(string1, "String"); node.setCode("\"" + string1 + "\""); RESULT = node; :} 
 		| BOOL:bool1 {: Node node = new Node(bool1, "Boolean");  node.setCode("" + bool1); RESULT = node;:};
