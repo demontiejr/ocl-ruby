@@ -1,2 +1,5 @@
-context Transacao::programa()
-	pre: pontos > 0
+context Conta::debitar(pts: Integer)
+	post: pontos < 0
+	
+context Conta::estaVazia()
+	pre: pontos = 0

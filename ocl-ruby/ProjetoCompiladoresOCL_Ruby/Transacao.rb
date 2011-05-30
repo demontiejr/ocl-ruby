@@ -1,31 +1,40 @@
 class Transacao
-
-	def initialize(pontos, data, conta, cartao, servico)
-
-		@pontos = pontos
-		@data = data
-		@conta = conta
-		@cartao = cartao
-		@servico = servico
-
-	end
+	attr "pontos"
+	attr "data"
+	attr "conta"
+	attr "cartao"
+	attr "servico"
 
 	def programa() end
 
+
+	def checkPostfazNadaPrograma()
+programa().obtemServicos().select {|i|i.condicao == true}.size() + 2
+	end
 
 	def checkAllPrePrograma()
 		return true
 	end
 
 	def checkAllPostPrograma()
-		if !(checkPost1Programa())
+		if !(checkPostfazNadaPrograma())
 			programaPostViolated()
 		end
 		return true
 	end
 
-	def programaPost IsViolated()
-		raise Exception, "Post condition of the method programa was violated"
+	def programaPostIsViolated()
+		raise Exception, "Postcondition of the method programa was violated"
 	end
 
+	def main()
+
+		if checkAllPrePrograma()
+			programa()
+			checkAllPostPrograma()
+		else
+			programaPostIsViolated()
+		end
+
+	end
 end
