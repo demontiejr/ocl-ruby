@@ -36,7 +36,7 @@ public class CodeGenerator {
 		preNumber = 1;
 		postNumber = 1;
 		cMethods = new HashMap<String, String>();
-		generateAllClasses();
+		//generateAllClasses();
 	}
 	
 	public static CodeGenerator getInstance(){
@@ -89,7 +89,7 @@ public class CodeGenerator {
 		
 	}
 	
-	private void generateAllClasses(){
+	public void generateAllClasses(){
 		String code;
 		for (Classe c : XMIManager.getAllClasses()){
 			if (isCollection(c.getName()))
@@ -188,13 +188,13 @@ public class CodeGenerator {
 	}
 	
 	public String addPre(String method){
-		String name = "checkPre" + getPreNumber() + method.substring(0, 1).toUpperCase() + method.substring(1);
+		String name = "checkPre" + getPreNumber() + Util.capitalizeFirst(method);
 		checkPre.get(method).add(name);
 		return name;
 	}
 	
 	public String addPost(String method){
-		String name = "checkPost" + getPostNumber() + method.substring(0, 1).toUpperCase() + method.substring(1);
+		String name = "checkPost" + getPostNumber() + Util.capitalizeFirst(method);
 		checkPost.get(method).add(name);
 		return name;
 	}
@@ -202,7 +202,7 @@ public class CodeGenerator {
 	public String getAllPre(){
 		String code = "";
 		for (String m : checkPre.keySet()){
-			code += "\n\tdef checkAllPre" + m.substring(0, 1).toUpperCase() + m.substring(1)
+			code += "\n\tdef checkAllPre" + Util.capitalizeFirst(m)
 			+ "()\n";
 			if (checkPre.get(m).isEmpty()){
 				code += "\t\treturn true\n\tend\n";
@@ -223,7 +223,7 @@ public class CodeGenerator {
 	public String getAllPost(){
 		String code = "";
 		for (String m : checkPost.keySet()){
-			code += "\n\tdef checkAllPost" + m.substring(0, 1).toUpperCase() + m.substring(1)
+			code += "\n\tdef checkAllPost" + Util.capitalizeFirst(m)
 			+ "()\n";
 			if (checkPost.get(m).isEmpty()){
 				code += "\t\treturn true\n\tend\n";
@@ -268,9 +268,11 @@ public class CodeGenerator {
 	private String createMain(){
 		String code = "";
 		for (String m : checkPre.keySet()){
-			code += "\n\t\tif checkAllPre" + m.substring(0, 1).toUpperCase() + m.substring(1) + "()\n";
-			code += "\t\t\t" + cMethods.get(m) + "\n";    //TODO: tem que ajeitar os parametros
-			code += "\t\t\tcheckAllPost" + m.substring(0, 1).toUpperCase() + m.substring(1) + "()\n";
+			String methodName = Util.capitalizeFirst(m);
+			code += "\n\t\tif checkAllPre" + methodName + "()\n";
+			code += "\t\t\t" + "@result" + Util.capitalizeFirst(m) + " = "
+			+ cMethods.get(m) + "\n";
+			code += "\t\t\tcheckAllPost" + methodName + "()\n";
 			code += "\t\telse\n\t\t\t" + m + "PreIsViolated()\n";
 			code += "\t\tend\n";
 		}

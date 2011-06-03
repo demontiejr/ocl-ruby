@@ -63,6 +63,7 @@ final public class MainFrame extends Frame implements Handles {
   
   private AboutDialog aboutPanel;
 
+  public static String diretorio;
   
   public final int LEXICAL = 1, SYNTACTIC = 2;
   
@@ -90,7 +91,7 @@ final public class MainFrame extends Frame implements Handles {
   private void buildContent() {
     setBackground(SystemColor.control);
 
-    generate   = new Button("Analisar");
+    generate   = new Button("Compilar");
     quit       = new Button("Sair");
     options    = new Button("Opcoes");
     about       = new Button("Sobre");
@@ -264,6 +265,7 @@ final public class MainFrame extends Frame implements Handles {
     
     if (d.getFile() != null) {
       fileName = d.getDirectory()+d.getFile();
+      diretorio = d.getDirectory();
       spec.setText(fileName);
     }
     

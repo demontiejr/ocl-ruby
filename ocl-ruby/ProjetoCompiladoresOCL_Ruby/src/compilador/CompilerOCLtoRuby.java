@@ -14,6 +14,7 @@ import xmiParser.XMIParser;
 
 import excecoes.FatalErrorException;
 import excecoes.SemanticErrorException;
+import geradorDeCodigo.CodeGenerator;
 
 import analisadorLexico.ScannerOCL;
 import analisadorSintatico.ParserOCL;
@@ -123,6 +124,7 @@ public class CompilerOCLtoRuby {
 			XMIParser parserxmi = new XMIParser(xmi);
 			parserxmi.readXMI();
 			XMIManager.setStaticClasses(parserxmi.getArrayClasses());
+			CodeGenerator.getInstance().generateAllClasses();
 		} catch (Exception e1) {
 			System.err.println(e1.getMessage());
 			System.exit(0);
