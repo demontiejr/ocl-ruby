@@ -22,6 +22,7 @@ import compilador.Main;
 
 import excecoes.FatalErrorException;
 import excecoes.SemanticErrorException;
+import geradorDeCodigo.CodeGenerator;
 
 public class GeneratorThread extends Thread {
 
@@ -156,6 +157,8 @@ public class GeneratorThread extends Thread {
 				XMIParser parserxmi = new XMIParser(xmi);
 				parserxmi.readXMI();
 				XMIManager.setStaticClasses(parserxmi.getArrayClasses());
+				CodeGenerator.getInstance().setDirectory((MainFrame.diretorio));
+				CodeGenerator.getInstance().generateAllClasses();
 			} catch (Exception e1) {
 				Out.println(e1.getMessage());
 				System.exit(0);
@@ -175,7 +178,7 @@ public class GeneratorThread extends Thread {
 				} catch (FatalErrorException e){
 					parser.log.add("\n" + e.getMessage() + "\n");
 				} catch (SemanticErrorException e){
-					errors.add(e.getMessage());
+					errors.add(e.getMessage() + "\n");
 				} catch (Exception e) {
 					parser.log.add("\nErro durante a analise sintatica: " + e.getMessage() + "\n");
 				} finally {

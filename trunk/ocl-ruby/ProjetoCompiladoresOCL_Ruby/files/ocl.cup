@@ -194,14 +194,12 @@ contextDeclaration ::= CONTEXT operationContext:oc1 {: RESULT = oc1; :};
 
 constraintBody ::= stereotype:s1 ID:id POINTS expression:exp1 {: Node node = new Node();
 																 if (((String)s1).equals("Pre")){
-																 	String name = "checkPre" + ((String)id) + parser.as.getContextMethod().substring(0, 1).toUpperCase() 
-																	  + parser.as.getContextMethod().substring(1);
+																 	String name = "checkPre" + ((String)id) + Util.capitalizeFirst(parser.as.getContextMethod());
 																	CodeGenerator.getInstance().addPre(parser.as.getContextMethod(), name);
 																	node.setCode("\n\tdef " + name + "()\n" + ((Node)exp1).getCode() + "\n\tend\n");
 																 }
 																 else{
-																 	String name = "checkPost" + ((String)id) + parser.as.getContextMethod().substring(0, 1).toUpperCase() 
-																	  + parser.as.getContextMethod().substring(1);
+																 	String name = "checkPost" + ((String)id) + Util.capitalizeFirst(parser.as.getContextMethod());
 																 	CodeGenerator.getInstance().addPost(parser.as.getContextMethod(), name);
 																 	node.setCode("\n\tdef " + name + "()\n" + ((Node)exp1).getCode() + "\n\tend\n");
 															     }
@@ -243,9 +241,13 @@ operationContext ::= classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN P
 					 																						RESULT = ct1; :}
 					 
 					 | classifierType:ct1 LPAREN RPAREN POINTS classifierType:ct2 {: parser.as.checkOperationContext((Node)ct1, new Node(), (Node)ct2, ct2left);
+					 																 CodeGenerator.getInstance().addContextMethodCall(((Node)ct1).getOperation(),((Node)ct1).getOperation()
+					 																 + "()");
 					 																 RESULT = ct1; :}
 					 																 	
 					 | classifierType:ct1 LPAREN RPAREN POINTS oclType:ocltype1 {: parser.as.checkOperationContext((Node)ct1, new Node(), (Node)ocltype1, ocltype1left);
+					 															   CodeGenerator.getInstance().addContextMethodCall(((Node)ct1).getOperation(),((Node)ct1).getOperation()
+					 															   + "()");
 					 															   RESULT = ct1; :}
 					 																	
 					 | classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN {: parser.as.setContext(((Node)ct1).toString(), (Node)fpl1, ct1left);
@@ -253,6 +255,8 @@ operationContext ::= classifierType:ct1 LPAREN formalParameterList:fpl1 RPAREN P
 					 																"(" +((Node)fpl1).getCode() + ")");
 					 																RESULT = ct1; :}
 					 | classifierType:ct1 LPAREN RPAREN {: parser.as.setContext(((Node)ct1).toString(), new Node(), ct1left);
+					 									   CodeGenerator.getInstance().addContextMethodCall(((Node)ct1).getOperation(),((Node)ct1).getOperation()
+					 									   + "()");
 					 									   RESULT = ct1; :};
 
 formalParameterList ::= formalParameter:fp1 formalParameterListAux:fpla1 {: Node node = (Node)fpla1;
@@ -584,7 +588,7 @@ primaryExpression ::= litteralCollection:lc1
 				   			     node.setValue("result");
 				   			     node.setType(parser.as.getContextType());
 				   			     node.setRole(Node.VARIABLE);
-				   			     node.setCode("result");
+				   			     node.setCode("@result" + Util.capitalizeFirst(parser.as.getContextMethod()));
 				   			     RESULT = node;
 				   			   :}
 				   | featureCall:fCall1 {: Node fCall = (Node)fCall1;
