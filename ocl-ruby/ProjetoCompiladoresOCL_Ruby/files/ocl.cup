@@ -141,7 +141,7 @@ non terminal formalParameterList, formalParameter;
 non terminal expression, logicalExpression, logicalOperator;
 non terminal relationalExpression, relationalOperator;
 non terminal additiveExpression, multiplicativeExpression, unaryExpression, unaryOperator;
-non terminal postfixExpression, postfixExpressionAux, featureAccess, primaryExpression;
+non terminal postfixExpression, postfixExpressionAux, primaryExpression;
 non terminal litteralCollection, expressionListOrRange, litteral;
 non terminal ifExpression, featureCall, parameters;
 non terminal actualParameterList, typeName, oclType;
@@ -537,17 +537,7 @@ postfixExpression ::= primaryExpression:pe1 postfixExpressionAux:pfea1 {: Node n
                                                                           	node = aux;
                                                                           	node.setCode(CollectionOpGenerator.getCode(((Node)pe1).getCode() + ((Node)pfea1).getCode()));
                                                                           }
-                                                                          RESULT = node; :}
-				   
-				   | SELF featureAccess:fa1 {: Node fCall = (Node)fa1;
-				   						       Node node = parser.as.checkFeatureCall(parser.as.getContextClass(),fCall, fa1left);
-				   						       RESULT = node;//TODO
-				   						    :}
-				   
-				   | SELF AROBAPRE featureAccess:fa1 {: parser.as.checkStereotype("@pre", fa1left);
-				   										Node fCall = (Node)fa1;
-				   						       			Node node = parser.as.checkFeatureCall(parser.as.getContextClass(),fCall, fa1left);
-				   						       			RESULT = node;//TODO :};
+                                                                          RESULT = node; :};
 
 postfixExpressionAux ::= POINT featureCall:fCall1 {: Node fCall = (Node)fCall1;
 													 Node node = parser.as.checkFeatureCall(parser.as.tipoPrimary,fCall, fCall1left);
@@ -568,17 +558,6 @@ postfixExpressionAux ::= POINT featureCall:fCall1 {: Node fCall = (Node)fCall1;
 																						RESULT = node; :}
 					  | {: RESULT = new Node(); :};
 
-featureAccess ::=  POINT featureCall:fCall1 postfixExpressionAux:pfea1 {: //TODO: fazer a parte para quando postfixExpAux != null
-																		  Node node = new Node();
-																		  if (pfea1 == null){
-																		  	node = (Node)fCall1;
-																		  }
-																		  else
-																		      node.setCode("." + ((Node)fCall1).getCode() + ((Node)pfea1).getCode());
-																		  RESULT = node;
-																	    :}
-			   | ;
-
 primaryExpression ::= litteralCollection:lc1
 		           | litteral:l1 {: Node node = (Node)l1; node.setCode(((Node)l1).getCode());RESULT = node;:}
 				   | RESULT:r {: parser.as.checkStereotype("result", rleft); 
@@ -596,6 +575,15 @@ primaryExpression ::= litteralCollection:lc1
 				   						   RESULT = node;
 				   						   parser.as.tipoPrimary = node.getType();
 				   						    :}
+				   
+				   | SELF POINT featureCall:fCall1 {: Node fCall = (Node)fCall1;
+				   						   Node node = parser.as.checkFeatureCall(parser.as.getContextClass(),fCall, fCall1left);
+				   						   if (fCall.getRole() == Node.FUNCTION)
+				   						   		node.setCode("self." + node.getCode());
+				   						   RESULT = node;
+				   						   parser.as.tipoPrimary = node.getType();
+				   						    :}
+
 				   | LPAREN expression:exp1 RPAREN {: Node node = (Node)exp1; 
 				   			node.setCode("(" + ((Node)exp1).getCode() + ")"); 
 				   			if(((Node)exp1).isIfExpression){

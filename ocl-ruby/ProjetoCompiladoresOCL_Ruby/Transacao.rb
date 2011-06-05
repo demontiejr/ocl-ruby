@@ -8,7 +8,7 @@ class Transacao
 	def programa() end
 
 	def checkPostfazNadaPrograma()
-programa().obtemServicos().select {|i|i.condicao == true}.size() + 2
+self.programa().obtemServicos().select {|i|i.condicao == true}.size() + 2
 	end
 
 	def checkAllPrePrograma()
