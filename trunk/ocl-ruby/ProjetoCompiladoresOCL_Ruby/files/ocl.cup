@@ -180,7 +180,7 @@ constraint ::= contextDeclaration:cd1 constraintBody:cb1 constraintAux:ca1 {:
 								String code = ((Node)cd1).getCode() + ((Node)cb1).getCode() + ((Node)ca1).getCode() + CodeGenerator.getInstance().getAllPre()
 								 + CodeGenerator.getInstance().getAllPost();
 								CodeGenerator.getInstance().writeToFile(code + CodeGenerator.getInstance().getMain() + "\nend");
-								CodeGenerator.getInstance().setClassCode(parser.as.getContextClass(),code);
+								CodeGenerator.getInstance().setClassCode(parser.as.getContextClass(),(code + "\nend"));
 								CodeGenerator.getInstance().reset();
 								parser.as.reset();
 								 :};
@@ -635,6 +635,7 @@ featureCall ::= pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft
 				| pathName:pn AROBAPRE {: parser.as.checkStereotype("@pre", pnleft);
 										  Node node = new Node(((Node)pn).getValue(), "");
 								 		  node.setRole(Node.VARIABLE);
+								 		  node.setCode(((Node)pn).toString()+"_pre");
 								 		  RESULT = node; //TODO soma, mult, div em ruby com arobapre:}
 				| pathName:pn {: Node node = new Node(((Node)pn).getValue(), "");
 								 String code = (String)((Node)pn).getValue();

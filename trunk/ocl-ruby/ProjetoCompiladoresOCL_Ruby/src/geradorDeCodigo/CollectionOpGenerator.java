@@ -123,11 +123,26 @@ public class CollectionOpGenerator {
 		return c + ".select {"+ retornaParametrosSelect(params) + "}";
 	}
 
+//	public static String createForAll(String c, String params){
+//		return "for i in "+ c +"\n\tif !(" +  retornaParametros(params) + ")\n\t\treturn false\n\tend\nend\nreturn true"; 
+//	}
+//	
+//	public static String createExists(String c, String params){
+//		return "for i in "+ c +"\n\tif (" + retornaParametros(params) + ")\n\t\treturn true\n\tend\nend\nreturn false"; 
+//	}
+	
 	public static String createForAll(String c, String params){
-		return "for i in "+ c +"\n\tif !(" +  retornaParametros(params) + ")\n\t\treturn false\n\tend\nend\nreturn true"; 
+		String code = "\t\taux = true\n";
+		code += "\t\tfor i in "+ c +"\n\t\t\taux = aux && (" +  retornaParametros(params) + ")\n";
+		code += "\t\tend\n\t\t@aux";
+		return code;
 	}
 	
 	public static String createExists(String c, String params){
-		return "for i in "+ c +"\n\tif (" + retornaParametros(params) + ")\n\t\treturn true\n\tend\nend\nreturn false"; 
+		String code = "\t\taux = false\n";
+		code += "\t\tfor i in "+ c +"\n\t\t\taux = aux || (" +  retornaParametros(params) + ")\n";
+		code += "\t\tend\n\t\taux";
+		return code;
 	}
+	
 }

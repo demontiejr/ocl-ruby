@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ public class CodeGenerator {
 	private int preNumber;
 	private int postNumber;
 	private Map<String, String> cMethods;
+	private Map<String, List<String>> atributes;
 	
 	private CodeGenerator(){
 		directory = "";
@@ -36,6 +38,7 @@ public class CodeGenerator {
 		preNumber = 1;
 		postNumber = 1;
 		cMethods = new HashMap<String, String>();
+		atributes = new HashMap<String, List<String>>();
 		//generateAllClasses();
 	}
 	
@@ -75,24 +78,17 @@ public class CodeGenerator {
 	
 	public String getClassCode(String className){
 		String code = classesCode.get(className);
-		return code;
+		return code.substring(0,code.length()-4);
 	}
 
 	public void writeToFile(String code){
-		try {
-			BufferedWriter file = new BufferedWriter(new FileWriter(directory + fileName + ".rb"));
-			file.write(code);
-			file.close();
-		} catch (IOException e) {
-			System.out.println("Problemas na escrita do arquivo");;
-		}
-		
+		writeClassesToFile(code, fileName);
 	}
 	
 	public void generateAllClasses(){
 		String code;
 		for (Classe c : XMIManager.getAllClasses()){
-			if (isCollection(c.getName()))
+			if (Util.isCollection(c.getName()) != null)
 				continue;
 			Classe sup = c.getClassePai();
 			String s = "";
@@ -106,6 +102,8 @@ public class CodeGenerator {
 			code += "\nend";
 			classesCode.put(c.getName(),code);
 			writeClassesToFile(code,c.getName());
+			
+			setClassAtributes(c.getName(),c.getAtributos());
 		}
 	}
 	
@@ -140,22 +138,16 @@ public class CodeGenerator {
 			file.write(code);
 			file.close();
 		} catch (IOException e) {
-			System.out.println(fName);
 			System.out.println("Problemas na escrita do arquivo");;
 		}	
 	}	
 	
-	private boolean isCollection(String entrada){
-		if(entrada != null){
-			String[] lista = entrada.split("<");
-			if(lista.length > 1){
-				String[] listaAux = (lista[lista.length-1]).split(">");
-				if(listaAux.length == 1){
-					return true;
-				}
-			}
-		}		
-		return false;
+	private void setClassAtributes(String className, List<Atributo> atList){
+		List<String> aux = new LinkedList<String>();
+		for (Atributo a : atList){
+			aux.add(a.getNome());
+		}
+		atributes.put(className, aux);
 	}
 	
 	public int getPreNumber(){
@@ -243,8 +235,11 @@ public class CodeGenerator {
 	}
 	
 	private String generateMethodViolate(String method, String stereotype){
+		String st = stereotype;
+		if (stereotype.equals("Post"))
+			st += " ";
 		String code = "\tdef " + method + stereotype + "IsViolated()\n";
-		code += "\t\traise Exception, \"" + stereotype + "condition of the method " + method  + " was violated\"";
+		code += "\t\traise Exception, \"" + st + "condition of the method " + method  + " was violated\"";
 		code += "\n\tend\n";
 		return code;
 	}
@@ -270,6 +265,9 @@ public class CodeGenerator {
 		for (String m : checkPre.keySet()){
 			String methodName = Util.capitalizeFirst(m);
 			code += "\n\t\tif checkAllPre" + methodName + "()\n";
+			for (String at : atributes.get(fileName)){
+				code += "\t\t\t@" + at + "_pre = @" + at + "\n";
+			}
 			code += "\t\t\t" + "@result" + Util.capitalizeFirst(m) + " = "
 			+ cMethods.get(m) + "\n";
 			code += "\t\t\tcheckAllPost" + methodName + "()\n";
