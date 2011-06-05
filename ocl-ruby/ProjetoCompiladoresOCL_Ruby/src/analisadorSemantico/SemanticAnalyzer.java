@@ -11,6 +11,7 @@ import xmiParser.util.OperacaoMaior;
 import xmiParser.util.Parametro;
 import excecoes.RelationalErrorException;
 import excecoes.SemanticErrorException;
+import geradorDeCodigo.Util;
 
 /**
  * Classe com funcoes uteis para a analise semantica.
@@ -322,7 +323,7 @@ public class SemanticAnalyzer {
 				else
 					type = op.getReturnType();
 				checkParams(op, elemento.getElements(), line);
-				String aux = isCollection(type);
+				String aux = Util.isCollection(type);
 				if (aux != null) {
 					type = aux;
 					isCollection = true;
@@ -335,7 +336,7 @@ public class SemanticAnalyzer {
 					type = at.getIdTipo();
 				isCollection = at.ehColecao();
 				if (!at.ehColecao()){
-					String aux = isCollection(type);
+					String aux = Util.isCollection(type);
 					if (aux != null){
 						type = aux;
 						isCollection = true;
@@ -409,19 +410,6 @@ public class SemanticAnalyzer {
 	private boolean isNumeric(String type){
 		return (type.equalsIgnoreCase("Float") || type.equalsIgnoreCase("Integer") 
 				|| type.equalsIgnoreCase("Double") || type.equalsIgnoreCase("Long"));
-	}
-	
-	private String isCollection(String entrada){
-		if(entrada != null){
-			String[] lista = entrada.split("<");
-			if(lista.length > 1){
-				String[] listaAux = (lista[lista.length-1]).split(">");
-				if(listaAux.length == 1){
-					return listaAux[0];
-				}
-			}
-		}		
-		return null;
 	}
 	
 }

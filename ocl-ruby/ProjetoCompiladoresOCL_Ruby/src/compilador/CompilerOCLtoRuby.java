@@ -126,6 +126,7 @@ public class CompilerOCLtoRuby {
 			XMIManager.setStaticClasses(parserxmi.getArrayClasses());
 			CodeGenerator.getInstance().generateAllClasses();
 		} catch (Exception e1) {
+			e1.printStackTrace();
 			System.err.println(e1.getMessage());
 			System.exit(0);
 		}
