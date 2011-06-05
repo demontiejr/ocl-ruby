@@ -1,5 +1,5 @@
 context Conta::creditar(pts: Integer)
-	post: pontos < 0
+	post exemploImplies: (pontos = 0) implies estaVazia()
 	
 context Conta::debitar(pts: Integer)
 	pre: pontos >= pts

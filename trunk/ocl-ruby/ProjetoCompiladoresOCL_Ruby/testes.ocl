@@ -1,6 +1,6 @@
 context Transacao::programa()
-	post fazNada: programa().obtemServicos()->select(condicao=true)->size() + 2
+	post fazNada: self.programa().obtemServicos()->select(condicao=true)->size() + 2
 	
 context Cliente::idade()
-    post: nome@pre = if masculino then 'jose' else 'maria' endif
+    post: self.nome@pre = if masculino then 'jose' else 'maria' endif
     post: true = cartoes->forAll(valido)
